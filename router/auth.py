@@ -50,49 +50,50 @@ class AdminRegisterRequest(BaseModel):
     pincode: Optional[int] = None
 
 class GenAdminLoginRequest(BaseModel):
-    phone: str
+    email: str
 
 class GenAdminOTPVerifyRequest(BaseModel):
-    phone: str
+    email: str
     otp: str
 
 @router.post("/admin-login", dependencies=[Depends(rate_limit.by_ip("OTP_GENERATE"))])
 async def gen_admin_login_route(data: GenAdminLoginRequest):
-    from core_functions.auth_function import _send_msg91_sms
+    from core_functions.auth_function import _send_email_otp_async
     import random
     from datetime import timedelta
     from utils.timezone import get_utc_now
 
-    schema = os.getenv('DB_SCHEMA')
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     try:
-        # Check gen_admin_login table
+        email = data.email.lower().strip()
         cursor.execute(
-            "SELECT phone_number, role_id FROM gen_admin_login WHERE phone_number = %s",
-            (data.phone,)
+            "SELECT email, role_id FROM gen_admin_login WHERE email = %s",
+            (email,)
         )
         admin = cursor.fetchone()
         if not admin:
-            raise HTTPException(status_code=401, detail="Phone number not found")
+            raise HTTPException(status_code=401, detail="Email not found")
 
         otp_code = random.randint(100000, 999999)
         expires_at = get_utc_now() + timedelta(minutes=5)
 
-        cursor.execute("DELETE FROM moblie_otp_verification WHERE mobile_number = %s", (data.phone,))
+        cursor.execute("DELETE FROM email_otp_verification WHERE email = %s", (email,))
         cursor.execute(
-            "INSERT INTO moblie_otp_verification (mobile_number, otp_code, is_verified, attempts, created_at, expires_at) VALUES (%s, %s, %s, %s, %s, %s)",
-            (data.phone, otp_code, False, 0, get_utc_now(), expires_at)
+            "INSERT INTO email_otp_verification (email, otp_code, is_verified, attempts, created_at, expires_at) VALUES (%s, %s, %s, %s, %s, %s)",
+            (email, otp_code, False, 0, get_utc_now(), expires_at)
         )
         conn.commit()
 
-        _send_msg91_sms(data.phone, str(otp_code))
-        logger.info("[GenAdmin] OTP sent to ...%s", data.phone[-4:])
+        sent = await _send_email_otp_async(email, otp_code, "login")
+        if not sent:
+            raise HTTPException(status_code=503, detail="Could not send OTP email. Please try again.")
 
-        return {"success": True, "message": "OTP sent successfully"}
+        logger.info("[GenAdmin] OTP emailed to ...%s", email[-8:])
+        return {"success": True, "message": "OTP sent to your email"}
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         conn.rollback()
         logger.exception("Unexpected server error")
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -104,7 +105,6 @@ async def gen_admin_login_route(data: GenAdminLoginRequest):
 async def gen_admin_verify_otp_route(data: GenAdminOTPVerifyRequest):
     from utils.timezone import get_utc_now
 
-    schema = os.getenv('DB_SCHEMA')
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     try:
@@ -113,27 +113,28 @@ async def gen_admin_verify_otp_route(data: GenAdminOTPVerifyRequest):
         except ValueError:
             raise HTTPException(status_code=400, detail="Invalid OTP format")
 
+        email = data.email.lower().strip()
         cursor.execute(
-            "SELECT * FROM moblie_otp_verification WHERE mobile_number = %s AND otp_code = %s AND expires_at > %s",
-            (data.phone, otp_int, get_utc_now())
+            "SELECT * FROM email_otp_verification WHERE email = %s AND otp_code = %s AND expires_at > %s",
+            (email, otp_int, get_utc_now())
         )
         otp_record = cursor.fetchone()
         if not otp_record:
             raise HTTPException(status_code=400, detail="Invalid or expired OTP")
 
-        cursor.execute("DELETE FROM moblie_otp_verification WHERE mobile_number = %s", (data.phone,))
+        cursor.execute("DELETE FROM email_otp_verification WHERE email = %s", (email,))
 
         cursor.execute(
-            "SELECT phone_number, role_id FROM gen_admin_login WHERE phone_number = %s",
-            (data.phone,)
+            "SELECT email, role_id FROM gen_admin_login WHERE email = %s",
+            (email,)
         )
         admin = cursor.fetchone()
         conn.commit()
 
-        return {"success": True, "phone_number": admin["phone_number"], "role_id": admin["role_id"]}
+        return {"success": True, "email": admin["email"], "role_id": admin["role_id"]}
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         conn.rollback()
         logger.exception("Unexpected server error")
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -142,12 +143,12 @@ async def gen_admin_verify_otp_route(data: GenAdminOTPVerifyRequest):
         return_connection(conn)
 
 class GenAdminUserRequest(BaseModel):
-    phone_number: str
+    email: str
     name: str = ""
     role_id: int = 2
 
 class GenAdminUserUpdateRequest(BaseModel):
-    phone_number: str
+    email: str
     name: str = ""
     role_id: int = 2
 
@@ -168,7 +169,7 @@ async def list_gen_admin_users(request: Request):
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     try:
-        cursor.execute("SELECT phone_number, name, role_id FROM gen_admin_login ORDER BY phone_number")
+        cursor.execute("SELECT email, name, role_id FROM gen_admin_login ORDER BY email")
         users = cursor.fetchall()
         return {"success": True, "users": [dict(u) for u in users]}
     finally:
@@ -181,18 +182,19 @@ async def add_gen_admin_user(data: GenAdminUserRequest, request: Request):
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     try:
-        cursor.execute("SELECT phone_number FROM gen_admin_login WHERE phone_number = %s", (data.phone_number,))
+        email = data.email.lower().strip()
+        cursor.execute("SELECT email FROM gen_admin_login WHERE email = %s", (email,))
         if cursor.fetchone():
-            raise HTTPException(status_code=400, detail="Phone number already exists")
+            raise HTTPException(status_code=400, detail="Email already exists")
         cursor.execute(
-            "INSERT INTO gen_admin_login (phone_number, name, role_id) VALUES (%s, %s, %s)",
-            (data.phone_number, data.name, data.role_id)
+            "INSERT INTO gen_admin_login (email, name, role_id) VALUES (%s, %s, %s)",
+            (email, data.name, data.role_id)
         )
         conn.commit()
-        return {"success": True, "user": {"phone_number": data.phone_number, "name": data.name, "role_id": data.role_id}}
+        return {"success": True, "user": {"email": email, "name": data.name, "role_id": data.role_id}}
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         conn.rollback()
         logger.exception("Unexpected server error")
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -200,23 +202,24 @@ async def add_gen_admin_user(data: GenAdminUserRequest, request: Request):
         cursor.close()
         return_connection(conn)
 
-@router.put("/gen-admin-users/{phone_number}")
-async def update_gen_admin_user(phone_number: str, data: GenAdminUserUpdateRequest, request: Request):
+@router.put("/gen-admin-users/{email}")
+async def update_gen_admin_user(email: str, data: GenAdminUserUpdateRequest, request: Request):
     _require_role1(request)
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     try:
+        new_email = data.email.lower().strip()
         cursor.execute(
-            "UPDATE gen_admin_login SET phone_number = %s, name = %s, role_id = %s WHERE phone_number = %s",
-            (data.phone_number, data.name, data.role_id, phone_number)
+            "UPDATE gen_admin_login SET email = %s, name = %s, role_id = %s WHERE email = %s",
+            (new_email, data.name, data.role_id, email.lower().strip())
         )
         if cursor.rowcount == 0:
             raise HTTPException(status_code=404, detail="User not found")
         conn.commit()
-        return {"success": True, "user": {"phone_number": data.phone_number, "name": data.name, "role_id": data.role_id}}
+        return {"success": True, "user": {"email": new_email, "name": data.name, "role_id": data.role_id}}
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         conn.rollback()
         logger.exception("Unexpected server error")
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -224,20 +227,20 @@ async def update_gen_admin_user(phone_number: str, data: GenAdminUserUpdateReque
         cursor.close()
         return_connection(conn)
 
-@router.delete("/gen-admin-users/{phone_number}")
-async def delete_gen_admin_user(phone_number: str, request: Request):
+@router.delete("/gen-admin-users/{email}")
+async def delete_gen_admin_user(email: str, request: Request):
     _require_role1(request)
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     try:
-        cursor.execute("DELETE FROM gen_admin_login WHERE phone_number = %s", (phone_number,))
+        cursor.execute("DELETE FROM gen_admin_login WHERE email = %s", (email.lower().strip(),))
         if cursor.rowcount == 0:
             raise HTTPException(status_code=404, detail="User not found")
         conn.commit()
         return {"success": True}
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         conn.rollback()
         logger.exception("Unexpected server error")
         raise HTTPException(status_code=500, detail="Internal server error")

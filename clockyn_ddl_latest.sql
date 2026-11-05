@@ -520,7 +520,8 @@ CREATE TABLE clockyn_dev.free_trial (
 CREATE TABLE clockyn_dev.gen_admin_login (
 	phone_number varchar(20) NULL,
 	role_id int4 NULL,
-	"name" varchar(100) NULL
+	"name" varchar(100) NULL,
+	email varchar(255) NULL
 );
 
 ----------
@@ -1471,3 +1472,7 @@ ALTER TABLE clockyn_dev.attendance_rule
 ALTER TABLE clockyn_dev.attendance_rule
     ADD CONSTRAINT attendance_rule_max_sessions_per_day_check
     CHECK (max_sessions_per_day BETWEEN 1 AND 10);
+
+-- ─── ALTER: email column on gen_admin_login for Clockyn email-based admin auth ───────────────
+ALTER TABLE clockyn_dev.gen_admin_login
+    ADD COLUMN IF NOT EXISTS email varchar(255) NULL;

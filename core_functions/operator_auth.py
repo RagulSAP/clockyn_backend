@@ -77,15 +77,18 @@ def keys_match(presented: str, expected: str) -> bool:
                                hashlib.sha256((expected or "").encode("utf-8")).digest())
 
 
-def lookup_gen_admin_role(phone: str) -> Optional[int]:
-    """role_id of the `gen_admin_login` row of this phone (None: no such operator). Raises on a database error."""
+def lookup_gen_admin_role(identifier: str) -> Optional[int]:
+    """role_id of the `gen_admin_login` row for this identifier (email or legacy phone). None: no such operator."""
     from psycopg2.extras import RealDictCursor
     from core_functions.db_function import get_db_connection, return_connection
     conn = get_db_connection()
     try:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
-            cursor.execute("SELECT role_id FROM gen_admin_login WHERE phone_number = %s", (phone,))
+            if '@' in identifier:
+                cursor.execute("SELECT role_id FROM gen_admin_login WHERE email = %s", (identifier,))
+            else:
+                cursor.execute("SELECT role_id FROM gen_admin_login WHERE phone_number = %s", (identifier,))
             row = cursor.fetchone()
         finally:
             cursor.close()

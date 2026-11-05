@@ -30,18 +30,18 @@ router = APIRouter(prefix="/gen-dashboard", tags=["gen-dashboard"], dependencies
 
 
 @router.get("/me")
-async def admin_profile(phone_number: str = Query(...)):
-    return await get_admin_profile(phone_number)
+async def admin_profile(email: str = Query(...)):
+    return await get_admin_profile(email)
 
 
 class UpdateProfileRequest(BaseModel):
-    phone_number: str
+    email: str
     name: str
 
 
 @router.put("/me")
 async def update_profile(data: UpdateProfileRequest):
-    return await update_admin_profile(data.phone_number, data.name)
+    return await update_admin_profile(data.email, data.name)
 
 
 @router.get("/stats")

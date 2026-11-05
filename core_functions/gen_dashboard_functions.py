@@ -519,25 +519,25 @@ async def get_plan_breakdown():
         return_connection(conn)
 
 
-async def get_admin_profile(phone_number: str):
+async def get_admin_profile(email: str):
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     try:
         cursor.execute("""
-            SELECT phone_number, name, role_id,
+            SELECT email, name, role_id,
                 CASE role_id
                     WHEN 1 THEN 'Admin'
                     WHEN 2 THEN 'Staff'
                     ELSE 'Admin'
                 END AS role_name
-            FROM gen_admin_login WHERE phone_number = %s
-        """, (phone_number,))
+            FROM gen_admin_login WHERE email = %s
+        """, (email,))
         row = cursor.fetchone()
         if not row:
             raise HTTPException(status_code=404, detail="User not found")
         return {
-            "name":    row["name"] or row["phone_number"],
-            "mobile":  row["phone_number"],
+            "name":    row["name"] or row["email"],
+            "email":   row["email"],
             "role":    row["role_name"],
             "role_id": row["role_id"],
         }
@@ -550,13 +550,13 @@ async def get_admin_profile(phone_number: str):
         return_connection(conn)
 
 
-async def update_admin_profile(phone_number: str, name: str):
+async def update_admin_profile(email: str, name: str):
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     try:
         cursor.execute(
-            "UPDATE gen_admin_login SET name = %s WHERE phone_number = %s",
-            (name, phone_number)
+            "UPDATE gen_admin_login SET name = %s WHERE email = %s",
+            (name, email)
         )
         if cursor.rowcount == 0:
             raise HTTPException(status_code=404, detail="User not found")
