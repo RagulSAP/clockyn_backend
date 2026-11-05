@@ -1,0 +1,139 @@
+from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel
+from core_functions.operator_auth import require_operator
+from core_functions.gen_dashboard_functions import (
+    get_super_admin_stats,
+    get_all_users,
+    get_all_organizations,
+    get_recent_orgs,
+    get_recent_payments,
+    get_plan_breakdown,
+    get_monthly_revenue,
+    get_org_analytics,
+    get_admin_profile,
+    update_admin_profile,
+    update_org_details,
+    update_org_status,
+    get_user_latest_attendance,
+    get_org_info,
+    get_org_employees,
+    get_user_attendance_range,
+    get_active_orgs_today,
+    get_org_subscriptions_list,
+    get_org_attendance_by_date,
+    OrgUpdateRequest,
+    OrgStatusRequest,
+)
+
+# Platform-operator routes: every route of this router goes through the ONE operator guard (core_functions/operator_auth.py).
+router = APIRouter(prefix="/gen-dashboard", tags=["gen-dashboard"], dependencies=[Depends(require_operator)])
+
+
+@router.get("/me")
+async def admin_profile(phone_number: str = Query(...)):
+    return await get_admin_profile(phone_number)
+
+
+class UpdateProfileRequest(BaseModel):
+    phone_number: str
+    name: str
+
+
+@router.put("/me")
+async def update_profile(data: UpdateProfileRequest):
+    return await update_admin_profile(data.phone_number, data.name)
+
+
+@router.get("/stats")
+async def dashboard_stats():
+    return await get_super_admin_stats()
+
+
+@router.get("/users/{user_id}/latest-attendance")
+async def user_latest_attendance(user_id: str):
+    return await get_user_latest_attendance(user_id)
+
+
+@router.get("/users")
+async def all_users():
+    return await get_all_users()
+
+
+@router.get("/organizations")
+async def all_organizations():
+    return await get_all_organizations()
+
+
+@router.put("/organizations/{org_id}")
+async def edit_organization(org_id: str, data: OrgUpdateRequest):
+    return await update_org_details(org_id, data)
+
+
+@router.get("/recent-orgs")
+async def recent_orgs():
+    return await get_recent_orgs()
+
+
+@router.get("/recent-payments")
+async def recent_payments():
+    return await get_recent_payments()
+
+
+@router.get("/plan-breakdown")
+async def plan_breakdown():
+    return await get_plan_breakdown()
+
+
+@router.get("/monthly-revenue")
+async def monthly_revenue():
+    return await get_monthly_revenue()
+
+
+@router.get("/org-analytics/{org_id}")
+async def org_analytics(org_id: str, days: int = Query(default=7)):
+    return await get_org_analytics(org_id, days)
+
+
+@router.post("/organizations/{org_id}/activate")
+async def activate_org(org_id: str, data: OrgStatusRequest):
+    return await update_org_status(org_id, 1, data.changed_by)
+
+
+@router.post("/organizations/{org_id}/deactivate")
+async def deactivate_org(org_id: str, data: OrgStatusRequest):
+    return await update_org_status(org_id, 0, data.changed_by)
+
+
+@router.delete("/organizations/{org_id}")
+async def delete_org(org_id: str, data: OrgStatusRequest):
+    return await update_org_status(org_id, 2, data.changed_by)
+
+
+@router.get("/org/{org_id}/info")
+async def get_org_info_route(org_id: str):
+    return await get_org_info(org_id)
+
+
+@router.get("/org/{org_id}/employees")
+async def get_org_employees_route(org_id: str):
+    return await get_org_employees(org_id)
+
+
+@router.get("/users/{user_id}/attendance-range")
+async def get_user_attendance_range_route(user_id: str, from_date: str = Query(...), to_date: str = Query(...)):
+    return await get_user_attendance_range(user_id, from_date, to_date)
+
+
+@router.get("/active-orgs")
+async def get_active_orgs_today_route():
+    return await get_active_orgs_today()
+
+
+@router.get("/org-subscriptions")
+async def get_org_subscriptions_list_route():
+    return await get_org_subscriptions_list()
+
+
+@router.get("/org/{org_id}/attendance/{date}")
+async def get_org_attendance_by_date_route(org_id: str, date: str):
+    return await get_org_attendance_by_date(org_id, date)

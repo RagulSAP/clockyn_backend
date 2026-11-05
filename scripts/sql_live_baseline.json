@@ -1,0 +1,63 @@
+{
+ "comment": "Ignore list and hints for scripts/sql_live_check.py (live PostgreSQL validation). 'untyped' = keys (file|hash of the statement text, no line numbers) of statements whose parameter types PostgreSQL cannot infer: harmless noise because psycopg2 sends literals; regenerate with: PGSSLMODE=require python scripts/sql_live_check.py --write-baseline. 'accepted_errors' = {key, reason} of REAL findings that were triaged as false positives (none today). 'placeholder_hints' resolve f-string parts the static extractor cannot see: key '<file>::<expr>' (or '<expr>'), a list of candidate texts; candidate i of every placeholder of a statement is used together in rendering i and EVERY rendering must prepare. The token __SCHEMA__ stands for the scratch schema.",
+ "untyped": [
+  "utils/email.py|4d4e10a188",
+  "utils/email.py|dbc439bfc1"
+ ],
+ "accepted_errors": [],
+ "placeholder_hints": {
+  "core_functions/auth_function.py::{table_name}": [
+   "email_otp_verification",
+   "moblie_otp_verification"
+  ],
+  "core_functions/auth_function.py::{contact_field}": [
+   "email",
+   "mobile_number"
+  ],
+  "core_functions/auth_function.py::{_contact_clause(data.contact)}": [
+   "LOWER(u.email) = LOWER(%s)",
+   "u.mobile_number = %s"
+  ],
+  "core_functions/auth_function.py::{_contact_clause(data.contact, 'users')}": [
+   "LOWER(users.email) = LOWER(%s)",
+   "users.mobile_number = %s"
+  ],
+  "core_functions/auth_function.py::{clause}": [
+   "LOWER(u.email) = LOWER(%s)",
+   "u.mobile_number = %s"
+  ],
+  "core_functions/branch_functions.py::{placeholders}": [
+   "%s",
+   "%s, %s"
+  ],
+  "core_functions/salary_structure.py::{placeholders}": [
+   "%s",
+   "%s, %s"
+  ],
+  "core_functions/emp_pers_detail_functions.py::{', '.join(update_fields)}": [
+   "name = %s",
+   "name = %s, mobile_number = %s, email = %s"
+  ],
+  "core_functions/emp_pers_detail_functions.py::{set_clause}": [
+   "dob = %s, gender = %s, blood_group = %s, address = %s, emergency_contact_no = %s, acc_no = %s, ifsc_code = %s, bank_name = %s, bank_branch = %s, father_name = %s, marital_status = %s, aadhaar_no = %s, pan_no = %s, uan_no = %s, pf_no = %s, esi_no = %s, doj = %s"
+  ],
+  "core_functions/emp_pers_detail_functions.py::{cols}": [
+   "user_id, dob, gender, blood_group, address, emergency_contact_no, acc_no, ifsc_code, bank_name, bank_branch, father_name, marital_status, aadhaar_no, pan_no, uan_no, pf_no, esi_no, doj"
+  ],
+  "core_functions/emp_pers_detail_functions.py::{placeholders}": [
+   "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
+  ],
+  "core_functions/gen_dashboard_functions.py::{', '.join(update_fields)}": [
+   "mobile_number = %s",
+   "email = %s",
+   "mobile_number = %s, email = %s"
+  ],
+  "core_functions/gen_dashboard_functions.py::{DB_SCHEMA}": [
+   "__SCHEMA__"
+  ],
+  "core_functions/holiday_functions.py::{', '.join(fields)}": [
+   "name = %s",
+   "name = %s, date = %s, block_attendance = %s"
+  ]
+ }
+}

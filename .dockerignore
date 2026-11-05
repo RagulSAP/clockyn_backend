@@ -1,0 +1,16 @@
+.venv
+__pycache__
+.git
+.vscode
+.env
+known_faces/
+
+.pytest_cache
+tests/
+project_complete_context/
+*.xlsx
+
+# docs / scratch SQL are not needed at runtime (README.md, planner, fix.sql); migrations/ scripts/ static/ ml/models stay in the image
+*.md
+fix.sql
+.env.*

@@ -1,0 +1,11 @@
+-- 033: bearer-token revocation epoch (WP12). Apply with the target schema on the search_path, e.g.
+--   python migrate.py <schema> migrations/033_user_auth_epoch.sql
+-- Idempotent (safe to re-run) and it deletes no data. The same column is in punchapp_ddl_latest.sql (users).
+--
+-- users.auth_epoch: a bearer access token carries the epoch its user had when it was issued and is valid only while it
+-- still equals users.auth_epoch. The backend increments it when a single-device user (manager / staff) is signed out
+-- (device-change approval, login on another device, logout), which revokes every token issued before.
+--   - ADD COLUMN ... NOT NULL DEFAULT 0 is a metadata-only change on PostgreSQL 11+ (no table rewrite, no long lock);
+--     existing rows read 0, so tokens issued after this migration start at epoch 0.
+--   - No constraint over existing data, so there is no pre-check query.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS auth_epoch int4 NOT NULL DEFAULT 0;

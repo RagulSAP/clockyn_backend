@@ -1,0 +1,32 @@
+# Shared brief for every Clockyn backend work-package agent
+
+You are a senior Python/FastAPI/PostgreSQL (and, where stated, React Native/TypeScript) engineer. The owner has asked for the remaining planner work packages to be implemented **fully and carefully**; there is **no database available** until later (the owner will provision AWS Postgres and run real API tests afterwards). So every change must be correct by construction and proven as far as possible without a database. Quality bar: it must work the first time against real PostgreSQL.
+
+## Repos and tools
+- Backend `<BE>` = `C:\POC\pa_backend\Clockyn` (FastAPI + psycopg2 sync; routers in `router/`, logic in `core_functions/`, mounts in `app.py`; schema file `punchapp_ddl_latest.sql`; numbered `migrations/`). It is a git repository (root `C:\POC\pa_backend`); `git diff` / `git status` work, but **never commit, stash, reset, checkout, rm --cached, or init anything**.
+- Frontend `<FE>` = `C:\POC\pa_frontend\Clockyn` (Expo/React Native, TypeScript; typed API client `src/api/*.ts`; executable contract = stateful mock `e2e/mock-server/`).
+- Python: `C:\Users\RSITHU~1\AppData\Local\Temp\claude\c--POC-pa-frontend\90c115e7-e99e-4778-ad6c-7055cb1620cc\scratchpad\venv\Scripts\python.exe` (fastapi, pydantic, psycopg2, httpx, pytest, boto3, tzdata, numpy, pillow installed; ML libs insightface/onnxruntime/cv2/weasyprint NOT installed, so **never `import app`**; test modules directly, mount only the router under test on a small `FastAPI()`).
+- Static DDL check: `scratchpad\ddl_static.py <ddl> <out>` (uses pglast from `scratchpad\pylibs`). If a SQL static checker script `scripts/sql_static_check.py` exists in `<BE>` when you finish, run it on your files too.
+- Context docs (read only what you need): `<BE>\clockyn_backend_planner.md`, `<BE>\project_complete_context\implementation_roadmap.md` (your WP section), `clockyn_backend_gap_analysis.md` (rows/designs for your area), `domains\*.md` (the domain docs for your area: sections 3 endpoints, 7 defects, 8 Clockyn requirements), `<FE>\backend_changes.md`, `<FE>\e2e\mock-server\routes\*.js` (contract), `<FE>\src\api\*.ts` (client).
+
+## Hard rules
+1. **Additive and backward compatible.** The Clockyn app must keep working unchanged against your backend. New fields optional; new behaviour that could surprise the app sits behind an env flag whose default keeps today's behaviour, unless your WP text says otherwise. Response shapes the app depends on do not change.
+2. **No DDL inside request handlers.** Schema changes go into `punchapp_ddl_latest.sql` (IF NOT EXISTS style, schema-qualified `punchapp_prod.<name>`, small anchored `Edit`s; other agents edit it concurrently: re-read right before editing and never rewrite it wholesale) AND as a new numbered migration in `migrations/` (follow `migrations/README.md`, idempotent, unqualified names, never deletes data). **Use only the migration numbers assigned to you.** A migration that adds a constraint over existing data must be written so it cannot fail silently (document the pre-check query in a comment).
+3. **Errors honest:** re-raise `HTTPException` before generic `except Exception`; real 4xx for client errors; no `str(e)` in responses.
+4. **SQL discipline (no DB to catch mistakes):** every statement you write must be valid PostgreSQL: parameters `%s` count equals params tuple length; every selected alias used by the code exists; column and table names are checked against `punchapp_ddl_latest.sql` (grep the table definition before using a column); `RealDictCursor` rows accessed by key; `psycopg2` `IN %s` takes a tuple; casts and `COALESCE` types agree; `GROUP BY` complete. Re-read every SQL string you wrote once, slowly, before finishing. Prefer simple SQL over clever SQL.
+5. **Org scoping everywhere:** any lookup by per-company ids (`branch_id`, `dept_id`, shift ids) also matches `org_id`.
+6. **Never type the legacy product names** in new code, comments, tests, docs, test data (existing occurrences, the schema qualifier `punchapp_prod`, and legacy table names already present may stay). New env vars/objects get neutral names.
+7. **Files:** use the Edit/Write tools (shell heredocs mangle backslashes). Re-read a file immediately before editing it; other agents work in parallel on other files. **Stay inside your file ownership list**; if you must touch a file owned by another WP, make the smallest anchored edit and say so in the report. Do not edit `clockyn_backend_planner.md`, `clockyn_progress_tracker.xlsx` or memory files (the lead updates them).
+8. **No sub-agents, no network, no real AWS/FCM/Razorpay/SES/MSG91 calls.** External services sit behind small functions you can monkeypatch.
+9. Existing suites must stay green. Run, from `<BE>`, once at the end: `python -m pytest tests -q --ignore=tests/test_wages_shifts.py --ignore=tests/test_attendance_rule_overtime_salary.py` (the two ignored files need a DB; the rest are DB-free). Fix anything you broke. Do not weaken or delete an existing test to make it pass; if a test encodes behaviour your WP deliberately changes, update it and say why.
+
+## Tests you must write (DB-free)
+- Fake-cursor / fake-connection unit tests for every function you add or change: normal path, each validation error, org-scoping, idempotency, and the exact SQL predicate/params for the important statements (see `tests/test_org_scoping.py`, `tests/test_quick_wins_2.py` for style).
+- For HTTP routes: mount the router on a small `FastAPI()` with `TestClient` and monkeypatch the DB layer; assert status codes and JSON shapes against the contract mock (`<FE>\e2e\mock-server\routes\*.js` / `<FE>\src\api\*.ts`).
+- Where behaviour is pure logic (date maths, pricing, rules), test it as pure functions with table-driven cases including boundaries.
+
+## Docs you must update
+Your domain doc(s) under `project_complete_context\domains\` (section 3 endpoints and a short "Changes" note), plus any env vars you add in `<BE>\.env` (commented/placeholder, same style) and the Environment Variables table in `<BE>\README.md`.
+
+## Final report (<= 14 lines)
+What you built (files), migration numbers used + DDL added, env vars added, tests added and the total pass count of the full DB-free suite, deviations from the WP text and why, anything you could not verify without a database (be specific: which SQL statements), and decisions you made on the owner's behalf (the planner's default decision IDs you applied).

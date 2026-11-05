@@ -1,0 +1,15 @@
+{
+ "comment": "Findings accepted as pre-existing by scripts/sql_static_check.py. Keys do not contain line numbers. Regenerate only after triage: python scripts/sql_static_check.py --write-baseline scripts/sql_static_baseline.json",
+ "findings": [
+  {
+   "key": "migrate.py|UNKNOWN_TABLE|9b9cfc6524#1",
+   "file": "migrate.py",
+   "line": 200,
+   "code": "UNKNOWN_TABLE",
+   "severity": "warn",
+   "message": "table 'schema_migrations' is not in the DDL",
+   "sql": "SELECT version FROM schema_migrations",
+   "approximate": false
+  }
+ ]
+}
