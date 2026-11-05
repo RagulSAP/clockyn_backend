@@ -1,1 +1,5 @@
-INFO:     192.168.1.7:35060 - "POST /face/check-location HTTP/1.1" 422 Unprocessable Entity
+Received `false` for a non-boolean attribute `collapsable`.
+
+If you want to write it to the DOM, pass a string instead: collapsable="false" or collapsable={value.toString()}.
+
+If you used to conditionally omit it with collapsable={condition && value}, pass collapsable={condition ? value : undefined} instead.
