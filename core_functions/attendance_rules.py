@@ -27,7 +27,7 @@ from typing import Callable, Dict, Iterable, List, Optional
 from utils.timezone import IST, UTC, get_utc_now
 
 IST_TZ_NAME = "Asia/Kolkata"
-MAX_SESSIONS_PER_DAY = 2
+MAX_SESSIONS_PER_DAY = 3
 STALE_OPEN_HOURS = 18            # D-22: an open session older than this is "forgotten"
 FALLBACK_SHIFT_HOURS = 9         # D-22: auto-close length when there is no usable shift
 DEFAULT_SHIFT_MINUTES = 540      # attendanceCalendar.ts DEFAULT_SHIFT_MINUTES (9 h)

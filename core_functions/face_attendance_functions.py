@@ -374,15 +374,23 @@ async def _punch_core(att, user_id: str, org_id: str, face: UploadFile, action: 
                     auto_closed_previous = True
                     logger.info("auto-closed stale session %s of user %s at %s", open_session['id'], user_id, close_at)
 
-                # Check if already used 2 punch-in sessions today
+                # Load per-org daily session limit from attendance_rule (falls back to module default)
+                cursor.execute(
+                    "SELECT max_sessions_per_day FROM attendance_rule WHERE org_id = %s",
+                    (org_id,)
+                )
+                _rule_row = cursor.fetchone()
+                max_sessions = int(_rule_row['max_sessions_per_day']) if _rule_row and _rule_row.get('max_sessions_per_day') is not None else rules.MAX_SESSIONS_PER_DAY
+
+                # Check if already used max punch-in sessions today
                 cursor.execute("""
                     SELECT COUNT(*) as cnt FROM attendance
                     WHERE user_id = %s AND attendance_date = %s
                 """, (user_id, today))
-                if cursor.fetchone()['cnt'] >= rules.MAX_SESSIONS_PER_DAY:
+                if cursor.fetchone()['cnt'] >= max_sessions:
                     if auto_closed_previous:
                         conn.commit()  # keep the auto-close even though this punch-in is refused
-                    return _fail("max_sessions", "Maximum 2 punch-in sessions allowed per day.")
+                    return _fail("max_sessions", f"Maximum {max_sessions} punch-in session(s) allowed per day.")
 
                 # Store location as POINT if coordinates provided
                 location_point = None

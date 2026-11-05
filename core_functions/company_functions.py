@@ -29,6 +29,7 @@ class AddCompanyRequest(BaseModel):
     state: Optional[str] = None
     district: Optional[str] = None
     pincode: Optional[int] = None
+    max_sessions_per_day: Optional[int] = None
 
 async def add_company(data: AddCompanyRequest):
     if not all([data.user_id, data.org_name, data.branches]):
@@ -88,11 +89,20 @@ async def add_company(data: AddCompanyRequest):
                 (data.user_id, org_id, data.pan_number or '', data.company_website or '', data.cin_number or '', data.tan_number or '', data.msme_number or '', data.business_category or '', data.gst_number or '', get_utc_now())
             )
         
+        # Insert default attendance rule (max_sessions_per_day defaults to 3)
+        max_sessions = max(1, min(10, data.max_sessions_per_day)) if data.max_sessions_per_day is not None else 3
+        cursor.execute(
+            """INSERT INTO attendance_rule (org_id, late_punch_in_count, consider_as, grace_minutes, max_sessions_per_day, created_at, updated_at)
+               VALUES (%s, %s, %s, %s, %s, %s, %s)
+               ON CONFLICT (org_id) DO NOTHING""",
+            (org_id, 3, 'Half Day', 0, max_sessions, get_utc_now(), get_utc_now())
+        )
+
         conn.commit()
-        
+
         return {
-            "success": True, 
-            "message": "Company added successfully!", 
+            "success": True,
+            "message": "Company added successfully!",
             "user_id": data.user_id,
             "org_id": org_id,
             "org_name": data.org_name,
@@ -138,7 +148,15 @@ async def get_company_details(org_id: str):
         
         if additional_info:
             company.update(additional_info)
-        
+
+        # Fetch per-org attendance rule settings
+        cursor.execute(
+            "SELECT max_sessions_per_day FROM attendance_rule WHERE org_id = %s",
+            (org_id,)
+        )
+        att_rule = cursor.fetchone()
+        company['max_sessions_per_day'] = att_rule['max_sessions_per_day'] if att_rule else 3
+
         return {
             "success": True,
             "data": company
@@ -304,18 +322,28 @@ async def update_company(org_id: str, data: AddCompanyRequest):
             # Check existing departments
             cursor.execute("SELECT dept_name FROM dept_info WHERE org_id = %s", (org_id,))
             existing_depts = [row['dept_name'] for row in cursor.fetchall()]
-            
+
             # Only update if departments changed
             if set(departments_to_insert) != set(existing_depts):
                 cursor.execute("DELETE FROM dept_info WHERE org_id = %s", (org_id,))
-                
+
                 for dept_name in departments_to_insert:
                     dept_id = str(uuid.uuid4())
                     cursor.execute(
                         "INSERT INTO dept_info (org_id, dept_id, dept_name, created_at) VALUES (%s, %s, %s, %s)",
                         (org_id, dept_id, dept_name, get_utc_now())
                     )
-        
+
+        # Update attendance rule max_sessions_per_day if provided
+        if data.max_sessions_per_day is not None:
+            max_s = max(1, min(10, data.max_sessions_per_day))
+            cursor.execute(
+                """INSERT INTO attendance_rule (org_id, late_punch_in_count, consider_as, grace_minutes, max_sessions_per_day, created_at, updated_at)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s)
+                   ON CONFLICT (org_id) DO UPDATE SET max_sessions_per_day = EXCLUDED.max_sessions_per_day, updated_at = EXCLUDED.updated_at""",
+                (org_id, 3, 'Half Day', 0, max_s, get_utc_now(), get_utc_now())
+            )
+
         conn.commit()
         
         return {

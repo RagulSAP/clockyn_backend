@@ -278,13 +278,15 @@ CREATE TABLE punchapp_prod.attendance_rule (
 	late_punch_in_count int4 NOT NULL,
 	consider_as varchar(10) NOT NULL,
 	grace_minutes int4 DEFAULT 0 NOT NULL,
+	max_sessions_per_day int4 DEFAULT 3 NOT NULL,
 	updated_by varchar(36) NULL,
 	created_at timestamptz DEFAULT now() NOT NULL,
 	updated_at timestamptz DEFAULT now() NOT NULL,
 	CONSTRAINT attendance_rule_pkey PRIMARY KEY (org_id),
 	CONSTRAINT attendance_rule_late_punch_in_count_check CHECK (late_punch_in_count BETWEEN 1 AND 10),
 	CONSTRAINT attendance_rule_consider_as_check CHECK (consider_as IN ('Half Day', 'Leave')),
-	CONSTRAINT attendance_rule_grace_minutes_check CHECK (grace_minutes BETWEEN 0 AND 120)
+	CONSTRAINT attendance_rule_grace_minutes_check CHECK (grace_minutes BETWEEN 0 AND 120),
+	CONSTRAINT attendance_rule_max_sessions_per_day_check CHECK (max_sessions_per_day BETWEEN 1 AND 10)
 );
 
 ------------
@@ -1456,3 +1458,16 @@ VALUES
 	('com.clockyn.app', 'android', '1.0.0', '1.0.0', false, NULL, NULL),
 	('com.clockyn.app', 'ios',     '1.0.0', '1.0.0', false, NULL, NULL)
 ON CONFLICT (app_id, platform) DO NOTHING;
+
+-- ─── ALTER: max_sessions_per_day on attendance_rule (run once on existing databases) ─────────
+-- Adds the configurable daily punch-in session limit per organisation.
+-- Default 3: matches the new hardcoded fallback; existing orgs stay at 3 until changed in settings.
+ALTER TABLE punchapp_prod.attendance_rule
+    ADD COLUMN IF NOT EXISTS max_sessions_per_day int4 DEFAULT 3 NOT NULL;
+
+ALTER TABLE punchapp_prod.attendance_rule
+    DROP CONSTRAINT IF EXISTS attendance_rule_max_sessions_per_day_check;
+
+ALTER TABLE punchapp_prod.attendance_rule
+    ADD CONSTRAINT attendance_rule_max_sessions_per_day_check
+    CHECK (max_sessions_per_day BETWEEN 1 AND 10);
