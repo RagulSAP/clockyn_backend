@@ -3,3 +3,12 @@ Received `false` for a non-boolean attribute `collapsable`.
 If you want to write it to the DOM, pass a string instead: collapsable="false" or collapsable={value.toString()}.
 
 If you used to conditionally omit it with collapsable={condition && value}, pass collapsable={condition ? value : undefined} instead.
+
+-----------
+
+Render Error
+
+Attempting to run JS driven animation on animated node that has been moved to "native" earlier by starting an animation with useNativeDriver: true
+
+Source:
+F:\Tech\clockyn_frontend\node_modules\react-native\Libraries\Animated\animations\Animation.js (75:21)
