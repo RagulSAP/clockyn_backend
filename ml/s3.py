@@ -349,6 +349,21 @@ def get_support_video_url(s3_key: str, expires_in: int = 21600) -> str:
     )
 
 
+def create_support_video_upload_url(s3_key: str, content_type: str, expires_in: int = 3600) -> str:
+    """Presigned PUT URL so the admin web app uploads a guide video straight to S3 (large files never pass through the API).
+    The browser must send the same Content-Type; the bucket's CORS must allow PUT from the admin site."""
+    return s3.generate_presigned_url(
+        'put_object',
+        Params={'Bucket': S3_BUCKET, 'Key': s3_key, 'ContentType': content_type},
+        ExpiresIn=expires_in
+    )
+
+
+def delete_s3_object(s3_key: str) -> None:
+    """Delete one object (S3 answers 204 for a missing key, so this is idempotent)."""
+    s3.delete_object(Bucket=S3_BUCKET, Key=s3_key)
+
+
 def _delete_prefix(prefix: str) -> int:
     """Delete every object under an S3 prefix. Returns count deleted."""
     deleted = 0

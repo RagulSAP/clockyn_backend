@@ -1,6 +1,19 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
-from core_functions.operator_auth import require_operator
+from core_functions.operator_auth import require_operator, require_operator_super
+from core_functions.support_video_functions import (
+    VideoCreateRequest,
+    VideoUpdateRequest,
+    VideoUploadUrlRequest,
+    create_support_video,
+    create_video_upload_url,
+    delete_support_video,
+    list_all_support_videos,
+    list_support_video_views,
+    update_support_video,
+)
 from core_functions.gen_dashboard_functions import (
     get_super_admin_stats,
     get_all_users,
@@ -137,3 +150,34 @@ async def get_org_subscriptions_list_route():
 @router.get("/org/{org_id}/attendance/{date}")
 async def get_org_attendance_by_date_route(org_id: str, date: str):
     return await get_org_attendance_by_date(org_id, date)
+
+
+# ── Video Hub (guide videos of the app's Support tab): read = any operator, write = super admin (role_id 1) ──────────
+@router.get("/support-videos")
+async def support_videos_list_route():
+    return await list_all_support_videos()
+
+
+@router.post("/support-videos/upload-url", dependencies=[Depends(require_operator_super)])
+async def support_video_upload_url_route(data: VideoUploadUrlRequest):
+    return await create_video_upload_url(data)
+
+
+@router.post("/support-videos", dependencies=[Depends(require_operator_super)])
+async def support_video_create_route(data: VideoCreateRequest):
+    return await create_support_video(data)
+
+
+@router.put("/support-videos/{video_id}", dependencies=[Depends(require_operator_super)])
+async def support_video_update_route(video_id: int, data: VideoUpdateRequest):
+    return await update_support_video(video_id, data)
+
+
+@router.delete("/support-videos/{video_id}", dependencies=[Depends(require_operator_super)])
+async def support_video_delete_route(video_id: int):
+    return await delete_support_video(video_id)
+
+
+@router.get("/support-video-views")
+async def support_video_views_route(video_id: Optional[int] = Query(None), limit: int = Query(1000)):
+    return await list_support_video_views(video_id, limit)

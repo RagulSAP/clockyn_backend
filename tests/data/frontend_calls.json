@@ -1336,24 +1336,30 @@
   {
    "file": "support.ts",
    "line": 79,
+   "method": "POST",
+   "path": "/support/videos/{param}/view"
+  },
+  {
+   "file": "support.ts",
+   "line": 84,
    "method": "GET",
    "path": "/support/requests/{param}"
   },
   {
    "file": "support.ts",
-   "line": 92,
+   "line": 97,
    "method": "POST",
    "path": "/support/submit"
   },
   {
    "file": "support.ts",
-   "line": 100,
+   "line": 105,
    "method": "POST",
    "path": "/support/submit"
   },
   {
    "file": "support.ts",
-   "line": 109,
+   "line": 114,
    "method": "POST",
    "path": "/support/{param}/reply"
   },

@@ -9,7 +9,7 @@ from core_functions.support_functions import (
     get_support_subjects, submit_support_request, get_support_requests,
     update_support_request, get_all_support_requests, reply_to_ticket,
 )
-from core_functions.support_video_functions import get_active_support_videos
+from core_functions.support_video_functions import VideoViewRequest, get_active_support_videos, record_video_view
 
 router = APIRouter(tags=["support"])
 
@@ -41,6 +41,13 @@ async def support_videos_route():
     except Exception:
         logging.getLogger(__name__).exception("Could not load guide videos")
         raise HTTPException(status_code=500, detail="Could not load videos")
+
+
+@router.post("/support/videos/{video_id}/view")
+async def support_video_view_route(video_id: int, data: VideoViewRequest, request: Request):
+    """The app opened a guide video: lets the operators see which organisations use which topics."""
+    rate_limit.check_user("VIDEO_VIEW", request, data.user_id)
+    return await record_video_view(video_id, data.user_id, data.org_id)
 
 
 @router.post("/support/submit")

@@ -9,6 +9,7 @@ Rules (name -> default `count/window_seconds`), each overridable with the env va
 
   SUPPORT_CREATE       10/3600   per user    POST /support/submit
   SUGGESTION_CREATE    10/3600   per user    POST /company/suggest-feature
+  VIDEO_VIEW           120/3600  per user    POST /support/videos/{id}/view
   AUTH_CHECK           30/60     per IP      GET /auth/check-mobile/*, /auth/check-email/*  (anti-enumeration)
   AUTH_LOGIN           30/60     per IP      POST /auth/login, /auth/employee-login          (anti-enumeration)
   OTP_GENERATE         20/3600   per IP      POST /auth/generate-otp (the per-contact throttle stays in place)
@@ -45,6 +46,7 @@ MAX_KEY_LENGTH = 200       # request-supplied values (user ids) are clipped befo
 DEFAULT_RULES: Dict[str, Tuple[int, int]] = {
     "SUPPORT_CREATE": (10, 3600),
     "SUGGESTION_CREATE": (10, 3600),
+    "VIDEO_VIEW": (120, 3600),
     "AUTH_CHECK": (30, 60),
     "AUTH_LOGIN": (30, 60),
     "OTP_GENERATE": (20, 3600),
