@@ -337,6 +337,18 @@ def get_support_photo_url(s3_key: str, expires_in: int = 604800) -> str:
         return None
 
 
+def get_support_video_url(s3_key: str, expires_in: int = 21600) -> str:
+    """Presigned GET URL of a guide video (no head_object: the list would otherwise cost one S3 call per video).
+    6 h by default: shorter than the life of temporary IAM-role credentials, which presigned URLs cannot outlive."""
+    if not s3_key:
+        return None
+    return s3.generate_presigned_url(
+        'get_object',
+        Params={'Bucket': S3_BUCKET, 'Key': s3_key},
+        ExpiresIn=expires_in
+    )
+
+
 def _delete_prefix(prefix: str) -> int:
     """Delete every object under an S3 prefix. Returns count deleted."""
     deleted = 0

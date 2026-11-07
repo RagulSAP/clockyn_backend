@@ -9,6 +9,7 @@ from core_functions.support_functions import (
     get_support_subjects, submit_support_request, get_support_requests,
     update_support_request, get_all_support_requests, reply_to_ticket,
 )
+from core_functions.support_video_functions import get_active_support_videos
 
 router = APIRouter(tags=["support"])
 
@@ -30,6 +31,16 @@ async def support_subjects_route():
         return await get_support_subjects()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/support/videos")
+async def support_videos_route():
+    """Video Hub: the active (status = 1) guide videos with presigned playback URLs."""
+    try:
+        return await get_active_support_videos()
+    except Exception:
+        logging.getLogger(__name__).exception("Could not load guide videos")
+        raise HTTPException(status_code=500, detail="Could not load videos")
 
 
 @router.post("/support/submit")

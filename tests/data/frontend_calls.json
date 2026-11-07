@@ -1323,31 +1323,37 @@
   },
   {
    "file": "support.ts",
-   "line": 64,
+   "line": 65,
    "method": "GET",
    "path": "/support/subjects"
   },
   {
    "file": "support.ts",
-   "line": 70,
+   "line": 71,
+   "method": "GET",
+   "path": "/support/videos"
+  },
+  {
+   "file": "support.ts",
+   "line": 79,
    "method": "GET",
    "path": "/support/requests/{param}"
   },
   {
    "file": "support.ts",
-   "line": 83,
-   "method": "POST",
-   "path": "/support/submit"
-  },
-  {
-   "file": "support.ts",
-   "line": 91,
+   "line": 92,
    "method": "POST",
    "path": "/support/submit"
   },
   {
    "file": "support.ts",
    "line": 100,
+   "method": "POST",
+   "path": "/support/submit"
+  },
+  {
+   "file": "support.ts",
+   "line": 109,
    "method": "POST",
    "path": "/support/{param}/reply"
   },
