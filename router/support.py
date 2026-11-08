@@ -10,6 +10,7 @@ from core_functions.support_functions import (
     update_support_request, get_all_support_requests, reply_to_ticket,
 )
 from core_functions.support_video_functions import VideoViewRequest, get_active_support_videos, record_video_view
+from core_functions.support_faq_functions import list_active_faqs
 
 router = APIRouter(tags=["support"])
 
@@ -41,6 +42,12 @@ async def support_videos_route():
     except Exception:
         logging.getLogger(__name__).exception("Could not load guide videos")
         raise HTTPException(status_code=500, detail="Could not load videos")
+
+
+@router.get("/support/faqs")
+async def support_faqs_route():
+    """FAQ Hub: the active (status = 1) FAQs in display order (the app's Support > FAQ screen)."""
+    return await list_active_faqs()
 
 
 @router.post("/support/videos/{video_id}/view")

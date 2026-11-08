@@ -1353,43 +1353,49 @@
   },
   {
    "file": "support.ts",
-   "line": 65,
+   "line": 66,
    "method": "GET",
    "path": "/support/subjects"
   },
   {
    "file": "support.ts",
-   "line": 71,
+   "line": 72,
    "method": "GET",
    "path": "/support/videos"
   },
   {
    "file": "support.ts",
-   "line": 79,
+   "line": 80,
+   "method": "GET",
+   "path": "/support/faqs"
+  },
+  {
+   "file": "support.ts",
+   "line": 94,
    "method": "POST",
    "path": "/support/videos/{param}/view"
   },
   {
    "file": "support.ts",
-   "line": 84,
+   "line": 99,
    "method": "GET",
    "path": "/support/requests/{param}"
   },
   {
    "file": "support.ts",
-   "line": 97,
+   "line": 112,
    "method": "POST",
    "path": "/support/submit"
   },
   {
    "file": "support.ts",
-   "line": 105,
+   "line": 120,
    "method": "POST",
    "path": "/support/submit"
   },
   {
    "file": "support.ts",
-   "line": 114,
+   "line": 129,
    "method": "POST",
    "path": "/support/{param}/reply"
   },

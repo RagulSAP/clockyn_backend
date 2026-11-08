@@ -14,6 +14,14 @@ from core_functions.support_video_functions import (
     list_support_video_views,
     update_support_video,
 )
+from core_functions.support_faq_functions import (
+    FaqCreateRequest,
+    FaqUpdateRequest,
+    create_faq,
+    delete_faq,
+    list_all_faqs,
+    update_faq,
+)
 from core_functions.gen_dashboard_functions import (
     get_super_admin_stats,
     get_all_users,
@@ -181,3 +189,24 @@ async def support_video_delete_route(video_id: int):
 @router.get("/support-video-views")
 async def support_video_views_route(video_id: Optional[int] = Query(None), limit: int = Query(1000)):
     return await list_support_video_views(video_id, limit)
+
+
+# ── FAQ Hub (FAQs of the app's Support tab): read = any operator, write = super admin (role_id 1) ───────────────────
+@router.get("/faqs")
+async def support_faqs_list_route():
+    return await list_all_faqs()
+
+
+@router.post("/faqs", dependencies=[Depends(require_operator_super)])
+async def support_faq_create_route(data: FaqCreateRequest):
+    return await create_faq(data)
+
+
+@router.put("/faqs/{faq_id}", dependencies=[Depends(require_operator_super)])
+async def support_faq_update_route(faq_id: int, data: FaqUpdateRequest):
+    return await update_faq(faq_id, data)
+
+
+@router.delete("/faqs/{faq_id}", dependencies=[Depends(require_operator_super)])
+async def support_faq_delete_route(faq_id: int):
+    return await delete_faq(faq_id)
