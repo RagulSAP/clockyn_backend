@@ -119,9 +119,43 @@ def _fire_push(user_ids: List[str], body: str, data: Dict[str, str]) -> None:
         asyncio.create_task(push_service.send_push_to_users(user_ids, PUSH_TITLE, body, data))
 
 
+_UNDEFINED_TABLE = "42P01"          # PostgreSQL: relation does not exist
+_missing_tables_logged = False
+
+
+def _tables_missing(exc: Exception) -> bool:
+    return getattr(exc, "pgcode", None) == _UNDEFINED_TABLE
+
+
+def _log_tables_missing(what: str) -> None:
+    """The deployment ran before the two tables were created: say so loudly, once per process (not on every poll)."""
+    global _missing_tables_logged
+    if not _missing_tables_logged:
+        _missing_tables_logged = True
+        logger.error("live chat: the tables live_chat_thread / live_chat_message do not exist in this schema (first seen in "
+                     "%s). Run the 'CREATE: Live Chat' block of clockyn_ddl_latest.sql.", what)
+
+
 def _unexpected(what: str, exc: Exception) -> HTTPException:
+    if _tables_missing(exc):
+        _log_tables_missing(what)
+        return HTTPException(status_code=503, detail="Live chat is not set up yet")
     logger.exception("live chat: %s failed", what)
     return HTTPException(status_code=500, detail="Internal server error")
+
+
+def _degrade_if_tables_missing(conn, what: str, exc: Exception) -> bool:
+    """READ endpoints answer an empty result while the tables are missing instead of a 5xx: the web console polls
+    unread-count on every page and the app seeds its badge at start-up, so an error here would be a constant stream of
+    5xx that also trips the deployment's error-rate rollback alarm."""
+    if not _tables_missing(exc):
+        return False
+    try:
+        conn.rollback()
+    except Exception:
+        pass
+    _log_tables_missing(what)
+    return True
 
 
 # ═══════════════════ SQL building blocks (all take an open cursor) ═══════════════════
@@ -282,6 +316,8 @@ async def app_get_messages(org_id: str, user_id: str) -> Dict[str, Any]:
     except HTTPException:
         raise
     except Exception as exc:
+        if _degrade_if_tables_missing(conn, "history", exc):
+            return {"success": True, "status": None, "unread": 0, "messages": [], "setup_required": True}
         raise _unexpected("history", exc)
     finally:
         return_connection(conn)
@@ -296,6 +332,8 @@ async def app_unread(org_id: str, user_id: str) -> Dict[str, Any]:
     except HTTPException:
         raise
     except Exception as exc:
+        if _degrade_if_tables_missing(conn, "unread", exc):
+            return {"success": True, "unread": 0, "setup_required": True}
         raise _unexpected("unread", exc)
     finally:
         return_connection(conn)
@@ -444,6 +482,8 @@ async def op_list_threads(status: Optional[str] = None, q: Optional[str] = None)
     except HTTPException:
         raise
     except Exception as exc:
+        if _degrade_if_tables_missing(conn, "thread list", exc):
+            return []
         raise _unexpected("thread list", exc)
     finally:
         return_connection(conn)
@@ -462,6 +502,8 @@ async def op_get_messages(org_id: str) -> Dict[str, Any]:
     except HTTPException:
         raise
     except Exception as exc:
+        if _degrade_if_tables_missing(conn, "operator history", exc):
+            raise HTTPException(status_code=404, detail="No conversation for this organization")
         raise _unexpected("operator history", exc)
     finally:
         return_connection(conn)
@@ -607,6 +649,8 @@ async def op_unread_count() -> Dict[str, Any]:
     except HTTPException:
         raise
     except Exception as exc:
+        if _degrade_if_tables_missing(conn, "unread count", exc):
+            return {"success": True, "unread_threads": 0, "unread_messages": 0, "setup_required": True}
         raise _unexpected("unread count", exc)
     finally:
         return_connection(conn)

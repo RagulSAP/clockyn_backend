@@ -613,6 +613,52 @@ class TestRealtime:
         assert org_send(env).status_code == 200 and len(env.db.messages) == 1
 
 
+class _UndefinedTable(Exception):
+    pgcode = "42P01"
+
+
+class TestTablesNotCreatedYet:
+    """A deployment that runs before the two tables exist must not produce a stream of 500s (the web console polls
+    unread-count on every page, and the deployment rolls back on its error rate)."""
+
+    @pytest.fixture
+    def no_tables(self, env, monkeypatch, caplog):
+        real = FakeCursor.execute
+
+        def execute(self, sql, params=None):
+            if "live_chat_" in sql:
+                raise _UndefinedTable('relation "live_chat_thread" does not exist')
+            return real(self, sql, params)
+
+        monkeypatch.setattr(FakeCursor, "execute", execute)
+        monkeypatch.setattr(live, "_missing_tables_logged", False)
+        caplog.set_level("ERROR")
+        return env
+
+    def test_reads_answer_empty_200s(self, no_tables):
+        c = no_tables.client
+        r = c.get("/gen-dashboard/live-chat/unread-count", headers=OP)
+        assert r.status_code == 200 and r.json() == {"success": True, "unread_threads": 0, "unread_messages": 0, "setup_required": True}
+        assert c.get("/gen-dashboard/live-chat/threads", headers=OP).json() == []
+        r = c.get(f"/live-chat/messages/{ORG}", params={"user_id": ADMIN})
+        assert r.status_code == 200 and r.json()["messages"] == [] and r.json()["setup_required"] is True
+        r = c.get(f"/live-chat/unread/{ORG}", params={"user_id": ADMIN})
+        assert r.status_code == 200 and r.json()["unread"] == 0
+        assert c.get(f"/gen-dashboard/live-chat/threads/{ORG}/messages", headers=OP).status_code == 404
+
+    def test_writes_answer_a_clear_503_not_a_500(self, no_tables):
+        c = no_tables.client
+        r = c.post("/live-chat/send", json={"org_id": ORG, "user_id": ADMIN, "message": "hi"})
+        assert r.status_code == 503 and r.json()["detail"] == "Live chat is not set up yet"
+        assert c.post(f"/gen-dashboard/live-chat/threads/{ORG}/messages", json={"message": "x"}, headers=OP).status_code == 503
+
+    def test_the_cause_is_logged_once_not_on_every_poll(self, no_tables, caplog):
+        for _ in range(5):
+            no_tables.client.get("/gen-dashboard/live-chat/unread-count", headers=OP)
+        hits = [r for r in caplog.records if "do not exist in this schema" in r.getMessage()]
+        assert len(hits) == 1 and "CREATE: Live Chat" in hits[0].getMessage()
+
+
 def test_fire_push_goes_through_the_push_service(monkeypatch):
     calls = []
 

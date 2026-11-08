@@ -704,6 +704,36 @@
    "path": "/api/leads/carry-forward/{param}/action"
   },
   {
+   "file": "liveChat.ts",
+   "line": 71,
+   "method": "GET",
+   "path": "/live-chat/messages/{param}"
+  },
+  {
+   "file": "liveChat.ts",
+   "line": 77,
+   "method": "POST",
+   "path": "/live-chat/send"
+  },
+  {
+   "file": "liveChat.ts",
+   "line": 84,
+   "method": "POST",
+   "path": "/live-chat/send-file"
+  },
+  {
+   "file": "liveChat.ts",
+   "line": 101,
+   "method": "PUT",
+   "path": "/live-chat/mark-read"
+  },
+  {
+   "file": "liveChat.ts",
+   "line": 107,
+   "method": "GET",
+   "path": "/live-chat/unread/{param}"
+  },
+  {
    "file": "location.ts",
    "line": 15,
    "method": "POST",
