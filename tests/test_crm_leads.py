@@ -581,7 +581,7 @@ def test_migration_text_is_idempotent_style_and_widens_status():
     assert "varchar(64)" in sql and "ALTER COLUMN status TYPE varchar(64)" in sql
     assert "ADD COLUMN IF NOT EXISTS prev_status" in sql
     assert "CREATE TABLE IF NOT EXISTS carry_forward_requests" in sql
-    assert "punchapp_prod" not in sql  # unqualified: the schema comes from the search_path
+    assert "clockyn_dev" not in sql  # unqualified: the schema comes from the search_path
     assert not re.search(r"(?im)^\s*(DELETE|TRUNCATE|DROP)\b", sql)
     # unique index only inside the duplicate check, with a NOTICE
     assert "RAISE NOTICE" in sql and "HAVING count(*) > 1" in sql
@@ -625,10 +625,10 @@ def test_dedupe_script_is_manual_and_transactional():
 
 
 def test_ddl_file_matches_what_the_code_needs():
-    ddl = (ROOT / "punchapp_ddl_latest.sql").read_text(encoding="utf-8")
+    ddl = (ROOT / "clockyn_ddl_latest.sql").read_text(encoding="utf-8")
     assert "prev_status varchar(64)" in ddl
     assert "ux_leads_assignment_lead_user" in ddl
-    li = ddl[ddl.index("CREATE TABLE punchapp_prod.leads_info"):]
+    li = ddl[ddl.index("CREATE TABLE clockyn_dev.leads_info"):]
     li = li[: li.index(");")]
     assert "status varchar(64) DEFAULT 'new'" in li
-    assert "CREATE TABLE punchapp_prod.carry_forward_requests" in ddl
+    assert "CREATE TABLE clockyn_dev.carry_forward_requests" in ddl

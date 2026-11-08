@@ -2,7 +2,7 @@
 
 Runs against a real PostgreSQL database, inside a temporary schema `clockyn_dev_test_<hex>` of an EXISTING database
 (no database is created or dropped, and no other schema is touched: see tests/pg_scratch.py). The tables are created from
-the definitions in `punchapp_ddl_latest.sql` (only the tables these routes touch) and the schema is dropped afterwards.
+the definitions in `clockyn_ddl_latest.sql` (only the tables these routes touch) and the schema is dropped afterwards.
 """
 import os
 import re
@@ -31,7 +31,7 @@ except Exception:  # pragma: no cover - environment dependent
     _tz.IST = _tz.UTC = timezone.utc
     sys.modules["utils.timezone"] = _tz
 
-SCHEMA = "punchapp_prod"
+SCHEMA = "clockyn_dev"
 TABLES = ["users", "branch_info", "dept_info", "daily_hourly_wages", "assigned_wages", "shift", "users_additional_info"]
 
 _STATE = {}  # schema name of the scratch schema of this module
@@ -42,7 +42,7 @@ ORG_B = "org-b"
 
 def _ddl_statements():
     """CREATE TABLE / CREATE INDEX statements of TABLES, taken from the real DDL file."""
-    text = (ROOT / "punchapp_ddl_latest.sql").read_text(encoding="utf-8")
+    text = (ROOT / "clockyn_ddl_latest.sql").read_text(encoding="utf-8")
     out = []
     for chunk in re.split(r";[ \t]*\r?\n", text):
         stmt = "\n".join(ln for ln in chunk.splitlines() if not ln.startswith("--")).strip()

@@ -13,6 +13,10 @@ Frames (the shapes the app's `interpretSocketFrame` / `useChatSocket` read):
   group_created      {"type":"group_created","data":{group_id,group_name,created_by}}
   group_updated      {"type":"group_updated","data":{group_id,member_count}}
   force_logout       {"type":"force_logout","data":{user_id}}
+  live_chat_message  {"type":"live_chat_message","data":{Message + org_id (+ org_name, thread_status to operators)}}
+  live_chat_read     {"type":"live_chat_read","data":{org_id,reader}}
+  live_chat_status   {"type":"live_chat_status","data":{org_id,status}}          (operators only)
+Support console (web) sockets register under the single key SUPPORT_OPS_KEY, so one publish reaches every open console.
 """
 import asyncio
 import logging
@@ -29,6 +33,8 @@ logger = logging.getLogger(__name__)
 LEGACY_BADGE_TYPES = frozenset({"badge_update", "request_submitted"})
 # More than this many per-message read frames in one call collapse into one refetch hint per sender.
 MAX_READ_FRAMES_PER_CALL = 50
+# Registry key of every open support-console socket (`/ws/support-ops`).
+SUPPORT_OPS_KEY = "support-ops"
 
 
 # ---------------------------------------------------------------------------- frame builders (pure)
@@ -100,6 +106,11 @@ async def publish_to_user(user_id: str, frame: Dict[str, Any]) -> int:
     if frame.get("type") in LEGACY_BADGE_TYPES:
         await _legacy_send(user_id, frame)
     return reached or 0
+
+
+async def publish_to_operators(frame: Dict[str, Any]) -> int:
+    """One frame to every open support-console socket. Returns the number of sockets reached."""
+    return await publish_to_user(SUPPORT_OPS_KEY, frame)
 
 
 async def publish_to_users(user_ids: Iterable[str], frame: Dict[str, Any]) -> int:

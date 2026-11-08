@@ -1,6 +1,6 @@
 -- 028: attendance sessions (WP5, NEW-2, D-22). Apply with the target schema on the search_path, e.g.
 --   python migrate.py <schema> migrations/028_attendance_sessions.sql
--- Idempotent (safe to re-run) and it deletes no data. The same objects are in punchapp_ddl_latest.sql.
+-- Idempotent (safe to re-run) and it deletes no data. The same objects are in clockyn_ddl_latest.sql.
 -- Runs in ONE transaction (migrate.py): any RAISE EXCEPTION below rolls the whole migration back.
 --
 -- Why: the old unique index on (user_id, attendance_date) allows ONE row per user per day, while the punch code

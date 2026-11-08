@@ -3,6 +3,7 @@ from core_functions.db_function import get_db_connection, return_connection
 from core_functions import gen_payment_functions as payments
 from psycopg2.extras import RealDictCursor
 from utils.razorpay import verify_webhook_signature
+import hashlib
 import json
 import os
 import logging
@@ -28,6 +29,19 @@ def _webhook_secret() -> str:
     return os.getenv("RAZORPAY_WEBHOOK_SECRET", "").strip()
 
 
+def webhook_secret_configured() -> bool:
+    """True when RAZORPAY_WEBHOOK_SECRET is set. Without it EVERY Razorpay webhook is answered 503 and nothing is stored
+    in gen_webhook_events: payments still work through the app's own verify call, but a payment made while the app is
+    closed is never activated."""
+    return bool(_webhook_secret())
+
+
+def _fallback_event_id(raw: bytes) -> str:
+    """Stable id for a delivery that carries no event id (neither header nor payload id): a retry of the same body
+    maps to the same id, so the unique index still de-duplicates it."""
+    return "sha256:" + hashlib.sha256(raw).hexdigest()
+
+
 async def handle_razorpay_webhook(raw_body: bytes, signature: str, header_event_id: str = None):
     """Razorpay webhook. ``raw_body`` is the request body bytes exactly as received (the signature covers them).
 
@@ -37,9 +51,15 @@ async def handle_razorpay_webhook(raw_body: bytes, signature: str, header_event_
     """
     secret = _webhook_secret()
     if not secret:
-        logger.error("RAZORPAY_WEBHOOK_SECRET is not set: webhook rejected")
+        logger.error("Razorpay webhook rejected (503): RAZORPAY_WEBHOOK_SECRET is not set on this server, so no webhook "
+                     "event can be accepted or stored. Set it to the secret entered in the Razorpay dashboard webhook.")
         raise HTTPException(status_code=503, detail="Webhook is not configured")
     if not verify_webhook_signature(raw_body, signature, secret):
+        logger.warning(
+            "Razorpay webhook rejected (400): signature %s (event id %s, %d body bytes). If this is a real Razorpay "
+            "delivery, the secret in the Razorpay dashboard differs from RAZORPAY_WEBHOOK_SECRET.",
+            "does not match" if signature else "header missing", header_event_id or "-", len(raw_body or b""),
+        )
         raise HTTPException(status_code=400, detail="Invalid webhook signature")
 
     try:
@@ -58,7 +78,7 @@ async def handle_razorpay_webhook(raw_body: bytes, signature: str, header_event_
 
         event_type = payload.get("event")
         # Razorpay sends the unique event id in the X-Razorpay-Event-Id header.
-        event_id = (header_event_id or payload.get("id") or None)
+        event_id = header_event_id or payload.get("id") or _fallback_event_id(raw_body)
 
         cursor.execute("""
             INSERT INTO gen_webhook_events (event_id, event_type, payload)
@@ -70,6 +90,7 @@ async def handle_razorpay_webhook(raw_body: bytes, signature: str, header_event_
             conn.rollback()
             logger.info("Duplicate Razorpay webhook event %s ignored", event_id)
             return {"success": True, "duplicate": True}
+        logger.info("Razorpay webhook event stored: %s (%s)", event_type, event_id)
 
         body = payload.get("payload") or {}
         payment = (body.get("payment") or {}).get("entity") or {}
@@ -162,14 +183,19 @@ async def handle_msg91_whatsapp_webhook(payload: dict):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
 
+        # event_id is UNIQUE: one MSG91 request reports several events (sent, delivered, read), so the key is the request
+        # id plus the event; without a request id the payload hash is used. A retried delivery is stored once.
+        event_id = (f"{request_id}:{event_type}" if request_id
+                    else "sha256:" + hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest())
         cursor.execute(
             """
             INSERT INTO gen_webhook_events (event_id, event_type, payload)
             VALUES (%s, %s, %s)
+            ON CONFLICT (event_id) DO NOTHING
             """,
             (
-                request_id or f"msg91-{event_type}",
-                f"msg91.whatsapp.{event_type}",
+                event_id[:255],
+                f"msg91.whatsapp.{event_type}"[:100],
                 json.dumps(payload),
             ),
         )

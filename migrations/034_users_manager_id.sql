@@ -1,6 +1,6 @@
 -- 034: users.manager_id (WP6, planner D-10). Apply with the target schema on the search_path, e.g.
 --   python migrate.py <schema> migrations/034_users_manager_id.sql
--- Idempotent (safe to re-run). The same column and index are in punchapp_ddl_latest.sql (users).
+-- Idempotent (safe to re-run). The same column and index are in clockyn_ddl_latest.sql (users).
 --
 -- users.manager_id: the manager a staff member reports to / was created for. users.parent_id stays the ORGANISATION id.
 -- Until now the add-staff form wrote the chosen manager's user_id into parent_id, which made that staff member invisible

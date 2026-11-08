@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Schema consistency check: punchapp_ddl_latest.sql  vs  migrations/NNN_*.sql  (no database needed).
+"""Schema consistency check: clockyn_ddl_latest.sql  vs  migrations/NNN_*.sql  (no database needed).
 
 Why: `python migrate.py --all` on an empty database applies the DDL file and then RECORDS every migration as applied
 without running it. So every object a migration creates or changes must already be in the DDL, with a compatible
@@ -32,7 +32,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 BE_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_DDL = BE_ROOT / "punchapp_ddl_latest.sql"
+DEFAULT_DDL = BE_ROOT / "clockyn_ddl_latest.sql"
 DEFAULT_MIGRATIONS = BE_ROOT / "migrations"
 _FALLBACK_PGLAST = (
     r"C:\Users\RSITHU~1\AppData\Local\Temp\claude\c--POC-pa-frontend\90c115e7-e99e-4778-ad6c-7055cb1620cc"
@@ -63,7 +63,7 @@ from pglast import ast as A  # noqa: E402
 from pglast import enums as E  # noqa: E402
 from pglast.stream import RawStream  # noqa: E402
 
-SCHEMA_QUALIFIER = "punchapp_prod"
+SCHEMA_QUALIFIER = "clockyn_dev"
 MIGRATION_RE = re.compile(r"^(\d{3,})_[A-Za-z0-9_]+\.sql$")
 
 
@@ -296,7 +296,7 @@ class Catalog:
                 _add_constraint(t, con)
 
 
-def load_catalog(ddl_sql: str, where: str = "punchapp_ddl_latest.sql") -> Catalog:
+def load_catalog(ddl_sql: str, where: str = "clockyn_ddl_latest.sql") -> Catalog:
     cat = Catalog()
     for raw in pglast.parse_sql(ddl_sql):
         cat.apply(raw.stmt, where)

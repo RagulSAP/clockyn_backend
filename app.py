@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 import uvicorn
-from router import add_staff, auth, home, branch, company, salary, leads, manager, shift, employee, incentive, face_attendance, emp_expenses, requests, staff_location, chat, announcement, report, department, gen_orders, gen_payments, gen_plans, gen_webhook, advance, profile_photo, holiday, gen_dashboard, version, ws_badge, support, attribution
+from router import add_staff, auth, home, branch, company, salary, leads, manager, shift, employee, incentive, face_attendance, emp_expenses, requests, staff_location, chat, announcement, report, department, gen_orders, gen_payments, gen_plans, gen_webhook, advance, profile_photo, holiday, gen_dashboard, version, ws_badge, support, attribution, live_chat, gen_live_chat
 from utils import email
 from utils import branding
 from router import wages
@@ -92,6 +92,8 @@ app.include_router(gen_dashboard.router)
 app.include_router(version.router)
 app.include_router(ws_badge.router)
 app.include_router(support.router)
+app.include_router(live_chat.router)
+app.include_router(gen_live_chat.router)
 app.include_router(attribution.router)
 app.include_router(attendance_rule.router)
 app.include_router(salary_payments.router)
@@ -128,6 +130,19 @@ def _warm_face_model():
             import logging
             logging.getLogger("face.metrics").warning("face warm-up skipped: %s", e)
     threading.Thread(target=_run, name="face-warmup", daemon=True).start()
+
+
+@app.on_event("startup")
+def _warn_missing_payment_webhook_secret():
+    """Without RAZORPAY_WEBHOOK_SECRET every Razorpay webhook is answered 503 and gen_webhook_events stays empty."""
+    from core_functions.gen_webhook_functions import webhook_secret_configured
+    if not webhook_secret_configured():
+        import logging
+        logging.getLogger("payments").warning(
+            "RAZORPAY_WEBHOOK_SECRET is not set: Razorpay webhooks will be rejected with 503 and nothing is stored in "
+            "gen_webhook_events. Payments verified by the app still work, but a payment made while the app is closed is "
+            "not activated. Set it to the secret entered in the Razorpay dashboard (Settings, Webhooks)."
+        )
 
 
 @app.on_event("startup")

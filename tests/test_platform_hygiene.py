@@ -320,6 +320,6 @@ def test_health_routes_are_mounted_in_app_py():
 # ---------------------------------------------------------------------------------------------------------------
 def test_db_config_pins_utc_and_search_path(monkeypatch):
     from core_functions import db_function as dbf
-    monkeypatch.setenv("DB_SCHEMA", "punchapp_prod")
+    monkeypatch.setenv("DB_SCHEMA", "clockyn_dev")
     opts = dbf.get_db_config()["options"]
-    assert "-c timezone=UTC" in opts and "-c search_path=punchapp_prod" in opts
+    assert "-c timezone=UTC" in opts and "-c search_path=clockyn_dev" in opts

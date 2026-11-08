@@ -13,9 +13,9 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import check_schema_consistency as C  # noqa: E402
 
 DDL = """
-CREATE SCHEMA punchapp_prod;
-CREATE TYPE punchapp_prod.kind_enum AS ENUM ('a', 'b');
-CREATE TABLE punchapp_prod.things (
+CREATE SCHEMA clockyn_dev;
+CREATE TYPE clockyn_dev.kind_enum AS ENUM ('a', 'b');
+CREATE TABLE clockyn_dev.things (
 	id int4 GENERATED ALWAYS AS IDENTITY NOT NULL,
 	org_id varchar(36) NOT NULL,
 	name varchar(64) DEFAULT 'x'::character varying NULL,
@@ -23,10 +23,10 @@ CREATE TABLE punchapp_prod.things (
 	flag bool DEFAULT false NOT NULL,
 	CONSTRAINT things_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX ux_things_org_name ON punchapp_prod.things USING btree (org_id, name) WHERE (name IS NOT NULL);
-CREATE INDEX idx_things_org ON punchapp_prod.things USING btree (org_id);
-CREATE SEQUENCE punchapp_prod.thing_seq START 1;
-INSERT INTO punchapp_prod.things (org_id) VALUES ('seed');
+CREATE UNIQUE INDEX ux_things_org_name ON clockyn_dev.things USING btree (org_id, name) WHERE (name IS NOT NULL);
+CREATE INDEX idx_things_org ON clockyn_dev.things USING btree (org_id);
+CREATE SEQUENCE clockyn_dev.thing_seq START 1;
+INSERT INTO clockyn_dev.things (org_id) VALUES ('seed');
 """
 
 
@@ -157,9 +157,9 @@ def test_enum_values(tmp_path):
 
 def test_seed_rows_must_be_in_ddl_seed_section(tmp_path):
     ins = "INSERT INTO other (a) VALUES (1) ON CONFLICT DO NOTHING;\n"
-    ddl = DDL + "CREATE TABLE punchapp_prod.other (a int4 NOT NULL);\n"
+    ddl = DDL + "CREATE TABLE clockyn_dev.other (a int4 NOT NULL);\n"
     assert any("seed rows for other" in m for m in msgs(run_with(tmp_path, {"001_x.sql": ins}, ddl), "DRIFT"))
-    assert not blocking(run_with(tmp_path, {"001_x.sql": ins}, ddl + "INSERT INTO punchapp_prod.other VALUES (1);"))
+    assert not blocking(run_with(tmp_path, {"001_x.sql": ins}, ddl + "INSERT INTO clockyn_dev.other VALUES (1);"))
 
 
 # ------------------------------------------------------------------ migration sanity
@@ -185,8 +185,8 @@ def test_sanity_rules(tmp_path, sql, expect):
 
 
 def test_unique_index_on_table_created_in_same_migration_needs_no_precheck(tmp_path):
-    ddl = DDL + ("CREATE TABLE punchapp_prod.fresh (a int4 NOT NULL, b int4 NOT NULL);\n"
-                 "CREATE UNIQUE INDEX ux_fresh ON punchapp_prod.fresh USING btree (a, b);\n")
+    ddl = DDL + ("CREATE TABLE clockyn_dev.fresh (a int4 NOT NULL, b int4 NOT NULL);\n"
+                 "CREATE UNIQUE INDEX ux_fresh ON clockyn_dev.fresh USING btree (a, b);\n")
     sql = """
         CREATE TABLE IF NOT EXISTS fresh (a int4 NOT NULL, b int4 NOT NULL);
         CREATE UNIQUE INDEX IF NOT EXISTS ux_fresh ON fresh USING btree (a, b);
@@ -195,7 +195,7 @@ def test_unique_index_on_table_created_in_same_migration_needs_no_precheck(tmp_p
 
 
 def test_ordering_dependency_on_later_migration(tmp_path):
-    ddl = DDL + "CREATE TABLE punchapp_prod.late (a int4 NOT NULL);\n"
+    ddl = DDL + "CREATE TABLE clockyn_dev.late (a int4 NOT NULL);\n"
     f = run_with(tmp_path, {
         "001_early.sql": "ALTER TABLE late ADD COLUMN IF NOT EXISTS a int4 NOT NULL;\n",
         "002_late.sql": "CREATE TABLE IF NOT EXISTS late (a int4 NOT NULL);\n",
@@ -211,7 +211,7 @@ def test_syntax_error_and_duplicate_numbers(tmp_path):
 
 
 def test_ddl_duplicate_index_name_is_reported(tmp_path):
-    ddl = DDL + "CREATE INDEX idx_things_org ON punchapp_prod.things USING btree (name);\n"
+    ddl = DDL + "CREATE INDEX idx_things_org ON clockyn_dev.things USING btree (name);\n"
     f = run_with(tmp_path, {"001_x.sql": "SELECT 1;\n"}, ddl)
     assert any("used twice" in m for m in msgs(f, "ERROR"))
 
@@ -219,4 +219,4 @@ def test_ddl_duplicate_index_name_is_reported(tmp_path):
 def test_normalisation_helpers():
     assert C.norm_sql("CAST('pending' AS varchar)") == "'pending'"
     assert C.norm_sql("CURRENT_TIMESTAMP") == C.norm_sql("now()")
-    assert C.norm_sql("punchapp_prod.f(1)") == "f(1)"
+    assert C.norm_sql("clockyn_dev.f(1)") == "f(1)"

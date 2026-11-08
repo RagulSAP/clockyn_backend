@@ -9,7 +9,7 @@ What it does
   2. Converts psycopg2 placeholders (`%s`, `%(name)s`, `%%`) to PostgreSQL `$N` parameters, counts them
      and compares the count with a literal params tuple/list/dict (PARAM_COUNT_MISMATCH).
   3. Parses every statement with the real PostgreSQL parser (pglast): SYNTAX_ERROR.
-  4. Resolves aliases against the schema in punchapp_ddl_latest.sql and flags UNKNOWN_TABLE,
+  4. Resolves aliases against the schema in clockyn_ddl_latest.sql and flags UNKNOWN_TABLE,
      UNKNOWN_COLUMN and UNKNOWN_ALIAS for qualified/unqualified column references and for
      INSERT / UPDATE target columns.
 
@@ -37,7 +37,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 BE_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_DDL = BE_ROOT / "punchapp_ddl_latest.sql"
+DEFAULT_DDL = BE_ROOT / "clockyn_ddl_latest.sql"
 DEFAULT_BASELINE = BE_ROOT / "scripts" / "sql_static_baseline.json"
 SCAN_GLOBS = [
     "core_functions/*.py", "router/*.py", "services/*.py", "utils/*.py", "ml/*.py",
@@ -681,7 +681,7 @@ def _children(node):
 
 
 _SYSCOLS = {"ctid", "tableoid", "xmin", "xmax", "cmin", "cmax"}
-_OK_SCHEMAS = (None, "punchapp_prod")
+_OK_SCHEMAS = (None, "clockyn_dev")
 
 
 class _Scope2:
@@ -1220,7 +1220,7 @@ def main(argv=None) -> int:
     ap.add_argument("--baseline", default=None, help="baseline json; only findings not in it fail the run")
     ap.add_argument("--no-baseline", action="store_true", help="ignore the default baseline file")
     ap.add_argument("--write-baseline", default=None, help="write all current findings to this file and exit 0")
-    ap.add_argument("--ddl", default=str(DEFAULT_DDL), help="schema file (default punchapp_ddl_latest.sql)")
+    ap.add_argument("--ddl", default=str(DEFAULT_DDL), help="schema file (default clockyn_ddl_latest.sql)")
     ap.add_argument("--all", action="store_true", help="also print baselined findings")
     args = ap.parse_args(argv)
 

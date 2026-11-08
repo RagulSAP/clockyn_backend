@@ -1,6 +1,6 @@
 -- 032: payroll engine (WP4b). Apply with the target schema on the search_path, e.g.
 --   python migrate.py <schema> migrations/032_payroll_engine.sql
--- Idempotent (safe to re-run) and it deletes no data. The same objects are in punchapp_ddl_latest.sql.
+-- Idempotent (safe to re-run) and it deletes no data. The same objects are in clockyn_ddl_latest.sql.
 --
 -- 1) salary_payments.snapshot (jsonb, nullable): the computed salary stored when a month is marked paid, so a paid
 --    salary is returned as it was paid and is never recomputed silently. Rows paid before this migration keep

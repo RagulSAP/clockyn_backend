@@ -14,11 +14,11 @@ sys.path.insert(0, str(ROOT))
 import sql_static_check as S  # noqa: E402
 
 DDL = """
-CREATE SCHEMA punchapp_prod;
-CREATE TABLE punchapp_prod.users (user_id varchar(36), name text, email text, org_id varchar(36), status int4);
-CREATE TABLE punchapp_prod.org_info (org_id varchar(36), org_name text);
-CREATE TABLE punchapp_prod.requests (id int4, user_id varchar(36), kind text);
-CREATE UNIQUE INDEX ux ON punchapp_prod.users (user_id);
+CREATE SCHEMA clockyn_dev;
+CREATE TABLE clockyn_dev.users (user_id varchar(36), name text, email text, org_id varchar(36), status int4);
+CREATE TABLE clockyn_dev.org_info (org_id varchar(36), org_name text);
+CREATE TABLE clockyn_dev.requests (id int4, user_id varchar(36), kind text);
+CREATE UNIQUE INDEX ux ON clockyn_dev.users (user_id);
 """
 SCHEMA = S.load_schema(DDL)
 
@@ -242,7 +242,7 @@ def test_unknown_qualified_column_and_alias():
     assert codes('cur.execute("SELECT x.email FROM users u")') == [("UNKNOWN_ALIAS", "error")]
     # table name used as qualifier when there is no alias
     assert codes('cur.execute("SELECT users.email FROM users")') == []
-    assert codes('cur.execute("SELECT punchapp_prod.users.email FROM punchapp_prod.users")') == []
+    assert codes('cur.execute("SELECT clockyn_dev.users.email FROM clockyn_dev.users")') == []
 
 
 def test_unknown_unqualified_column():

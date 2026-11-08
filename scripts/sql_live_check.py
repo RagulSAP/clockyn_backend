@@ -50,7 +50,7 @@ import pglast  # noqa: E402
 from pglast import ast as A  # noqa: E402
 
 BASELINE_FILE = BE_ROOT / "scripts" / "sql_live_baseline.json"
-DDL_FILE = BE_ROOT / "punchapp_ddl_latest.sql"
+DDL_FILE = BE_ROOT / "clockyn_ddl_latest.sql"
 MIGRATIONS_DIR = BE_ROOT / "migrations"
 MAX_VARIANTS_APPROX = 6
 MAX_TYPE_ATTEMPTS = 6

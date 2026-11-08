@@ -1,6 +1,6 @@
 """CRM leads: leads, categories, assignments, work/pipeline status and carry-forward requests.
 
-Schema lives in punchapp_ddl_latest.sql / migrations (029); nothing here executes DDL.
+Schema lives in clockyn_ddl_latest.sql / migrations (029); nothing here executes DDL.
 Rules (decision D-17, enforced on the server):
   * one row per lead in every list, carrying the lead's pipeline status (lead_status);
   * an assignment is unique per (lead, staff): assigning twice is refused as a no-op;

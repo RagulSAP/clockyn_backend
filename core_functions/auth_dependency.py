@@ -109,7 +109,7 @@ class UserState:
 
 
 # ============================================================================================ database loaders
-# Column / table names checked against punchapp_ddl_latest.sql: users(user_id, org_id, parent_id, role_id, status,
+# Column / table names checked against clockyn_ddl_latest.sql: users(user_id, org_id, parent_id, role_id, status,
 # auth_epoch), org_info(id, org_id, parent_id), punchapp_manager_permissions(user_id, org_id, setting_id, status),
 # punchapp_settings(setting_id, setting_name).
 _USER_STATE_SQL = (

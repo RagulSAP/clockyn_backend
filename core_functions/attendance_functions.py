@@ -481,13 +481,25 @@ def _parse_time(time_str: str, base_date: date):
             continue
     raise HTTPException(status_code=422, detail=f"Invalid time format: '{time_str}'. Use HH:MM (24h) or HH:MM AM/PM")
 
+def _org_session_limit(cursor, org_id) -> int:
+    """Daily punch-session limit of an organisation (attendance_rule.max_sessions_per_day, editable in company settings);
+    rules.MAX_SESSIONS_PER_DAY when the organisation has no rule row."""
+    cursor.execute("SELECT max_sessions_per_day FROM attendance_rule WHERE org_id = %s", (org_id,))
+    row = cursor.fetchone()
+    value = row.get("max_sessions_per_day") if hasattr(row, "get") else None
+    if isinstance(value, int) and not isinstance(value, bool) and value >= 1:
+        return value
+    return rules.MAX_SESSIONS_PER_DAY
+
+
 async def edit_attendance(data: EditAttendanceRequest):
     """Create or edit punch_in / punch_out of ONE session of a day (admin use).
-    `session` 1 (default) = the earliest session of the day, 2 = the second. A day without a row gets one created
-    (this is the main "regularise a missed day" path). Sessions are never merged: a day with two sessions keeps both."""
+    `session` 1 (default) = the earliest session of the day, 2 = the second, ... up to the organisation's daily limit.
+    A day without a row gets one created (this is the main "regularise a missed day" path). Sessions are never merged:
+    a day with several sessions keeps all of them."""
     session_no = 1 if data.session is None else data.session
-    if isinstance(session_no, bool) or session_no not in (1, rules.MAX_SESSIONS_PER_DAY):
-        raise HTTPException(status_code=422, detail="session must be 1 or 2")
+    if isinstance(session_no, bool) or not isinstance(session_no, int) or session_no < 1:
+        raise HTTPException(status_code=422, detail="session must be a whole number from 1")
 
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -497,6 +509,17 @@ async def edit_attendance(data: EditAttendanceRequest):
         except ValueError:
             raise HTTPException(status_code=422, detail="Invalid date format. Use YYYY-MM-DD")
 
+        org_id = data.org_id
+        if not org_id:
+            cursor.execute("SELECT parent_id FROM users WHERE user_id = %s", (data.staff_id,))
+            user_row = cursor.fetchone()
+            org_id = user_row['parent_id'] if user_row else None
+        if not org_id:
+            raise HTTPException(status_code=400, detail="Unable to resolve organization for this staff member")
+        limit = _org_session_limit(cursor, org_id)
+        if session_no > limit:
+            raise HTTPException(status_code=422, detail=f"session must be between 1 and {limit} (this organization's daily limit)")
+
         cursor.execute(
             """SELECT id, punch_in, punch_out FROM attendance
                WHERE user_id = %s AND attendance_date = %s
@@ -505,7 +528,7 @@ async def edit_attendance(data: EditAttendanceRequest):
         )
         day_rows = cursor.fetchall() or []
         if session_no > len(day_rows) + 1:
-            raise HTTPException(status_code=400, detail="Session 1 of this day must exist before session 2 can be created")
+            raise HTTPException(status_code=400, detail=f"Session {len(day_rows) + 1} of this day must exist before session {session_no} can be created")
         record = day_rows[session_no - 1] if session_no <= len(day_rows) else None
 
         if not record and not data.punch_in and not data.punch_out:
@@ -524,14 +547,6 @@ async def edit_attendance(data: EditAttendanceRequest):
         work_hours = None
         if new_punch_in and new_punch_out:
             work_hours = round((new_punch_out - new_punch_in).total_seconds() / 3600, 2)
-
-        org_id = data.org_id
-        if not org_id:
-            cursor.execute("SELECT parent_id FROM users WHERE user_id = %s", (data.staff_id,))
-            user_row = cursor.fetchone()
-            org_id = user_row['parent_id'] if user_row else None
-        if not org_id:
-            raise HTTPException(status_code=400, detail="Unable to resolve organization for this staff member")
 
         now = get_utc_now()
         try:

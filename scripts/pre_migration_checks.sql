@@ -1,7 +1,7 @@
 -- Read-only checks to run on a COPY of an EXISTING database before applying migrations 024-033.
--- A fresh database built from punchapp_ddl_latest.sql does not need any of this.
+-- A fresh database built from clockyn_ddl_latest.sql does not need any of this.
 -- Run with: psql -v ON_ERROR_STOP=0 -f scripts/pre_migration_checks.sql   (every query should return ZERO rows unless noted)
-SET search_path TO punchapp_prod, public;
+SET search_path TO clockyn_dev, public;
 
 -- 025 (holiday unique index): rows listed here must be de-duplicated first
 SELECT org_id, date, COALESCE(branch_name, '') AS branch, COALESCE(dept_name, '') AS dept, count(*)
@@ -18,7 +18,7 @@ SELECT count(*) AS rows_with_utc_based_date FROM attendance
 WHERE punch_in IS NOT NULL AND attendance_date <> (punch_in AT TIME ZONE 'Asia/Kolkata')::date;
 -- the old unique index must be the one 028 expects (name below); any OTHER unique index over (user_id, attendance_date) also raises
 SELECT indexname, indexdef FROM pg_indexes
-WHERE schemaname = 'punchapp_prod' AND tablename = 'attendance' AND indexdef ILIKE '%unique%';
+WHERE schemaname = 'clockyn_dev' AND tablename = 'attendance' AND indexdef ILIKE '%unique%';
 
 -- 029 (CRM): duplicate assignments (run scripts/dedupe_leads.sql, then re-run 029)
 SELECT leads_id, user_id, count(*) FROM leads_assignment_info
@@ -44,4 +44,4 @@ SELECT user_id, name, role_id FROM users WHERE status = 1 AND (email IS NULL OR 
 
 -- 033 (auth epoch) must be applied BEFORE AUTH_TOKEN_SECRET is set; the app_version_control.app_id column exists only in the DDL:
 SELECT column_name FROM information_schema.columns
-WHERE table_schema = 'punchapp_prod' AND table_name = 'app_version_control' AND column_name = 'app_id';  -- expect 1 row, else add the column before using /version/check
+WHERE table_schema = 'clockyn_dev' AND table_name = 'app_version_control' AND column_name = 'app_id';  -- expect 1 row, else add the column before using /version/check

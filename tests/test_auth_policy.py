@@ -242,7 +242,7 @@ def test_a_manager_is_denied_when_no_permission_callable_is_supplied():
 
 
 def test_permission_names_are_the_ten_exact_setting_names_of_the_ddl():
-    ddl = (ROOT / "punchapp_ddl_latest.sql").read_text(encoding="utf-8")
+    ddl = (ROOT / "clockyn_ddl_latest.sql").read_text(encoding="utf-8")
     used = {n for r in P.ROLE_RULES for n in r.perms}
     assert used and all(f"'{name}'" in ddl for name in used), used
 

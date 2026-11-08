@@ -19,7 +19,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 PREFIX = "clockyn_dev_test_"
 _NAME_RE = re.compile(r"^clockyn_dev_test_[0-9a-f]{8}$")
-BASELINE_SCHEMA = "punchapp_prod"  # the qualifier used in punchapp_ddl_latest.sql
+BASELINE_SCHEMA = "clockyn_dev"  # the qualifier used in clockyn_ddl_latest.sql
 
 
 def _env_file() -> dict:
@@ -85,7 +85,7 @@ def drop_scratch_schema(conn, name: str) -> None:
 
 
 def rewrite_ddl(text: str, schema: str) -> str:
-    """Point the baseline DDL (qualified with punchapp_prod) at the scratch schema."""
+    """Point the baseline DDL (qualified with clockyn_dev) at the scratch schema."""
     assert _NAME_RE.match(schema)
     return text.replace(BASELINE_SCHEMA, schema)
 

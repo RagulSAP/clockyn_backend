@@ -54,7 +54,7 @@ def db():
     conn.autocommit = True
     cur = conn.cursor()
     try:
-        cur.execute(pg_scratch.rewrite_ddl((ROOT / "punchapp_ddl_latest.sql").read_text(encoding="utf-8"), schema))
+        cur.execute(pg_scratch.rewrite_ddl((ROOT / "clockyn_ddl_latest.sql").read_text(encoding="utf-8"), schema))
         cur.execute(f'SET search_path TO "{schema}"')
         cur.execute(NEW_TABLES_DDL)
         # Two attendance sessions on one date need the one-row-per-day unique index gone.

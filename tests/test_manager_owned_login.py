@@ -243,9 +243,9 @@ def test_after_the_backfill_every_legacy_row_can_log_in(db):
 
 
 def test_ddl_and_migration_declare_the_same_column_and_index():
-    ddl = (ROOT / "punchapp_ddl_latest.sql").read_text(encoding="utf-8")
+    ddl = (ROOT / "clockyn_ddl_latest.sql").read_text(encoding="utf-8")
     mig = (ROOT / "migrations" / "034_users_manager_id.sql").read_text(encoding="utf-8")
     assert re.search(r"manager_id varchar\(36\) NULL", ddl)
-    assert "idx_users_manager_id ON punchapp_prod.users USING btree (manager_id)" in ddl
+    assert "idx_users_manager_id ON clockyn_dev.users USING btree (manager_id)" in ddl
     assert "ADD COLUMN IF NOT EXISTS manager_id varchar(36) NULL" in mig
     assert "CREATE INDEX IF NOT EXISTS idx_users_manager_id ON users USING btree (manager_id)" in mig

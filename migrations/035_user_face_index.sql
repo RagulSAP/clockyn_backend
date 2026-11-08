@@ -1,6 +1,6 @@
 -- 035: user_face_index (face recognition on AWS Rekognition collections: ml/face_service.py).
 -- Apply with the target schema on the search_path, e.g. python migrate.py <schema> migrations/035_user_face_index.sql
--- (the same statements are in punchapp_ddl_latest.sql as punchapp_prod.user_face_index). Safe to re-run; deletes nothing.
+-- (the same statements are in clockyn_ddl_latest.sql as clockyn_dev.user_face_index). Safe to re-run; deletes nothing.
 --
 -- One row per face that was indexed into the Rekognition collection for a user (a registration indexes 4+ photos).
 -- face_id is the FaceId Rekognition returned from IndexFaces. The rows are how the app knows (a) whether a user has

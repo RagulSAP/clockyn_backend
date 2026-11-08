@@ -1,6 +1,6 @@
 -- 025: holidays and weekly offs hardening (router/holiday.py is now the single owner of /api/holidays*).
 -- Apply with the target schema on the search_path, e.g. python migrate.py <schema> migrations/025_org_holidays_unique_scope.sql
--- (the unique index is also in punchapp_ddl_latest.sql as punchapp_prod.uq_org_holidays_org_date_scope). Safe to re-run.
+-- (the unique index is also in clockyn_ddl_latest.sql as clockyn_dev.uq_org_holidays_org_date_scope). Safe to re-run.
 --
 -- 1) Columns / tables the code already relies on (older databases may lack them):
 ALTER TABLE org_holidays ADD COLUMN IF NOT EXISTS block_attendance bool DEFAULT true NOT NULL;

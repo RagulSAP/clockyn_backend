@@ -352,7 +352,7 @@ faf = tfa.faf
 @pytest.fixture
 def flow(monkeypatch):
     st = {
-        "open": None, "cnt": 0, "record": None, "shift": {"start_time": time(9, 0), "end_time": time(18, 0)},
+        "open": None, "cnt": 0, "record": None, "rule": None, "shift": {"start_time": time(9, 0), "end_time": time(18, 0)},
         "user": {"is_field_staff": True, "branch_id": 1, "role_id": 1, "org_id": "o1", "parent_id": "o1",
                  "branch_lng": None, "branch_lat": None, "punch_radius": 100},
     }
@@ -360,6 +360,7 @@ def flow(monkeypatch):
         ("FROM users u", {"one": lambda: st["user"]}),
         ("SELECT id, punch_in FROM attendance", {"one": lambda: st["open"]}),
         ("FROM users_additional_info", {"one": lambda: st["shift"]}),
+        ("FROM attendance_rule", {"one": lambda: st["rule"]}),       # company settings: max_sessions_per_day
         ("COUNT(*)", {"one": lambda: {"cnt": st["cnt"]}}),
         ("RETURNING id", {"one": {"id": 77}}),
         ("SELECT id, punch_in, attendance_date", {"one": lambda: st["record"]}),
@@ -460,16 +461,28 @@ def test_stale_session_without_shift_closes_at_punch_in_plus_9h(flow):
     assert close_at == ist(2026, 11, 2, 17, 0).astimezone(UTC) and hours == 9.0 and att_id == 6
 
 
-def test_third_session_refused_but_auto_close_is_kept(flow):
+def test_session_over_the_default_limit_is_refused_but_auto_close_is_kept(flow):
     flow["open"] = {"id": 5, "punch_in": ist(2026, 11, 2, 1, 0).astimezone(UTC)}
     flow["now"] = ist(2026, 11, 2, 23, 0).astimezone(UTC)
-    flow["cnt"] = 2
+    flow["cnt"] = 3                                     # no rule row: the default limit of 3 applies
     r = punch()
-    assert r["code"] == "max_sessions" and r["message"] == "Maximum 2 punch-in sessions allowed per day."
+    assert r["code"] == "max_sessions" and r["message"] == "Maximum 3 punch-in session(s) allowed per day."
     assert flow["conn"].commits == 1 and not flow["cur"].find("INSERT INTO attendance")
     flow["open"] = None
     flow["conn"].commits = 0
     assert punch()["code"] == "max_sessions" and flow["conn"].commits == 0
+
+
+def test_the_organisation_limit_from_company_settings_is_used(flow):
+    flow["rule"] = {"max_sessions_per_day": 2}
+    flow["cnt"] = 2
+    r = punch()
+    assert r["code"] == "max_sessions" and r["message"] == "Maximum 2 punch-in session(s) allowed per day."
+    flow["rule"] = {"max_sessions_per_day": 5}          # raised in company settings: a 3rd and 4th session are fine
+    flow["cnt"] = 3
+    assert punch()["success"] is True
+    flow["cnt"] = 5
+    assert punch()["code"] == "max_sessions"
 
 
 def test_second_session_same_day_is_allowed(flow):
@@ -824,10 +837,26 @@ def test_edit_attendance_creates_a_missing_day_or_second_session_without_upsert(
     assert cur2.find("INSERT INTO attendance") and not cur2.find("UPDATE attendance")
 
 
+def test_edit_attendance_follows_the_organisation_limit(monkeypatch):
+    two = [{"id": 11, "punch_in": utc(2026, 11, 2, 3, 30), "punch_out": utc(2026, 11, 2, 6, 30)},
+           {"id": 12, "punch_in": utc(2026, 11, 2, 7, 30), "punch_out": utc(2026, 11, 2, 9, 30)}]
+    req = lambda **kw: af.EditAttendanceRequest(staff_id="u1", org_id="o1", date="2026-11-02", punch_in="13:00", punch_out="18:00", **kw)  # noqa: E731
+    patch_db(monkeypatch, af, Cur([("FROM attendance_rule", {"one": {"max_sessions_per_day": 2}}), ("FROM attendance", {"all": two})]))
+    with pytest.raises(HTTPException) as e:
+        run(af.edit_attendance(req(session=3)))
+    assert e.value.status_code == 422 and "between 1 and 2" in e.value.detail
+    cur = Cur([("FROM attendance_rule", {"one": {"max_sessions_per_day": 5}}), ("FROM attendance", {"all": two})])
+    patch_db(monkeypatch, af, cur)
+    assert run(af.edit_attendance(req(session=3)))["message"] == "Attendance record created successfully"
+    assert cur.find("INSERT INTO attendance")
+
+
 def test_edit_attendance_validation(monkeypatch):
     patch_db(monkeypatch, af, Cur([("FROM attendance", {"all": []})]))
     for kwargs, status in (
-        ({"session": 3, "punch_in": "09:00"}, 422),
+        ({"session": 4, "punch_in": "09:00"}, 422),            # over the default daily limit of 3
+        ({"session": 0, "punch_in": "09:00"}, 422),
+        ({"session": 3, "punch_in": "09:00"}, 400),            # allowed number, but sessions 1 and 2 must exist first
         ({"session": 2, "punch_in": "09:00"}, 400),            # session 1 must exist first
         ({}, 400),                                             # nothing to change
     ):
@@ -999,15 +1028,15 @@ def test_staff_list_queries_pass_an_explicit_ist_date(monkeypatch):
 
 # =============================================================================== schema artefacts
 def test_ddl_and_migration_028_replace_the_stale_unique_index():
-    ddl = (ROOT / "punchapp_ddl_latest.sql").read_text(encoding="utf-8")
+    ddl = (ROOT / "clockyn_ddl_latest.sql").read_text(encoding="utf-8")
     mig = (ROOT / "migrations" / "028_attendance_sessions.sql").read_text(encoding="utf-8")
     assert not re.search(r"^CREATE UNIQUE INDEX attendance_user_id_attendance_date_key", ddl, re.M)
-    assert "ux_attendance_one_open ON punchapp_prod.attendance USING btree (user_id) WHERE (punch_in IS NOT NULL AND punch_out IS NULL)" in ddl
+    assert "ux_attendance_one_open ON clockyn_dev.attendance USING btree (user_id) WHERE (punch_in IS NOT NULL AND punch_out IS NULL)" in ddl
     assert "auto_closed bool DEFAULT false NOT NULL" in ddl
     assert "DROP INDEX IF EXISTS attendance_user_id_attendance_date_key;" in mig
     assert "DROP CONSTRAINT attendance_user_id_attendance_date_key" in mig
     assert "ADD COLUMN IF NOT EXISTS auto_closed boolean NOT NULL DEFAULT false" in mig
     assert "CREATE UNIQUE INDEX IF NOT EXISTS ux_attendance_one_open" in mig
-    assert "RAISE EXCEPTION" in mig and "punchapp_prod" not in mig
+    assert "RAISE EXCEPTION" in mig and "clockyn_dev" not in mig
     assert not re.search(r"^\s*DELETE\s+FROM|^\s*TRUNCATE|DROP TABLE", mig, re.M | re.I)
     assert mig.index("RAISE EXCEPTION") < mig.index("DROP INDEX IF EXISTS")      # pre-check runs before anything changes

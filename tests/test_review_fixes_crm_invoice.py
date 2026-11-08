@@ -365,13 +365,13 @@ def test_existing_invoice_for_the_payment_is_a_quiet_noop(caplog):
 # ───────── sequence catch-up in migration 031 and the DDL ─────────
 
 SETVAL_BLOCK = re.compile(
-    r"DO \$\$\s*BEGIN\s*IF EXISTS \(SELECT 1 FROM (?:punchapp_prod\.)?gen_invoices\) THEN\s*"
-    r"PERFORM setval\('(?:punchapp_prod\.)?gen_invoice_seq', GREATEST\(\s*"
+    r"DO \$\$\s*BEGIN\s*IF EXISTS \(SELECT 1 FROM (?:clockyn_dev\.)?gen_invoices\) THEN\s*"
+    r"PERFORM setval\('(?:clockyn_dev\.)?gen_invoice_seq', GREATEST\(\s*"
     r"COALESCE\(\(SELECT max\(substring\(invoice_number FROM '\(\[0-9\]\{1,15\}\)\$'\)::bigint\) "
-    r"FROM (?:punchapp_prod\.)?gen_invoices\), 0\), 1\)\);\s*END IF;\s*END\s*\$\$;")
+    r"FROM (?:clockyn_dev\.)?gen_invoices\), 0\), 1\)\);\s*END IF;\s*END\s*\$\$;")
 
 
-@pytest.mark.parametrize("path", [ROOT / "migrations" / "031_billing_server_pricing.sql", ROOT / "punchapp_ddl_latest.sql"])
+@pytest.mark.parametrize("path", [ROOT / "migrations" / "031_billing_server_pricing.sql", ROOT / "clockyn_ddl_latest.sql"])
 def test_sequence_is_moved_past_existing_invoices(path):
     text = path.read_text(encoding="utf-8-sig")
     assert SETVAL_BLOCK.search(text), f"{path.name}: setval DO block missing or changed"
@@ -383,6 +383,6 @@ def test_setval_blocks_parse_with_the_postgres_parser():
         import pglast
     except ImportError:
         pytest.skip("pglast not installed")
-    for path in (ROOT / "migrations" / "031_billing_server_pricing.sql", ROOT / "punchapp_ddl_latest.sql"):
+    for path in (ROOT / "migrations" / "031_billing_server_pricing.sql", ROOT / "clockyn_ddl_latest.sql"):
         m = SETVAL_BLOCK.search(path.read_text(encoding="utf-8-sig"))
         assert pglast.parse_sql(m.group(0))

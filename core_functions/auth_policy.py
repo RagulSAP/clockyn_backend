@@ -146,6 +146,7 @@ ROLE_RULES: Tuple[RoleRule, ...] = (
     # --- administrator only: billing, manager administration, destructive company/staff operations
     RoleRule("*", "/orders/*", ADMIN_ONLY, note="plan purchase"),
     RoleRule("*", "/payments/*", ADMIN_ONLY, note="payment verification"),
+    RoleRule("*", "/live-chat/*", ADMIN_ONLY, note="live chat with Clockyn support (organisation admin only, not plan-gated)"),
     RoleRule("*", "/invoice/*", ADMIN_ONLY, note="invoices (bulk-download is operator)"),
     RoleRule(("POST",), "/managers/assign", ADMIN_ONLY, note="promote staff to manager"),
     RoleRule(("DELETE",), "/managers/{}", ADMIN_ONLY, note="demote manager"),

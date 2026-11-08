@@ -78,7 +78,7 @@ class FakePool:
 
 @pytest.fixture(autouse=True)
 def schema(monkeypatch):
-    monkeypatch.setenv("DB_SCHEMA", "punchapp_prod")
+    monkeypatch.setenv("DB_SCHEMA", "clockyn_dev")
 
 
 def install(monkeypatch, pool):
@@ -90,7 +90,7 @@ def test_get_connection_sets_the_search_path_and_checks_out_one_connection(monke
     c = FakeConn()
     pool = install(monkeypatch, FakePool([c]))
     assert dbf.get_db_connection() is c
-    assert c.statements == ["SET search_path TO punchapp_prod"] and c.commits == 1
+    assert c.statements == ["SET search_path TO clockyn_dev"] and c.commits == 1
     assert pool.used == [c]
     dbf.return_connection(c)
     assert pool.used == [] and pool.free == [c]

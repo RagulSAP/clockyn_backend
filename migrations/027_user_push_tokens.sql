@@ -1,6 +1,6 @@
 -- 027: multi-device push tokens (services/push_service.py).
 -- Apply with the target schema on the search_path, e.g. python migrate.py <schema> migrations/027_user_push_tokens.sql
--- (the same statements are in punchapp_ddl_latest.sql as punchapp_prod.user_push_tokens). Safe to re-run; deletes nothing.
+-- (the same statements are in clockyn_ddl_latest.sql as clockyn_dev.user_push_tokens). Safe to re-run; deletes nothing.
 -- users.push_token is NOT touched: it remains the legacy single token and the fallback for users with no row here.
 -- Rows are created by POST /auth/update-push-token and by the login endpoints (validate-otp / verify-device-token),
 -- and deleted when FCM reports a token as dead.

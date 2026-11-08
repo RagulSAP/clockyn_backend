@@ -9,7 +9,7 @@ Rules (mirrors the executable contract `e2e/mock-server/domain.js` and the clien
 
 * Business date (D-2): the calendar date in IST (Asia/Kolkata) of the instant of the punch. Timestamps are stored
   in UTC (timestamptz); `attendance.attendance_date` of a new row is `ist_today(now)`.
-* A day holds at most `MAX_SESSIONS_PER_DAY` (2) sessions. An overnight session belongs to the business date it
+* A day holds at most the organisation's `attendance_rule.max_sessions_per_day` sessions (default `MAX_SESSIONS_PER_DAY`, 3). An overnight session belongs to the business date it
   started on; while it is open (and younger than `STALE_OPEN_HOURS`) it is also reported as today's open session.
 * Lateness: first punch-in of the day, converted to IST, compared with the shift start (+ grace). Night shifts
   (end < start) are late when the punch falls within 12 h after start + grace.

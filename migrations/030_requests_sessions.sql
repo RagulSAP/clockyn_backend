@@ -1,6 +1,6 @@
 -- 030: requests and sessions (WP7). Apply with the target schema on the search_path, e.g.
 --   python migrate.py <schema> migrations/030_requests_sessions.sql
--- Idempotent (safe to re-run) and it deletes nothing. The same index is in punchapp_ddl_latest.sql.
+-- Idempotent (safe to re-run) and it deletes nothing. The same index is in clockyn_ddl_latest.sql.
 --
 -- 1) Rate limit of device-change requests (3 per user per rolling 24 hours) counts a user's rows by type and age;
 --    the pending-request lookup and the one-day shift override lookup use the same leading columns.

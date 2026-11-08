@@ -35,7 +35,7 @@ HISTORY = "history"      # payroll and attendance history: removed on a full del
 
 # (kind, sql): every placeholder is the staff member's user_id. The ORDER of the first 24 entries and their text are
 # those of the former permanently_delete_staff (statements unchanged); two entries are new (user_push_tokens,
-# face_attempt_log). Columns checked against punchapp_ddl_latest.sql.
+# face_attempt_log). Columns checked against clockyn_ddl_latest.sql.
 STAFF_STEPS: Tuple[Tuple[str, str], ...] = (
     (HISTORY, "DELETE FROM leave_dates WHERE request_id IN (SELECT request_id FROM requests WHERE user_id = %s)"),
     (HISTORY, "DELETE FROM requests WHERE user_id = %s"),

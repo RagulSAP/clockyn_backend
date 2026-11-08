@@ -640,6 +640,40 @@ class TestWebhook:
         r = env.client.post("/webhook/razorpay", content=raw, headers={"X-Razorpay-Signature": sign(raw, "")})
         assert r.status_code == 503 and env.db.subs == []
 
+    def test_unconfigured_secret_is_logged_and_detectable(self, env, monkeypatch, caplog):
+        monkeypatch.setenv("RAZORPAY_WEBHOOK_SECRET", "")
+        assert hook_fn.webhook_secret_configured() is False
+        with caplog.at_level("ERROR"):
+            assert hook(env, "payment.captured", secret="x").status_code == 503
+        assert any("RAZORPAY_WEBHOOK_SECRET is not set" in r.getMessage() for r in caplog.records)
+        monkeypatch.setenv("RAZORPAY_WEBHOOK_SECRET", SECRET)
+        assert hook_fn.webhook_secret_configured() is True
+
+    def test_a_rejected_signature_leaves_a_log_line_and_stores_nothing(self, env, caplog):
+        with caplog.at_level("WARNING"):
+            assert hook(env, "payment.captured", secret="other", event_id="evt_bad").status_code == 400
+        text = " ".join(r.getMessage() for r in caplog.records)
+        assert "signature does not match" in text and "evt_bad" in text and SECRET not in text
+        assert env.db.events == []
+
+    def test_a_delivery_without_any_event_id_is_stored_and_a_retry_is_deduplicated(self, env):
+        r = hook(env, "payment.authorized", event_id=None)
+        assert r.status_code == 200 and r.json() == {"success": True}
+        assert len(env.db.events) == 1 and env.db.events[0]["event_id"].startswith("sha256:")
+        r = hook(env, "payment.authorized", event_id=None)               # identical body: Razorpay retry
+        assert r.json() == {"success": True, "duplicate": True} and len(env.db.events) == 1
+
+    def test_msg91_events_of_one_request_are_all_stored_and_retries_are_not(self, env):
+        def post(body):
+            return env.client.post("/webhook/msg91/whatsapp", json=body)
+        assert post({"requestId": "r1", "eventName": "sent"}).status_code == 200
+        assert post({"requestId": "r1", "eventName": "delivered"}).status_code == 200
+        assert post({"requestId": "r1", "eventName": "sent"}).status_code == 200      # retried delivery: no error
+        assert [e["event_id"] for e in env.db.events] == ["r1:sent", "r1:delivered"]
+        assert post({"status": "failed"}).status_code == 200                           # no request id: payload hash
+        assert post({"status": "failed"}).status_code == 200
+        assert len(env.db.events) == 3 and env.db.events[2]["event_id"].startswith("sha256:")
+
     def test_signature_compare_is_constant_time(self, monkeypatch):
         calls = []
         real = hmac.compare_digest

@@ -96,11 +96,11 @@ def mdir(tmp_path):
     for n in ("001_a", "002_b", "010_c"):
         (d / f"{n}.sql").write_text(f"-- MIGRATION {n}\n", encoding="utf-8")
     base = tmp_path / "baseline.sql"
-    base.write_text("-- BASELINE punchapp_prod\nCREATE TABLE punchapp_prod.users (x int);\n", encoding="utf-8")
+    base.write_text("-- BASELINE clockyn_dev\nCREATE TABLE clockyn_dev.users (x int);\n", encoding="utf-8")
     return d, base
 
 
-def run(conn, mdir, schema="punchapp_prod", dry_run=False):
+def run(conn, mdir, schema="clockyn_dev", dry_run=False):
     d, base = mdir
     lines = []
     plan = migrate.run_migrations(conn, schema, dry_run=dry_run, migrations_dir=d, baseline_path=base, out=lines.append)
@@ -187,11 +187,11 @@ def test_decide_rejects_recorded_versions_without_users_table():
 
 
 def test_adapt_baseline_sql_replaces_only_the_schema_word():
-    sql = "CREATE SCHEMA IF NOT EXISTS punchapp_prod;\nCREATE TABLE punchapp_prod.users (); -- punchapp_prod_x stays"
-    assert migrate.adapt_baseline_sql(sql, "punchapp_prod") == sql
+    sql = "CREATE SCHEMA IF NOT EXISTS clockyn_dev;\nCREATE TABLE clockyn_dev.users (); -- clockyn_dev_x stays"
+    assert migrate.adapt_baseline_sql(sql, "clockyn_dev") == sql
     out = migrate.adapt_baseline_sql(sql, "clockyn_qa")
-    assert "punchapp_prod" not in out.replace("punchapp_prod_x", "")
-    assert "CREATE TABLE clockyn_qa.users ()" in out and "punchapp_prod_x" in out
+    assert "clockyn_dev" not in out.replace("clockyn_dev_x", "")
+    assert "CREATE TABLE clockyn_qa.users ()" in out and "clockyn_dev_x" in out
     with pytest.raises(MigrationError):
         migrate.adapt_baseline_sql(sql, "bad;name")
 
@@ -212,7 +212,7 @@ def test_format_plan_and_status_output():
     assert lines[1].startswith("mode: incremental")
     assert "  apply   002_b" in lines and "  note    777_old is recorded as applied but has no file in migrations/" in lines
     base = migrate.format_plan(migrate.decide_plan(False, set(), MS), "s1", set(), MS, dry_run=False)
-    assert "  apply   punchapp_ddl_latest.sql (baseline)" in base
+    assert "  apply   clockyn_ddl_latest.sql (baseline)" in base
     assert "  record  001_a (covered by the baseline)" in base and "dry run" not in base[0]
     st = migrate.format_status("s1", {"001_a", "777_old"}, MS)
     assert st == ["schema: s1", "  applied 001_a", "  pending 002_b", "  applied 777_old   (no file)", "1 applied, 1 pending"]
@@ -234,7 +234,7 @@ def test_dry_run_reads_only_and_prints_the_plan(mdir):
 def test_dry_run_on_empty_database_does_not_create_anything(mdir):
     conn = FakeConn(schema_exists=False)
     plan, lines = run(conn, mdir, dry_run=True)
-    assert plan.kind == "baseline" and "  apply   punchapp_ddl_latest.sql (baseline)" in lines
+    assert plan.kind == "baseline" and "  apply   clockyn_ddl_latest.sql (baseline)" in lines
     assert not conn.schema_exists and "schema_migrations" not in conn.tables
     assert not any(s.startswith(("CREATE", "INSERT")) for s in conn.sqls())
 
@@ -244,7 +244,7 @@ def test_empty_database_applies_baseline_then_records_every_migration(mdir):
     plan, _lines = run(conn, mdir)
     assert plan.kind == "baseline"
     assert conn.schema_exists and "schema_migrations" in conn.tables
-    assert conn.effects == ["punchapp_prod"]                      # baseline ran; no individual migration ran
+    assert conn.effects == ["clockyn_dev"]                      # baseline ran; no individual migration ran
     assert conn.applied == {"001_a", "002_b", "010_c"}
     assert not conn.locked
     assert conn.sqls()[0].startswith("SELECT pg_advisory_lock") and conn.sqls()[-1].startswith("SELECT pg_advisory_unlock")
@@ -299,7 +299,7 @@ def test_each_migration_and_its_record_commit_together(mdir):
 def test_status_reports_applied_and_pending(mdir):
     conn = FakeConn(schema_exists=True, tables={"users", "schema_migrations"}, applied={"001_a"})
     out = []
-    lines = migrate.status(conn, "punchapp_prod", migrations_dir=mdir[0], out=out.append)
+    lines = migrate.status(conn, "clockyn_dev", migrations_dir=mdir[0], out=out.append)
     assert lines == out and "  pending 002_b" in lines and "1 applied, 2 pending" in lines[-1]
     assert not any(s.startswith(("CREATE", "INSERT")) for s in conn.sqls())
 
@@ -321,7 +321,7 @@ def test_startup_hook_is_off_by_default(monkeypatch):
 
 def test_startup_hook_never_crashes_startup(monkeypatch, caplog):
     monkeypatch.setenv("RUN_MIGRATIONS", "1")
-    monkeypatch.setenv("DB_SCHEMA", "punchapp_prod")
+    monkeypatch.setenv("DB_SCHEMA", "clockyn_dev")
 
     def boom():
         raise RuntimeError("db down")
@@ -333,7 +333,7 @@ def test_startup_hook_never_crashes_startup(monkeypatch, caplog):
 
 def test_startup_hook_runs_the_same_function(monkeypatch):
     monkeypatch.setenv("RUN_MIGRATIONS", "true")
-    monkeypatch.setenv("DB_SCHEMA", "punchapp_prod")
+    monkeypatch.setenv("DB_SCHEMA", "clockyn_dev")
     calls = []
 
     class ClosingConn(FakeConn):

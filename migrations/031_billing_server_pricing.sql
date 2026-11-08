@@ -1,6 +1,6 @@
 -- 031: billing hardening (server-side pricing, idempotent activation, invoice uniqueness, coupon rules).
 -- Apply with the target schema on the search_path (python migrate.py --all). Safe to re-run; deletes nothing.
--- The same objects are in punchapp_ddl_latest.sql (punchapp_prod.*).
+-- The same objects are in clockyn_ddl_latest.sql (clockyn_dev.*).
 --
 -- 1) gen_orders: snapshot of the server-computed price and the purchase intent (read at activation time by the
 --    payment verify call AND by the payment webhook; both are idempotent on the order).

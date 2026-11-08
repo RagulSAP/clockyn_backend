@@ -1,6 +1,6 @@
 -- 029: CRM leads hardening (WP9). Apply with the target schema on the search_path, e.g.
 --   python migrate.py <schema> migrations/029_crm_leads_hardening.sql
--- Idempotent (safe to re-run) and it deletes nothing. The same objects are in punchapp_ddl_latest.sql.
+-- Idempotent (safe to re-run) and it deletes nothing. The same objects are in clockyn_ddl_latest.sql.
 --
 -- 1) carry_forward_requests used to be created by request handlers at run time; it now lives here.
 CREATE TABLE IF NOT EXISTS carry_forward_requests (

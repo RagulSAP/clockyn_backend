@@ -14,7 +14,7 @@ Environment (same variables as core_functions/db_function.py)
 
 Behaviour
     * Applied versions are recorded in <schema>.schema_migrations(version text primary key, applied_at timestamptz).
-    * Schema without a `users` table and nothing recorded: the baseline file punchapp_ddl_latest.sql is applied first
+    * Schema without a `users` table and nothing recorded: the baseline file clockyn_ddl_latest.sql is applied first
       (it already contains the effect of every migration file), then every existing migration file is recorded
       as applied without being executed.
     * Schema that already has `users` but nothing recorded (a legacy-shaped database): every migration file is
@@ -43,8 +43,8 @@ logger = logging.getLogger("migrate")
 
 ROOT = Path(__file__).resolve().parent
 MIGRATIONS_DIR = ROOT / "migrations"
-BASELINE_FILE = ROOT / "punchapp_ddl_latest.sql"
-BASELINE_SCHEMA = "punchapp_prod"          # the schema qualifier written in the baseline file
+BASELINE_FILE = ROOT / "clockyn_ddl_latest.sql"
+BASELINE_SCHEMA = "clockyn_dev"          # the schema qualifier written in the baseline file
 MARKER_TABLE = "users"                     # present in every schema that was created from the baseline
 VERSION_TABLE = "schema_migrations"
 ADVISORY_LOCK_KEY = 7262026001             # arbitrary constant shared by every migrator process
@@ -125,7 +125,7 @@ def decide_plan(has_marker_table: bool, applied: Set[str], migrations: List[Migr
 
 
 def adapt_baseline_sql(sql: str, schema: str) -> str:
-    """The baseline file qualifies every object with punchapp_prod; point it at the target schema."""
+    """The baseline file qualifies every object with clockyn_dev; point it at the target schema."""
     validate_schema(schema)
     if schema == BASELINE_SCHEMA:
         return sql

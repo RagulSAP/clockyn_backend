@@ -1,6 +1,6 @@
 -- 033: bearer-token revocation epoch (WP12). Apply with the target schema on the search_path, e.g.
 --   python migrate.py <schema> migrations/033_user_auth_epoch.sql
--- Idempotent (safe to re-run) and it deletes no data. The same column is in punchapp_ddl_latest.sql (users).
+-- Idempotent (safe to re-run) and it deletes no data. The same column is in clockyn_ddl_latest.sql (users).
 --
 -- users.auth_epoch: a bearer access token carries the epoch its user had when it was issued and is valid only while it
 -- still equals users.auth_epoch. The backend increments it when a single-device user (manager / staff) is signed out

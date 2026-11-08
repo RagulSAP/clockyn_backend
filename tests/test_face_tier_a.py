@@ -272,9 +272,9 @@ def test_codes_success_and_business_failures(db, monkeypatch):
     r = punch()
     assert (r["success"], r["code"], r["message"]) == (False, "already_punched_in", "Already punched in. Please punch out first.")
     db["open"] = None
-    db["cnt"] = 2
+    db["cnt"] = 3                                       # the default daily limit is 3 (attendance_rules.MAX_SESSIONS_PER_DAY)
     r = punch()
-    assert r["code"] == "max_sessions" and r["message"] == "Maximum 2 punch-in sessions allowed per day."
+    assert r["code"] == "max_sessions" and r["message"] == "Maximum 3 punch-in session(s) allowed per day."
     db["cnt"] = 0
 
     r = punch("punch_out")
