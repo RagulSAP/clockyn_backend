@@ -127,6 +127,18 @@ class FakeCursor:
             t.update(status="open", last_message=preview, last_message_type=mtype, last_sender_type="org",
                      last_message_at=at, updated_at=p[6])
             return self._set([{"thread_id": t["thread_id"], "status": t["status"]}])
+        if s.startswith("UPDATE live_chat_thread SET last_message = %s, last_message_type = %s, last_sender_type = %s, last_message_at = %s, updated_at = %s WHERE org_id = %s"):
+            assert "status" not in s.split("WHERE")[0]                  # a delete never touches the thread status
+            message, mtype, sender, at, _upd, org_id = p
+            db.thread(org_id).update(last_message=message, last_message_type=mtype, last_sender_type=sender, last_message_at=at)
+            return self._set([], 1)
+        if s.startswith("DELETE FROM live_chat_message WHERE message_id = %s AND thread_id = %s AND org_id = %s RETURNING message_id, file_key"):
+            hit = [m for m in db.messages if (m["message_id"], m["thread_id"], m["org_id"]) == p]
+            db.messages[:] = [m for m in db.messages if m not in hit]
+            return self._set([{"message_id": m["message_id"], "file_key": m["file_key"]} for m in hit])
+        if s.startswith("SELECT message, message_type, sender_type, created_at FROM live_chat_message WHERE thread_id = %s ORDER BY id DESC LIMIT 1"):
+            rows = sorted((m for m in db.messages if m["thread_id"] == p[0]), key=lambda m: -m["id"])[:1]
+            return self._set(rows)
         if s.startswith("UPDATE live_chat_thread SET last_message = %s"):
             message, mtype, at, _upd, org_id = p
             t = db.thread(org_id)
@@ -142,7 +154,8 @@ class FakeCursor:
             keys = ["message_id", "thread_id", "org_id", "sender_type", "sender_id", "sender_name", "message_type", "message",
                     "file_key", "file_name", "content_type", "created_at"]
             assert s.count("%s") == len(keys) == len(p)
-            row = dict(zip(keys, p), id=len(db.messages) + 1, read_at=None)
+            db.next_id = getattr(db, "next_id", 0) + 1                  # identity column: ids are never reused after a delete
+            row = dict(zip(keys, p), id=db.next_id, read_at=None)
             db.messages.append(row)
             return self._set([], 1)
         if s.startswith("SELECT message_id, created_at, message_type, message, file_key, file_name, content_type, sender_type, sender_id, sender_name, read_at FROM live_chat_message WHERE thread_id = %s ORDER BY id DESC LIMIT %s"):
@@ -399,6 +412,119 @@ class TestOperatorReplies:
         org_send(env)
         env.client.put(f"/gen-dashboard/live-chat/threads/{ORG}/status", json={"status": "closed"})
         assert reply(env).status_code == 200 and env.db.thread(ORG)["status"] == "closed"
+
+
+class TestOperatorDeletesAMessage:
+    @staticmethod
+    def delete(env, message_id, org=ORG, headers=OP):
+        return env.client.delete(f"/gen-dashboard/live-chat/threads/{org}/messages/{message_id}", headers=headers)
+
+    def test_deletes_an_own_org_message_and_recomputes_the_preview(self, env):
+        first = org_send(env, "first").json()
+        second = reply(env, "second").json()
+        env.client.put(f"/gen-dashboard/live-chat/threads/{ORG}/status", json={"status": "closed"})
+        t = env.db.thread(ORG)
+        assert (t["last_message"], t["last_sender_type"]) == ("second", "support")
+        r = self.delete(env, second["message_id"])
+        assert r.status_code == 200
+        # the preview falls back to the newest remaining message (the org's first one); status is untouched
+        assert r.json() == {"message_id": second["message_id"], "org_id": ORG, "last_message": "first",
+                            "last_message_at": first["timestamp"]}
+        assert (t["last_message"], t["last_message_type"], t["last_sender_type"], t["status"]) == ("first", "text", "org", "closed")
+        assert t["last_message_at"].isoformat().replace("+00:00", "Z") == first["timestamp"]
+        assert [m["message"] for m in env.client.get(f"/gen-dashboard/live-chat/threads/{ORG}/messages").json()["messages"]] == ["first"]
+        row = env.client.get("/gen-dashboard/live-chat/threads").json()[0]            # same key names as the thread list
+        assert (row["last_message"], row["last_message_at"]) == (r.json()["last_message"], r.json()["last_message_at"])
+        assert env.db.commits >= 1
+
+    def test_deleting_a_middle_message_keeps_the_preview(self, env):
+        a = org_send(env, "a").json()
+        reply(env, "b")
+        c = reply(env, "c").json()
+        assert self.delete(env, a["message_id"]).json()["last_message"] == "c"
+        assert env.db.thread(ORG)["last_message"] == "c" and c["message_id"] in [m["message_id"] for m in env.db.messages]
+
+    def test_deleting_the_last_message_clears_the_preview(self, env):
+        m = org_send(env, "only").json()
+        r = self.delete(env, m["message_id"])
+        assert r.json() == {"message_id": m["message_id"], "org_id": ORG, "last_message": None, "last_message_at": None}
+        t = env.db.thread(ORG)
+        assert env.db.messages == [] and t["last_message"] is None and t["last_message_at"] is None and t["status"] == "open"
+        assert env.client.get("/gen-dashboard/live-chat/threads").json() == []         # no preview: not listed until a new message
+        assert env.client.get(f"/gen-dashboard/live-chat/threads/{ORG}/messages").json()["messages"] == []
+
+    def test_404_for_another_org_unknown_id_or_no_thread(self, env):
+        mine = org_send(env, "mine").json()
+        theirs = org_send(env, "theirs", user=OTHER_ADMIN, org=ORG2).json()
+        assert self.delete(env, theirs["message_id"], org=ORG).status_code == 404       # exists, but in another org's thread
+        assert self.delete(env, mine["message_id"], org=ORG2).status_code == 404
+        assert self.delete(env, "no-such-id").status_code == 404
+        assert self.delete(env, mine["message_id"], org="org-9").status_code == 404     # no thread at all
+        assert len(env.db.messages) == 2 and env.db.thread(ORG)["last_message"] == "mine"
+        assert not [f for f in env.ops if f["type"] == "live_chat_message_deleted"]
+        assert not [u for u in env.users if u[1]["type"] == "live_chat_message_deleted"]
+        assert self.delete(env, mine["message_id"]).status_code == 200
+        assert self.delete(env, mine["message_id"]).status_code == 404                   # already gone
+
+    def test_publishes_the_event_to_the_consoles_and_the_org_admins(self, env):
+        org_send(env, "keep")
+        gone = reply(env, "oops").json()
+        env.ops.clear(), env.users.clear()
+        r = self.delete(env, gone["message_id"])
+        data = {"org_id": ORG, "message_id": gone["message_id"], "last_message": "keep", "last_message_at": r.json()["last_message_at"]}
+        frame = {"type": "live_chat_message_deleted", "data": data}
+        assert r.json() == {"message_id": gone["message_id"], "org_id": ORG, "last_message": "keep", "last_message_at": data["last_message_at"]}
+        assert env.ops == [frame]
+        assert env.users == [([ADMIN, ADMIN2], frame)]
+        assert env.pushes == [{"ids": [ADMIN, ADMIN2], "body": "oops", "data": {"type": "live_chat_message", "org_id": ORG, "message_id": gone["message_id"]}}]   # only the earlier reply: delete pushes nothing
+
+    def test_a_realtime_error_never_fails_the_delete(self, env, monkeypatch):
+        m = org_send(env).json()
+
+        async def boom(*a, **k):
+            raise RuntimeError("redis down")
+        monkeypatch.setattr(live.realtime, "publish_to_operators", boom)
+        assert self.delete(env, m["message_id"]).status_code == 200 and env.db.messages == []
+
+    def test_the_attachment_is_removed_from_s3_best_effort(self, env, monkeypatch):
+        deleted = []
+        monkeypatch.setattr("ml.s3.delete_s3_object", lambda key: deleted.append(key))
+        org_send(env, "hi")
+        att = env.client.post(f"/gen-dashboard/live-chat/threads/{ORG}/messages/file", headers=OP,
+                              files={"file": ("guide.pdf", b"%PDF-1.4 x", "application/pdf")}).json()
+        text = reply(env, "plain").json()
+        assert self.delete(env, text["message_id"]).status_code == 200 and deleted == []         # text: nothing to delete in S3
+        r = self.delete(env, att["message_id"])
+        assert r.status_code == 200 and deleted == [f"{S3_PREFIX}abc_guide.pdf"]
+        assert S3_PREFIX not in r.text and "file_key" not in r.text
+
+    def test_an_s3_failure_does_not_fail_the_request(self, env, monkeypatch, caplog):
+        def boom(key):
+            raise RuntimeError("S3 secret detail")
+        monkeypatch.setattr("ml.s3.delete_s3_object", boom)
+        caplog.set_level("WARNING")
+        org_send(env, "hi")
+        att = env.client.post(f"/gen-dashboard/live-chat/threads/{ORG}/messages/file", headers=OP,
+                              files={"file": ("a.png", b"123", "image/png")}).json()
+        env.ops.clear()
+        r = self.delete(env, att["message_id"])
+        assert r.status_code == 200 and "S3 secret" not in r.text
+        assert [m["message"] for m in env.db.messages] == ["hi"] and env.db.thread(ORG)["last_message"] == "hi"      # row is gone anyway
+        assert [f["type"] for f in env.ops] == ["live_chat_message_deleted"]                  # and the event still goes out
+        assert any("could not delete attachment" in r.getMessage() for r in caplog.records)
+
+    def test_an_unexpected_database_error_is_a_generic_500_and_rolls_back(self, env, monkeypatch):
+        m = org_send(env).json()
+        real = FakeCursor.execute
+
+        def execute(self, sql, params=None):
+            if sql.lstrip().startswith("UPDATE live_chat_thread SET last_message = %s, last_message_type = %s, last_sender_type = %s"):
+                raise RuntimeError("db secret detail")
+            return real(self, sql, params)
+        monkeypatch.setattr(FakeCursor, "execute", execute)
+        before = env.db.rollbacks
+        r = self.delete(env, m["message_id"])
+        assert r.status_code == 500 and "secret" not in r.text and env.db.rollbacks == before + 1
 
 
 class TestReadReceipts:
@@ -666,6 +792,8 @@ class TestTablesNotCreatedYet:
         r = c.post("/live-chat/send", json={"org_id": ORG, "user_id": ADMIN, "message": "hi"})
         assert r.status_code == 503 and r.json()["detail"] == "Live chat is not set up yet"
         assert c.post(f"/gen-dashboard/live-chat/threads/{ORG}/messages", json={"message": "x"}, headers=OP).status_code == 503
+        r = c.delete(f"/gen-dashboard/live-chat/threads/{ORG}/messages/some-id", headers=OP)
+        assert r.status_code == 503 and r.json()["detail"] == "Live chat is not set up yet"
 
     def test_the_cause_is_logged_once_not_on_every_poll(self, no_tables, caplog):
         for _ in range(5):
@@ -705,6 +833,7 @@ def test_the_live_chat_routes_are_exactly_these_and_are_covered_by_the_auth_poli
         ("gen_live_chat.py", "GET", base + "/threads/{}/messages"), ("gen_live_chat.py", "POST", base + "/threads/{}/messages"),
         ("gen_live_chat.py", "POST", base + "/threads/{}/messages/file"), ("gen_live_chat.py", "PUT", base + "/threads/{}/read"),
         ("gen_live_chat.py", "PUT", base + "/threads/{}/status"), ("gen_live_chat.py", "WEBSOCKET", "/ws/support-ops"),
+        ("gen_live_chat.py", "DELETE", base + "/threads/{}/messages/{}"),
     }
     for f, m, p in routes:
         method = "GET" if m == "WEBSOCKET" else m
@@ -722,7 +851,8 @@ def test_operator_routes_refuse_without_a_credential_when_enforced(env, monkeypa
     base = "/gen-dashboard/live-chat"
     calls = [("get", base + "/threads", {}), ("get", base + "/unread-count", {}), ("get", f"{base}/threads/{ORG}/messages", {}),
              ("post", f"{base}/threads/{ORG}/messages", {"json": {"message": "hi"}}), ("put", f"{base}/threads/{ORG}/read", {}),
-             ("put", f"{base}/threads/{ORG}/status", {"json": {"status": "closed"}})]
+             ("put", f"{base}/threads/{ORG}/status", {"json": {"status": "closed"}}),
+             ("delete", f"{base}/threads/{ORG}/messages/{env.db.messages[0]['message_id']}", {})]
     for method, url, kw in calls:
         assert getattr(env.client, method)(url, **kw).status_code == 403, url                       # no credential
         assert getattr(env.client, method)(url, headers={"x-admin-id": "intruder@evil.com"}, **kw).status_code == 403, url

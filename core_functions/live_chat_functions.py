@@ -588,6 +588,74 @@ async def op_send_file(org_id: str, upload, admin_id: Optional[str]) -> Dict[str
                            file_name=display, content_type=content_type[:100], file_url=file_url)
 
 
+async def _publish_message_deleted(data: Dict[str, Any], admin_ids: List[str]) -> None:
+    """Tells every open console and every device of the org admins that a message is gone. Never raises."""
+    frame = {"type": "live_chat_message_deleted", "data": data}
+    try:
+        await realtime.publish_to_operators(frame)
+        await realtime.publish_to_users(admin_ids, frame)
+    except Exception as exc:                                    # a socket problem must never fail the delete
+        logger.warning("live chat delete frame failed: %s", exc)
+
+
+def _delete_s3_object_quietly(file_key: str) -> None:
+    """Best-effort removal of an attachment's S3 object: the row is already gone, so a storage problem only leaves an
+    orphan object behind and must never fail the request."""
+    try:
+        from ml.s3 import delete_s3_object
+        delete_s3_object(file_key)
+    except Exception as exc:
+        logger.warning("live chat: could not delete attachment %s from storage: %s", file_key, exc)
+
+
+async def op_delete_message(org_id: str, message_id: str) -> Dict[str, Any]:
+    """Hard-deletes ONE message of the organisation's thread (404 when it does not exist or belongs to another
+    organisation), refreshes the thread's preview (last_message*) from the newest remaining message (cleared when none is
+    left; status and the other thread fields are untouched) and tells the consoles and the org admins' devices."""
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            thread = _thread_row(cur, org_id)
+            if not thread:
+                raise HTTPException(status_code=404, detail="No conversation for this organization")
+            cur.execute(
+                "DELETE FROM live_chat_message WHERE message_id = %s AND thread_id = %s AND org_id = %s "
+                "RETURNING message_id, file_key",
+                (message_id, thread["thread_id"], org_id),
+            )
+            deleted = cur.fetchone()
+            if not deleted:
+                raise HTTPException(status_code=404, detail="Message not found")
+            cur.execute(
+                "SELECT message, message_type, sender_type, created_at FROM live_chat_message "
+                "WHERE thread_id = %s ORDER BY id DESC LIMIT 1",
+                (thread["thread_id"],),
+            )
+            newest = cur.fetchone() or {}
+            cur.execute(
+                "UPDATE live_chat_thread SET last_message = %s, last_message_type = %s, last_sender_type = %s, "
+                "last_message_at = %s, updated_at = %s WHERE org_id = %s",
+                (newest.get("message"), newest.get("message_type"), newest.get("sender_type"),
+                 newest.get("created_at"), get_utc_now(), org_id),
+            )
+            admin_ids = _org_admin_ids(cur, org_id)
+        conn.commit()
+    except HTTPException:
+        conn.rollback()
+        raise
+    except Exception as exc:
+        conn.rollback()
+        raise _unexpected("operator delete message", exc)
+    finally:
+        return_connection(conn)
+    if deleted.get("file_key"):
+        await asyncio.to_thread(_delete_s3_object_quietly, deleted["file_key"])
+    data = {"org_id": org_id, "message_id": str(message_id), "last_message": newest.get("message"),
+            "last_message_at": _iso(newest.get("created_at"))}
+    await _publish_message_deleted(data, admin_ids)
+    return data
+
+
 async def op_mark_read(org_id: str) -> Dict[str, Any]:
     conn = get_db_connection()
     try:

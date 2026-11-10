@@ -4,7 +4,7 @@ HTTP routes live under /gen-dashboard/live-chat (an OPERATOR route class: `auth_
 `operator_auth.require_operator` (the operator's e-mail in the legacy admin header, or the operator key). The console's realtime
 channel is the WebSocket /ws/support-ops?admin_id=<operator e-mail>: every open console registers under ONE key in the
 shared socket registry, so a single publish reaches all of them (frames: live_chat_message / live_chat_read /
-live_chat_status, see services/realtime.py). Browsers cannot set headers on a WebSocket, hence the query parameter; like
+live_chat_status / live_chat_message_deleted, see services/realtime.py). Browsers cannot set headers on a WebSocket, hence the query parameter; like
 the other open operator routes, the operator is only checked when `operator_auth.enforced()`.
 """
 import asyncio
@@ -53,6 +53,11 @@ async def live_chat_reply_route(org_id: str, req: live.OperatorSendRequest, requ
 @router.post("/gen-dashboard/live-chat/threads/{org_id}/messages/file", dependencies=[Depends(require_operator)])
 async def live_chat_reply_file_route(org_id: str, request: Request, file: UploadFile = File(...)):
     return await live.op_send_file(org_id, file, _admin_id(request))
+
+
+@router.delete("/gen-dashboard/live-chat/threads/{org_id}/messages/{message_id}", dependencies=[Depends(require_operator)])
+async def live_chat_delete_message_route(org_id: str, message_id: str):
+    return await live.op_delete_message(org_id, message_id)
 
 
 @router.put("/gen-dashboard/live-chat/threads/{org_id}/read", dependencies=[Depends(require_operator)])
