@@ -368,9 +368,14 @@ async def get_manager(user_id: str):
 
 async def add_staff(data: AddStaffRequest):
     """Add new staff member with role validation"""
-    if not all([data.name, data.emp_id, data.mobile_number, data.user_id]):
+    # USER_AUTH=email: staff sign in with their email, so the mobile number is optional (the email is validated below).
+    data.mobile_number = (data.mobile_number or "").strip()
+    if is_email_auth():
+        if not all([data.name, data.emp_id, data.user_id]):
+            raise HTTPException(status_code=400, detail="Name, Employee ID, and User ID are required")
+    elif not all([data.name, data.emp_id, data.mobile_number, data.user_id]):
         raise HTTPException(status_code=400, detail="Name, Employee ID, Mobile Number, and User ID are required")
-    
+
     # user_id from frontend is actually org_id
     org_id = data.user_id
     
@@ -382,16 +387,18 @@ async def add_staff(data: AddStaffRequest):
         assert_staff_capacity(cursor, org_id)
         # ──────────────────────────────────────────────────────────────────
         # Check if employee ID or mobile_number already exists (email is optional)
+        # A blank mobile (email mode) is never compared: several staff may have none.
+        clauses, params = ["emp_id = %s"], [data.emp_id]
+        if data.mobile_number:
+            clauses.append("mobile_number = %s")
+            params.append(data.mobile_number)
         if data.email:
-            cursor.execute(
-                "SELECT * FROM users WHERE (emp_id = %s OR mobile_number = %s OR email = %s) AND parent_id = %s",
-                (data.emp_id, data.mobile_number, data.email, org_id)
-            )
-        else:
-            cursor.execute(
-                "SELECT * FROM users WHERE (emp_id = %s OR mobile_number = %s) AND parent_id = %s",
-                (data.emp_id, data.mobile_number, org_id)
-            )
+            clauses.append("email = %s")
+            params.append(data.email)
+        cursor.execute(
+            f"SELECT * FROM users WHERE ({' OR '.join(clauses)}) AND parent_id = %s",
+            (*params, org_id)
+        )
         existing_user = cursor.fetchone()
         if existing_user:
             raise HTTPException(status_code=400, detail="Employee ID, mobile number, or email already exists")
@@ -502,8 +509,10 @@ async def add_staff(data: AddStaffRequest):
 
         # Send WhatsApp onboarding message (non-blocking, does not affect staff creation)
         try:
+            if not data.mobile_number:
+                return {"success": True, "message": "Staff added successfully!", "user_id": new_user_id}
             from core_functions.whatsapp_service import send_employee_onboard_whatsapp
-            cursor.execute("SELECT name FROM users WHERE user_id = %s", (org_id,)) 
+            cursor.execute("SELECT name FROM users WHERE user_id = %s", (org_id,))
             org_row = cursor.fetchone()
             org_name = org_row['name'] if org_row else 'Your Organization'
             wa_sent = send_employee_onboard_whatsapp(
