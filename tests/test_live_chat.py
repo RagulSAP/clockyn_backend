@@ -231,7 +231,7 @@ def env(monkeypatch):
     monkeypatch.setattr(live, "get_utc_now", now)
     monkeypatch.setattr(live.realtime, "publish_to_operators", pub_ops)
     monkeypatch.setattr(live.realtime, "publish_to_users", pub_users)
-    monkeypatch.setattr(live, "_fire_push", lambda ids, body, data: pushes.append({"ids": list(ids), "body": body, "data": data}))
+    monkeypatch.setattr(live, "_fire_push", lambda ids, body, data, image_url=None: pushes.append({"ids": list(ids), "body": body, "data": data, **({"image": image_url} if image_url else {})}))
     monkeypatch.setattr("ml.s3.upload_chat_file", upload)
     monkeypatch.setattr("ml.s3.get_chat_file_presigned_url", lambda key, *a, **k: f"https://s3.test/signed/{key.split('_', 1)[1]}?sig=2")
     monkeypatch.setenv("RATE_LIMIT_ENABLED", "0")
@@ -506,6 +506,21 @@ class TestAttachments:
         assert r.status_code == 200 and r.json()["message_type"] == "file" and r.json()["sender_name"] == "Priya"
         assert env.pushes[-1]["body"] == "\U0001f4ce Sent an attachment" and env.pushes[-1]["data"]["type"] == "live_chat_message"
         assert env.users[-1][1]["data"]["file_url"] == "https://s3.test/signed/guide.pdf?sig=1"
+
+    def test_operator_photo_reply_pushes_the_picture(self, env):
+        org_send(env)
+        r = env.client.post(f"/gen-dashboard/live-chat/threads/{ORG}/messages/file", headers=OP,
+                            files={"file": ("screen.png", b"123", "image/png")})
+        assert r.status_code == 200 and r.json()["message_type"] == "image"
+        assert env.pushes[-1].get("image") == "https://s3.test/signed/screen.png?sig=1"
+        assert env.pushes[-1]["body"] == "\U0001f4f7 Sent a photo" and env.pushes[-1]["data"]["type"] == "live_chat_message"
+
+    def test_operator_non_picture_reply_has_no_notification_picture(self, env):
+        org_send(env)
+        env.client.post(f"/gen-dashboard/live-chat/threads/{ORG}/messages/file", headers=OP, files={"file": ("a.pdf", b"%PDF-1.4", "application/pdf")})
+        env.client.post(f"/gen-dashboard/live-chat/threads/{ORG}/messages/file", headers=OP, files={"file": ("p.heic", b"123", "image/heic")})
+        assert [p.get("image") for p in env.pushes[-2:]] == [None, None]          # PDFs and HEIC cannot be drawn by the notification shade
+        assert env.pushes[-1]["body"] == "\U0001f4ce Sent an attachment"
 
     def test_the_s3_key_never_leaves_the_server(self, env):
         env.client.post("/live-chat/send-file", data={"org_id": ORG, "user_id": ADMIN}, files={"file": ("a.png", b"123", "image/png")})

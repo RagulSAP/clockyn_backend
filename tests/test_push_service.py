@@ -195,6 +195,17 @@ def test_channel_id_and_image_come_from_env_and_arguments(monkeypatch):
     assert msg["notification"]["image"] == "https://img/x.png" and msg["android"]["notification"]["image"] == "https://img/x.png"
 
 
+def test_push_image_for_only_returns_pictures_the_shade_can_draw():
+    url = "https://s3.test/signed/x?sig=1"
+    for kind in ("image/jpeg", "image/png", "image/webp", "image/gif", "IMAGE/PNG", "image/png; charset=binary"):
+        assert ps.push_image_for(kind, url) == url
+    for kind in ("image/heic", "application/pdf", "video/mp4", "", None):
+        assert ps.push_image_for(kind, url) is None
+    assert ps.push_image_for("image/png", None) is None
+    assert ps.push_image_for("image/png", "http://insecure/x.png") is None     # https only
+    assert ps.PHOTO_PUSH_TEXT == "\U0001f4f7 Sent a photo"
+
+
 def test_silent_message_is_data_only(monkeypatch):
     configure(monkeypatch)
     fcm = Fcm(monkeypatch)

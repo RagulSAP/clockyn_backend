@@ -87,16 +87,22 @@ async def _get_group_member_ids(group_id: str) -> list[str]:
     return [member["user_id"] for member in members]
 
 
-def _push_chat_to_user(user_id: str, title: str, body: str, data: dict):
-    """Fire-and-forget push to every device of one user (the sender never waits for FCM)."""
-    asyncio.create_task(push_service.send_push_to_user(user_id, title, body, data))
+def _push_chat_to_user(user_id: str, title: str, body: str, data: dict, image_url: Optional[str] = None):
+    """Fire-and-forget push to every device of one user (the sender never waits for FCM). `image_url`: a photo shown in the notification."""
+    if image_url:
+        asyncio.create_task(push_service.send_push_to_user(user_id, title, body, data, image_url=image_url))
+    else:
+        asyncio.create_task(push_service.send_push_to_user(user_id, title, body, data))
 
 
-def _push_group_to_offline_members(member_ids: list, sender_id: str, title: str, body: str, data: dict):
+def _push_group_to_offline_members(member_ids: list, sender_id: str, title: str, body: str, data: dict, image_url: Optional[str] = None):
     """Push to the group members that have no open socket (online members got the socket frame)."""
     offline = realtime.offline_user_ids(member_ids, exclude=sender_id)
     if offline:
-        asyncio.create_task(push_service.send_push_to_users(offline, title, body, data))
+        if image_url:
+            asyncio.create_task(push_service.send_push_to_users(offline, title, body, data, image_url=image_url))
+        else:
+            asyncio.create_task(push_service.send_push_to_users(offline, title, body, data))
 
 # Import centralized manager
 from socket_manager import manager as shared_manager
@@ -426,10 +432,12 @@ async def chat_send_file_route(
             return_connection(conn)
 
         await shared_manager.broadcast_chat_message(sender_id, receiver_id, result)
+        push_image = push_service.push_image_for(file.content_type, presigned_url)   # a photo shows in the notification
         _push_chat_to_user(receiver_id, sender_name or result.get('sender_name') or 'Someone',
-                           '\U0001f4ce Sent an attachment',
+                           push_service.PHOTO_PUSH_TEXT if push_image else '\U0001f4ce Sent an attachment',
                            {'type': 'new_message', 'sender_id': sender_id, 'receiver_id': receiver_id,
-                            'message_id': result.get('message_id')})
+                            'message_id': result.get('message_id')},
+                           image_url=push_image)
         return result
     except HTTPException:
         raise
@@ -489,10 +497,13 @@ async def group_send_file_route(
 
         member_ids = await _get_group_member_ids(group_id)
         await shared_manager.broadcast_group_message(sender_id, member_ids, result)
+        push_image = push_service.push_image_for(file.content_type, presigned_url)   # a photo shows in the notification
         _push_group_to_offline_members(
-            member_ids, sender_id, result.get('sender_name', 'Someone'), '\U0001f4ce Sent an attachment',
+            member_ids, sender_id, result.get('sender_name', 'Someone'),
+            push_service.PHOTO_PUSH_TEXT if push_image else '\U0001f4ce Sent an attachment',
             {'type': 'new_group_message', 'group_id': group_id, 'sender_id': sender_id,
-             'message_id': result.get('message_id')})
+             'message_id': result.get('message_id')},
+            image_url=push_image)
         return result
     except HTTPException:
         raise

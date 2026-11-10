@@ -152,6 +152,21 @@ def stringify_data(data: Optional[Dict[str, Any]]) -> Dict[str, str]:
     return {str(k): ("" if v is None else str(v)) for k, v in (data or {}).items()}
 
 
+# Formats the Android notification shade can draw as the expanded picture (HEIC / PDF / other files cannot be shown).
+PUSH_IMAGE_TYPES = ("image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif")
+PHOTO_PUSH_TEXT = "\U0001f4f7 Sent a photo"
+
+
+def push_image_for(content_type: Optional[str], url: Optional[str]) -> Optional[str]:
+    """The link to show as the notification picture (collapsed: thumbnail, expanded: the full photo), or None when the
+    attachment is not a picture the phone can draw. The link is a presigned S3 URL (valid 7 days), so a device that is
+    offline for a while can still load it when it comes back."""
+    if not url or not isinstance(url, str) or not url.startswith("https://"):
+        return None
+    kind = (content_type or "").split(";")[0].strip().lower()
+    return url if kind in PUSH_IMAGE_TYPES else None
+
+
 def build_fcm_message(token: str, title: str, body: str, data: Optional[Dict[str, Any]] = None,
                       image_url: Optional[str] = None, silent: bool = False) -> Dict[str, Any]:
     """FCM v1 `message` object. `silent` = data-only message (no visible notification)."""

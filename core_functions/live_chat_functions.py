@@ -113,10 +113,14 @@ def _like(q: str) -> str:
     return f"%{escaped}%"
 
 
-def _fire_push(user_ids: List[str], body: str, data: Dict[str, str]) -> None:
-    """Fire-and-forget FCM push to every device of the org admins (the request never waits for FCM)."""
+def _fire_push(user_ids: List[str], body: str, data: Dict[str, str], image_url: Optional[str] = None) -> None:
+    """Fire-and-forget FCM push to every device of the org admins (the request never waits for FCM).
+    `image_url`: a photo shown in the notification (collapsed thumbnail, expanded full picture)."""
     if user_ids:
-        asyncio.create_task(push_service.send_push_to_users(user_ids, PUSH_TITLE, body, data))
+        if image_url:
+            asyncio.create_task(push_service.send_push_to_users(user_ids, PUSH_TITLE, body, data, image_url=image_url))
+        else:
+            asyncio.create_task(push_service.send_push_to_users(user_ids, PUSH_TITLE, body, data))
 
 
 _UNDEFINED_TABLE = "42P01"          # PostgreSQL: relation does not exist
@@ -542,8 +546,12 @@ async def _op_store(org_id: str, admin_id: Optional[str], message_type: str, mes
         return_connection(conn)
     payload = message_payload(row, file_url=file_url)
     await _publish_message(payload, org_id, org_name, thread["status"], admin_ids)
-    _fire_push(admin_ids, message if message_type == "text" else ATTACHMENT_PUSH_TEXT,
-               {"type": "live_chat_message", "org_id": org_id, "message_id": payload["message_id"]})
+    push_data = {"type": "live_chat_message", "org_id": org_id, "message_id": payload["message_id"]}
+    push_image = push_service.push_image_for(content_type, file_url) if message_type != "text" else None
+    if push_image:
+        _fire_push(admin_ids, push_service.PHOTO_PUSH_TEXT, push_data, image_url=push_image)
+    else:
+        _fire_push(admin_ids, message if message_type == "text" else ATTACHMENT_PUSH_TEXT, push_data)
     return payload
 
 
