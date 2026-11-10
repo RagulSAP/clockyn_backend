@@ -45,6 +45,7 @@ from core_functions.gen_dashboard_functions import (
     OrgUpdateRequest,
     OrgStatusRequest,
 )
+from core_functions.analytics_functions import clickstream_events, clickstream_summary, purge_clickstream
 
 # Platform-operator routes: every route of this router goes through the ONE operator guard (core_functions/operator_auth.py).
 router = APIRouter(prefix="/gen-dashboard", tags=["gen-dashboard"], dependencies=[Depends(require_operator)])
@@ -189,6 +190,28 @@ async def support_video_delete_route(video_id: int):
 @router.get("/support-video-views")
 async def support_video_views_route(video_id: Optional[int] = Query(None), limit: int = Query(1000)):
     return await list_support_video_views(video_id, limit)
+
+
+# ── Clickstream (screen views and button taps of the app + product insights): read = any operator, purge = super admin ──
+@router.get("/clickstream/summary")
+async def clickstream_summary_route(days: int = Query(30, ge=1, le=180), platform: Optional[str] = Query(None), role: Optional[int] = Query(None)):
+    return await clickstream_summary(days, platform, role)
+
+
+@router.get("/clickstream/events")
+async def clickstream_events_route(
+    limit: int = Query(200, ge=1, le=1000),
+    org_id: Optional[str] = Query(None),
+    user_id: Optional[str] = Query(None),
+    event_type: Optional[str] = Query(None),
+    q: Optional[str] = Query(None),
+):
+    return await clickstream_events(limit, org_id, user_id, event_type, q)
+
+
+@router.post("/clickstream/purge", dependencies=[Depends(require_operator_super)])
+async def clickstream_purge_route(days: int = Query(180, ge=30)):
+    return await purge_clickstream(days)
 
 
 # ── FAQ Hub (FAQs of the app's Support tab): read = any operator, write = super admin (role_id 1) ───────────────────

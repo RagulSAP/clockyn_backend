@@ -443,6 +443,10 @@ async def send_push_to_users(user_ids: Iterable[str], title: str, body: str, dat
             for tok in toks:
                 if tok not in tokens:
                     tokens.append(tok)
+        if not tokens:
+            # The usual reason a push "does not arrive": the app never registered a token (permission denied, a build without
+            # Firebase, or the user has not opened the app since signing in). Say so instead of failing silently.
+            logger.warning("[Notify] no push token registered for %d user(s) - nothing sent", len(by_user) or len(list(user_ids)))
         return await _send_many(tokens, title, body, data, image_url, silent)
     except Exception as e:
         logger.error("[Notify] fan-out failed: %s", e)

@@ -11,6 +11,7 @@ Rules (name -> default `count/window_seconds`), each overridable with the env va
   SUGGESTION_CREATE    10/3600   per user    POST /company/suggest-feature
   VIDEO_VIEW           120/3600  per user    POST /support/videos/{id}/view
   LIVE_CHAT_SEND       30/60     per user    POST /live-chat/send, /live-chat/send-file
+  ANALYTICS_EVENTS     30/60     per user    POST /analytics/events (clickstream batches)
   AUTH_CHECK           30/60     per IP      GET /auth/check-mobile/*, /auth/check-email/*  (anti-enumeration)
   AUTH_LOGIN           30/60     per IP      POST /auth/login, /auth/employee-login          (anti-enumeration)
   OTP_GENERATE         20/3600   per IP      POST /auth/generate-otp (the per-contact throttle stays in place)
@@ -49,6 +50,7 @@ DEFAULT_RULES: Dict[str, Tuple[int, int]] = {
     "SUGGESTION_CREATE": (10, 3600),
     "VIDEO_VIEW": (120, 3600),
     "LIVE_CHAT_SEND": (30, 60),
+    "ANALYTICS_EVENTS": (30, 60),
     "AUTH_CHECK": (30, 60),
     "AUTH_LOGIN": (30, 60),
     "OTP_GENERATE": (20, 3600),

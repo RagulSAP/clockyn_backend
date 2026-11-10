@@ -95,7 +95,7 @@ def test_very_long_keys_are_clipped(clock):
 # ---------------------------------------------------------------------------------------------------- rules and env
 def test_default_rules_match_the_documentation():
     assert {n: (r[0], r[1]) for n, r in RL.DEFAULT_RULES.items()} == {
-        "SUPPORT_CREATE": (10, 3600), "SUGGESTION_CREATE": (10, 3600), "VIDEO_VIEW": (120, 3600), "LIVE_CHAT_SEND": (30, 60),
+        "SUPPORT_CREATE": (10, 3600), "SUGGESTION_CREATE": (10, 3600), "VIDEO_VIEW": (120, 3600), "LIVE_CHAT_SEND": (30, 60), "ANALYTICS_EVENTS": (30, 60),
         "AUTH_CHECK": (30, 60), "AUTH_LOGIN": (30, 60), "OTP_GENERATE": (20, 3600), "DEVICE_CHANGE_SUBMIT": (10, 3600), "OPERATOR_FAIL": (20, 60)}
 
 
