@@ -48,6 +48,7 @@ class AdminRegisterRequest(BaseModel):
     state: Optional[str] = None
     district: Optional[str] = None
     pincode: Optional[int] = None
+    referral_code: Optional[str] = None      # Refer & Earn: another organisation's code (optional)
 
 class GenAdminLoginRequest(BaseModel):
     email: str

@@ -22,6 +22,8 @@ class CreateOrderRequest(BaseModel):
     coupon_code: Optional[str] = None
     # new | renew | upgrade. Older app builds omit it; the server then infers it (see core_functions/pricing.pick_mode).
     mode: Optional[str] = None
+    # Refer & Earn: use one of the organisation's AVAILABLE referral rewards (the server picks it; never sent by the app).
+    apply_referral: bool = False
 
 
 class QuoteOrderRequest(BaseModel):
@@ -32,6 +34,7 @@ class QuoteOrderRequest(BaseModel):
     staff_limit: int = 10
     coupon_code: Optional[str] = None
     mode: Optional[str] = None
+    apply_referral: bool = False
 
 
 @router.post("/quote")
@@ -44,6 +47,7 @@ async def quote(data: QuoteOrderRequest):
         data.staff_limit,
         data.coupon_code,
         data.mode,
+        data.apply_referral,
     )
 
 
@@ -57,6 +61,7 @@ async def create_order(data: CreateOrderRequest):
         data.staff_limit,
         data.coupon_code,
         data.mode,
+        data.apply_referral,
     )
 
 @router.get("/check_first_payment")

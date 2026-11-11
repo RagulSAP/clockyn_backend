@@ -52,6 +52,15 @@ CREDIT_BASELINE_STAFF = 10     # credit for the current plan assumes this many s
 RENEW_MONTHS = 12              # renewals are always priced for 12 months
 GST_PERCENT = D("18")
 
+# Refer & Earn: the ONE place the reward size and the plans it works on are defined (Prime = 2, Elite = 3; Core = 1 is not eligible).
+REFERRAL_PERCENT = 10
+REFERRAL_ELIGIBLE_PLAN_IDS: Tuple[int, ...] = (2, 3)
+REFERRAL_MODES: Tuple[str, ...] = ("new", "renew")      # `upgrade` (extra staff) is never eligible
+REFERRAL_MSG_PLAN = "Referral rewards are valid on Prime and Elite plans only"
+REFERRAL_MSG_UPGRADE = "Referral rewards do not apply to staff upgrades"
+REFERRAL_MSG_NONE = "No referral reward available"
+REFERRAL_MSG_WITH_COUPON = "Use either a coupon or a referral reward, not both"
+
 
 class PricingError(Exception):
     """A request that cannot be priced; ``status`` is the HTTP status the API answers with."""
@@ -114,6 +123,11 @@ def calendar_months_left(today: date, end_date: date) -> int:
 
 def _as_float(value: Optional[Decimal]) -> Optional[float]:
     return None if value is None else float(value)
+
+
+def _percent_out(value: Decimal):
+    """10 for a whole percent (JSON `10`, not `10.0`), else a float."""
+    return int(value) if value == value.to_integral_value() else float(value)
 
 
 def _iso(value: Optional[date]) -> Optional[str]:
@@ -189,6 +203,16 @@ class Coupon:
         return max(ZERO, min(discount, amount))     # never below 0, never more than the amount
 
 
+@dataclass(frozen=True)
+class ReferralOffer:
+    """What the database says about the organisation's referral rewards: how many are AVAILABLE and the one that would be
+    used (the oldest). ``reward_id`` is None when there is none."""
+
+    available_count: int = 0
+    reward_id: Optional[int] = None
+    percent: Decimal = D(REFERRAL_PERCENT)
+
+
 # ── output ──────────────────────────────────────────────────────────────────
 @dataclass(frozen=True)
 class Quote:
@@ -217,6 +241,14 @@ class Quote:
     min_staff: int
     has_current_plan: bool
     is_plan_expired: bool
+    # Refer & Earn (always reported; the reward id is internal and never part of ``to_dict``)
+    referral_applied: bool = False
+    referral_percent: Decimal = D(REFERRAL_PERCENT)
+    referral_message: Optional[str] = None            # why a REQUESTED reward could not be used (non-strict quote)
+    referral_available_count: int = 0
+    referral_eligible: bool = False                   # for THIS quote (plan + mode + a reward exists)
+    referral_eligible_message: Optional[str] = None   # why not eligible
+    referral_reward_id: Optional[int] = None          # the reward priced in (only when referral_applied)
 
     @property
     def payable(self) -> bool:
@@ -256,6 +288,15 @@ class Quote:
             "has_current_plan": self.has_current_plan,
             "is_plan_expired": self.is_plan_expired,
             "payable": self.payable,
+            "referral_applied": self.referral_applied,
+            "referral_percent": _percent_out(self.referral_percent),
+            "referral_message": self.referral_message,
+            "referral": {
+                "available_count": self.referral_available_count,
+                "eligible": self.referral_eligible,
+                "percent": _percent_out(self.referral_percent),
+                "message": self.referral_eligible_message,
+            },
         }
 
 
@@ -286,6 +327,9 @@ def build_quote(
     coupon: Optional[Coupon] = None,
     coupon_code: Optional[str] = None,
     strict_coupon: bool = True,
+    referral: Optional[ReferralOffer] = None,
+    apply_referral: bool = False,
+    strict_referral: bool = True,
 ) -> Quote:
     """Price one purchase.
 
@@ -293,6 +337,11 @@ def build_quote(
     ``target`` is ignored. ``staff`` is the stepper value (for ``upgrade`` the EXTRA staff, as the app posts it).
     ``coupon_code`` set while ``coupon`` is None means the code does not exist. With ``strict_coupon=False`` an
     unusable coupon is reported in the quote (and ignored) instead of raising :class:`CouponError`.
+
+    ``referral`` describes the organisation's rewards (None = none). ``apply_referral`` asks for the reward to be used: when
+    it cannot be (wrong mode / plan, none available) a strict quote raises ``PricingError('referral_not_applicable', ..., 400)``
+    and a non-strict one reports the reason in ``referral_message``. A coupon together with ``apply_referral`` always raises
+    ``PricingError('referral_with_coupon', ..., 400)``.
     """
     if mode not in MODES:
         raise PricingError("invalid_mode", "mode must be one of new, upgrade, renew")
@@ -352,11 +401,42 @@ def build_quote(
     staff_charge = money(charged_staff * price * months)
     after_credit = max(ZERO, staff_charge - credit)
 
+    # Refer & Earn: a coupon and a reward never share a purchase (checked before anything else is priced)
+    if apply_referral and code:
+        raise PricingError("referral_with_coupon", REFERRAL_MSG_WITH_COUPON, 400)
+    offer = referral or ReferralOffer()
+    ref_available = max(0, int(offer.available_count or 0))
+    ref_percent = to_decimal(offer.percent, D(REFERRAL_PERCENT))
+    ref_why: Optional[str] = None                  # why THIS quote cannot use a reward
+    if mode not in REFERRAL_MODES:
+        ref_why = REFERRAL_MSG_UPGRADE
+    elif int(tier.plan_id) not in REFERRAL_ELIGIBLE_PLAN_IDS:
+        ref_why = REFERRAL_MSG_PLAN
+    elif ref_available < 1 or offer.reward_id is None:
+        ref_why = REFERRAL_MSG_NONE
+    ref_eligible = ref_why is None
+    ref_applied = False
+    ref_message: Optional[str] = None
+    ref_reward_id: Optional[int] = None
+    ref_discount = ZERO
+    if apply_referral:
+        if ref_eligible and 0 < ref_percent <= 100:
+            ref_discount = max(ZERO, min(whole_rupee(after_credit * ref_percent / 100), after_credit))
+            ref_applied = True
+            ref_reward_id = int(offer.reward_id)
+        elif strict_referral:
+            raise PricingError("referral_not_applicable", ref_why or REFERRAL_MSG_NONE, 400)
+        else:
+            ref_message = ref_why or REFERRAL_MSG_NONE
+
     discount = ZERO
     percent: Optional[Decimal] = None
     applied = False
     message: Optional[str] = None
-    if code:
+    if ref_applied:
+        discount = ref_discount
+        percent = ref_percent
+    elif code:
         try:
             if mode == "upgrade":
                 raise CouponError("coupon_not_applicable", "Coupons do not apply to staff upgrades")
@@ -401,6 +481,13 @@ def build_quote(
         min_staff=min_staff,
         has_current_plan=has_current,
         is_plan_expired=expired,
+        referral_applied=ref_applied,
+        referral_percent=ref_percent,
+        referral_message=ref_message,
+        referral_available_count=ref_available,
+        referral_eligible=ref_eligible,
+        referral_eligible_message=ref_why,
+        referral_reward_id=ref_reward_id,
     )
 
 
@@ -413,6 +500,8 @@ def pick_mode(
     coupon: Optional[Coupon] = None,
     coupon_code: Optional[str] = None,
     client_amount: Any = None,
+    referral: Optional[ReferralOffer] = None,
+    apply_referral: bool = False,
 ) -> str:
     """Mode for a request that did not send one (older app builds).
 
@@ -438,7 +527,8 @@ def pick_mode(
         for cand in candidates:
             try:
                 q = build_quote(mode=cand, target=target, staff=staff, current=current, today=today,
-                                coupon=coupon, coupon_code=coupon_code, strict_coupon=False)
+                                coupon=coupon, coupon_code=coupon_code, strict_coupon=False,
+                                referral=referral, apply_referral=apply_referral, strict_referral=False)
             except PricingError:
                 continue
             if q.grand_total == shown:

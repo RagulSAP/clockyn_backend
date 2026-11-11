@@ -1,6 +1,6 @@
 -- ============================================================================================
 -- Clockyn FAQ starter set for the Support > FAQ screen of the app and the FAQ Hub of the web console.
--- 379 questions in 6 buckets. Generated 2026-11-08.
+-- 388 questions in 6 buckets. Generated 2026-11-08.
 --
 -- Run AFTER the 'CREATE: FAQ' block of clockyn_ddl_latest.sql (table clockyn_dev.support_faq).
 -- Safe to run more than once: a question that already exists (compared case-insensitively) is skipped, so FAQs you
@@ -11,7 +11,7 @@
 --   Attendance & Time: Attendance & Face Punch (45), Shifts, Holidays & Rules (21), Leave & Requests (15), Reports & Analytics (16)
 --   Pay & Expenses: Payroll & Salary (39), Expenses & Advances (22)
 --   Team & Customers: CRM & Leads (18), Chat & Announcements (18)
---   Plans & Payments: Plans & Billing (22), Payments & Invoices (17)
+--   Plans & Payments: Plans & Billing (22), Payments & Invoices (17), Refer & Earn (9)
 --   Help & Fixes: Notifications & Permissions (15), Troubleshooting (20), Support & Feedback (13)
 -- ============================================================================================
 
@@ -1727,6 +1727,57 @@ WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
 SELECT 'Plans & Payments', 'Payments & Invoices', 'Can I get a refund?', 'Refund rules are decided by the Clockyn team and are not set inside the app. Please write to us in Support > Live Chat with your payment details and we will tell you what is possible.', 3310, 1
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('Can I get a refund?'));
+
+-- Plans & Payments / Refer & Earn
+INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
+SELECT 'Plans & Payments', 'Refer & Earn', 'What is Refer & Earn?', 'Refer & Earn lets you invite other companies to Clockyn. You share your own referral code. When a new company enters it while registering, both companies get 10% off a plan: the company you referred gets 10% off its first plan, and you get 10% off your next plan or renewal once they have paid for their first plan.
+The 10% reward works on Prime and Elite plans only. Refer & Earn is available to the company admin.', 3311, 1
+WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('What is Refer & Earn?'));
+
+INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
+SELECT 'Plans & Payments', 'Refer & Earn', 'Where do I find my referral code and how do I share it?', '1. Open Settings and tap Refer & Earn. It is the row right after Your Plan & Validity.
+2. Your 6-character code is shown in large letters at the top. Tap the code or Copy code to copy it.
+3. Tap Share to use your phone''s share sheet, WhatsApp to send it in WhatsApp, or SMS to send it as a text message. Copy message copies a ready-made invitation that includes your code.
+Every company has one code and it does not change.', 3312, 1
+WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('Where do I find my referral code and how do I share it?'));
+
+INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
+SELECT 'Plans & Payments', 'Refer & Earn', 'How does the company I refer use my code?', 'The new company types your code in the optional Referral code box on the register screen, when it creates its Clockyn account. When the code is right, the screen shows Referred by followed by your company name.
+The code can only be entered while registering. It cannot be added to an account that already exists, a company cannot use its own code, and a company can be referred only once. If the code is wrong, the register screen shows a message and asks for the correct code.', 3313, 1
+WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('How does the company I refer use my code?'));
+
+INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
+SELECT 'Plans & Payments', 'Refer & Earn', 'How much do I save, and when can I use my reward?', 'Each referral gives 10% off, to both companies.
+The company you referred can use its reward right away, on its first paid plan after the free trial.
+Your reward shows as Pending until that company pays for its first plan. Then it changes to Available, and you can use it on your next plan or renewal. Rewards do not expire.
+The discount is taken off the staff charge before GST, after any plan credit.', 3314, 1
+WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('How much do I save, and when can I use my reward?'));
+
+INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
+SELECT 'Plans & Payments', 'Refer & Earn', 'Which plans and purchases does the referral reward work on?', 'It works only on Prime and Elite plans, when you take a first plan after the free trial or renew your plan. It does not work on the Core plan, and it does not work when you add more staff with Upgrade Plan.
+If you pick a plan it does not cover, the Apply button is greyed out and the card says why.', 3315, 1
+WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('Which plans and purchases does the referral reward work on?'));
+
+INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
+SELECT 'Plans & Payments', 'Refer & Earn', 'How do I use my referral reward when I pay?', '1. Open Settings > Your Plan & Validity and choose your plan (or renew), then continue to the Payment Summary.
+2. Under the coupon box you will see Referral reward - 10% off with the number of rewards you have available.
+3. Tap Apply. The card turns green and the price breakdown shows Referral reward (10%) with your new Grand Total.
+4. Tap Pay as usual. To change your mind before paying, tap Remove.
+The reward is used up only when the payment goes through. On iPhone the app only shows your plan status, so do this on an Android phone or the web version.', 3316, 1
+WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('How do I use my referral reward when I pay?'));
+
+INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
+SELECT 'Plans & Payments', 'Refer & Earn', 'Can I use a referral reward and a coupon together?', 'No. A purchase can use either a coupon or a referral reward, not both. If you apply one while the other is applied, the first one is removed and the app tells you. Choose whichever saves you more.', 3317, 1
+WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('Can I use a referral reward and a coupon together?'));
+
+INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
+SELECT 'Plans & Payments', 'Refer & Earn', 'I referred more than one company. Can I use the reward more than once?', 'Yes. Every company you refer gives you one 10% reward, and you can use one reward per purchase. If you referred 2 companies, you can use a 10% reward on two separate purchases, for example on two renewals. Each reward is available once the company you referred has paid for its first plan.', 3318, 1
+WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('I referred more than one company. Can I use the reward more than once?'));
+
+INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
+SELECT 'Plans & Payments', 'Refer & Earn', 'Where can I see who I referred, and why can I not apply my reward?', 'Open Settings > Refer & Earn. Under Organisations you referred, each company shows its Joined date, a Signed up or Paid label, and the status of your reward: Pending (unlocks when they pay), Available, Used (with the plan and the amount saved) or Void. Your rewards show the Available, Pending and Used counts.
+If you cannot apply a reward, check these: the reward is still Pending because the company has not paid yet, you picked the Core plan, you are adding staff with Upgrade Plan, or you already applied a coupon. If none of these fits, ask in Support > Live Chat.', 3319, 1
+WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('Where can I see who I referred, and why can I not apply my reward?'));
 
 -- ───── Help & Fixes ──────────────────────────────────────────────────────────
 -- Help & Fixes / Notifications & Permissions

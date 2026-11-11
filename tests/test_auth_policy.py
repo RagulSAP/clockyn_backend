@@ -115,7 +115,7 @@ def test_normalise_path():
     ("POST", "/auth/register"), ("POST", "/auth/logout"), ("GET", "/auth/check-mobile/9876"), ("GET", "/auth/check-email/a@b.c"),
     ("GET", "/auth/org-logo/o1"), ("GET", "/profile-photo/u1"), ("GET", "/auth/session-events/u1"),
     ("POST", "/webhook/razorpay"), ("POST", "/webhook/msg91/whatsapp"), ("GET", "/static/a.png"),
-    ("POST", "/requests/device-change/submit"), ("POST", "/auth/admin-login"),
+    ("POST", "/requests/device-change/submit"), ("POST", "/auth/admin-login"), ("GET", "/referral/validate"),
 ])
 def test_public_paths(method, path):
     assert P.classify(method, path) == P.PUBLIC
@@ -132,6 +132,7 @@ def test_device_change_submit_is_public_for_post_only():
     ("PUT", "/auth/gen-admin-users/9"), ("POST", "/plans/coupons"), ("DELETE", "/plans/coupons/3"), ("POST", "/plans"),
     ("POST", "/plans/"), ("PUT", "/plans/7"), ("DELETE", "/plans/7"), ("GET", "/plans/all"),
     ("GET", "/support/requests/all"), ("PUT", "/support/update/4"), ("GET", "/invoice/bulk-download"),
+    ("GET", "/gen-dashboard/referrals"), ("POST", "/gen-dashboard/referrals/rewards/9/void"),
 ])
 def test_operator_paths_are_never_satisfied_by_an_app_token(method, path):
     assert P.classify(method, path) == P.OPERATOR
@@ -155,7 +156,7 @@ def allowed(method, path, identity, perms=()):
     ("POST", "/orders/create"), ("POST", "/orders/quote"), ("GET", "/orders/history/o"), ("POST", "/payments/verify"),
     # GET /invoice/download is public in the policy since WP12 K2 (signed link); the handler demands the admin's token
     # itself: tests/test_signed_urls.py
-    ("GET", "/invoice/history"), ("POST", "/managers/assign"), ("DELETE", "/managers/u1"),
+    ("GET", "/invoice/history"), ("GET", "/referral/o"), ("POST", "/managers/assign"), ("DELETE", "/managers/u1"),
     ("POST", "/managers/u1/permissions"), ("POST", "/api/attendance-rule/o"), ("DELETE", "/company/delete/o/u"),
     ("DELETE", "/addstaff/u1/permanent"), ("DELETE", "/staff-location/cleanup"), ("POST", "/auth/upload-org-logo/o"),
     ("POST", "/department/add"), ("PUT", "/department/update/d"), ("POST", "/department/delete/d"),

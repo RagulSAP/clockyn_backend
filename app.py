@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 import uvicorn
-from router import add_staff, auth, home, branch, company, salary, leads, manager, shift, employee, incentive, face_attendance, emp_expenses, requests, staff_location, chat, announcement, report, department, gen_orders, gen_payments, gen_plans, gen_webhook, advance, profile_photo, holiday, gen_dashboard, version, ws_badge, support, attribution, live_chat, gen_live_chat, analytics
+from router import add_staff, auth, home, branch, company, salary, leads, manager, shift, employee, incentive, face_attendance, emp_expenses, requests, staff_location, chat, announcement, report, department, gen_orders, gen_payments, gen_plans, gen_webhook, advance, profile_photo, holiday, gen_dashboard, version, ws_badge, support, attribution, live_chat, gen_live_chat, analytics, referral
 from utils import email
 from utils import branding
 from router import wages
@@ -83,6 +83,7 @@ app.include_router(department.router)
 app.include_router(gen_orders.router)
 app.include_router(gen_payments.router)
 app.include_router(gen_plans.router)
+app.include_router(referral.router)
 app.include_router(gen_webhook.router)
 app.include_router(advance.router)
 app.include_router(email.router)

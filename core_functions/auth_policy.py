@@ -85,6 +85,9 @@ PUBLIC_RULES: Tuple[Tuple[object, str], ...] = (
     ("*", "/auth/session-events/*"),
     # the staff submits this BEFORE login (user_id + org_id); the existing 1-pending-and-3-per-24h rule limits it
     (("POST",), "/requests/device-change/submit"),
+    # Refer & Earn: the signup screen checks a typed referral code before the account exists (rate limited per IP,
+    # answers only the referrer's organisation name); every other /referral/* route is an organisation-admin route
+    (("GET",), "/referral/validate"),
     # payment / messaging webhooks carry their own HMAC signature
     ("*", "/webhook/*"),
     # static files
@@ -146,6 +149,7 @@ ROLE_RULES: Tuple[RoleRule, ...] = (
     # --- administrator only: billing, manager administration, destructive company/staff operations
     RoleRule("*", "/orders/*", ADMIN_ONLY, note="plan purchase"),
     RoleRule("*", "/payments/*", ADMIN_ONLY, note="payment verification"),
+    RoleRule("*", "/referral/*", ADMIN_ONLY, note="Refer & Earn page of the organisation (GET /referral/validate is public)"),
     RoleRule("*", "/live-chat/*", ADMIN_ONLY, note="live chat with Clockyn support (organisation admin only, not plan-gated)"),
     RoleRule("*", "/invoice/*", ADMIN_ONLY, note="invoices (bulk-download is operator)"),
     RoleRule(("POST",), "/managers/assign", ADMIN_ONLY, note="promote staff to manager"),

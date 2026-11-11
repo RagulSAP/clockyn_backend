@@ -16,6 +16,7 @@ Rules (name -> default `count/window_seconds`), each overridable with the env va
   AUTH_LOGIN           30/60     per IP      POST /auth/login, /auth/employee-login          (anti-enumeration)
   OTP_GENERATE         20/3600   per IP      POST /auth/generate-otp (the per-contact throttle stays in place)
   DEVICE_CHANGE_SUBMIT 10/3600   per IP      POST /requests/device-change/submit
+  REFERRAL_VALIDATE    20/60     per IP      GET /referral/validate (signup screen; anti-enumeration of referral codes)
   OPERATOR_FAIL        20/60     per IP      failed operator-credential attempts (see core_functions/operator_auth.py)
 
 Global switches (read on every call): `RATE_LIMIT_ENABLED` (default 1; 0/false/off disables every rule),
@@ -55,6 +56,7 @@ DEFAULT_RULES: Dict[str, Tuple[int, int]] = {
     "AUTH_LOGIN": (30, 60),
     "OTP_GENERATE": (20, 3600),
     "DEVICE_CHANGE_SUBMIT": (10, 3600),
+    "REFERRAL_VALIDATE": (20, 60),
     "OPERATOR_FAIL": (20, 60),
 }
 

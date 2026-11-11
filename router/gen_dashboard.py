@@ -46,6 +46,7 @@ from core_functions.gen_dashboard_functions import (
     OrgStatusRequest,
 )
 from core_functions.analytics_functions import clickstream_events, clickstream_summary, purge_clickstream
+from core_functions.referral_functions import operator_referrals, operator_void_reward
 
 # Platform-operator routes: every route of this router goes through the ONE operator guard (core_functions/operator_auth.py).
 router = APIRouter(prefix="/gen-dashboard", tags=["gen-dashboard"], dependencies=[Depends(require_operator)])
@@ -154,6 +155,17 @@ async def get_active_orgs_today_route():
 @router.get("/org-subscriptions")
 async def get_org_subscriptions_list_route():
     return await get_org_subscriptions_list()
+
+
+# ── Refer & Earn: read = any operator, voiding a reward = super admin (role_id 1) ──────────────────────────────────────
+@router.get("/referrals")
+async def referrals_route(status: str = Query("all"), q: str = Query("", max_length=100)):
+    return await operator_referrals(status, q)
+
+
+@router.post("/referrals/rewards/{reward_id}/void", dependencies=[Depends(require_operator_super)])
+async def referral_reward_void_route(reward_id: int):
+    return await operator_void_reward(reward_id)
 
 
 @router.get("/org/{org_id}/attendance/{date}")

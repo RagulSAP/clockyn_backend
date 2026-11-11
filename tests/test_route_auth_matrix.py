@@ -83,12 +83,14 @@ def test_the_public_list_is_exactly_the_documented_one():
         "/auth/admin-login", "/auth/admin-login/verify-otp",
         "/auth/check-mobile/{}", "/auth/check-email/{}", "/auth/org-logo/{}", "/auth/session-events/{}",
         "/profile-photo/{}", "/requests/device-change/submit",
+        "/referral/validate",           # Refer & Earn: the signup screen checks a typed code (rate limited per IP)
         "/webhook/razorpay", "/webhook/msg91/whatsapp",
         "/invoice/download",            # WP12 K2: signed link, otherwise the handler demands the admin's token itself
     }, "a route became public (or stopped being public): update the contract with the app first"
     # profile photo: only the READ is public, the upload needs an identity (WP12 K2)
     assert {(m, p) for m, p in public if p == "/profile-photo/{}"} == {("GET", "/profile-photo/{}")}
     assert {(m, p) for m, p in public if p == "/invoice/download"} == {("GET", "/invoice/download")}
+    assert {(m, p) for m, p in public if p == "/referral/validate"} == {("GET", "/referral/validate")}
 
 
 def test_the_operator_list_covers_the_platform_routes():
@@ -101,7 +103,8 @@ def test_the_operator_list_covers_the_platform_routes():
                    ("DELETE", "/plans/coupons/{}"), ("GET", "/plans/all"), ("POST", "/plans/"), ("PUT", "/plans/{}"),
                    ("DELETE", "/plans/{}"), ("GET", "/support/requests/all"), ("PUT", "/support/update/{}"),
                    ("GET", "/invoice/bulk-download"), ("GET", "/company/deletion-requests"),
-                   ("GET", "/attribution/reports/meta-attribution")):
+                   ("GET", "/attribution/reports/meta-attribution"),
+                   ("GET", "/gen-dashboard/referrals"), ("POST", "/gen-dashboard/referrals/rewards/{}/void")):
         assert kind_of(*needle) == P.OPERATOR, needle
     assert len(operator) >= 20
 
@@ -113,6 +116,7 @@ def test_the_operator_list_covers_the_platform_routes():
     ("GET", "/support/subjects"), ("POST", "/support/submit"), ("GET", "/support/requests/{}"), ("POST", "/support/{}/reply"),
     ("POST", "/company/suggest-feature"), ("GET", "/company/suggest-feature/mine"), ("POST", "/company/request-deletion/{}"),
     ("GET", "/invoice/history"), ("POST", "/attribution/meta"),
+    ("GET", "/referral/{}"),     # the organisation's own Refer & Earn page: an app route (admin only), never operator
 ])
 def test_app_facing_routes_are_not_operator_routes(method, path):
     assert P.classify(method, path) == P.AUTHENTICATED

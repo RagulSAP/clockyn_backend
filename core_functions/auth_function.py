@@ -462,6 +462,7 @@ class AdminRegisterRequest(BaseModel):
     state: Optional[str] = None
     district: Optional[str] = None
     pincode: Optional[int] = None
+    referral_code: Optional[str] = None     # Refer & Earn: another organisation's code (optional, only at registration)
  
 class DeviceTokenVerifyRequest(BaseModel):
     contact: str
@@ -483,6 +484,12 @@ async def admin_register_json(data: AdminRegisterRequest, device_token: str = No
         existing_user = cursor.fetchone()
         if existing_user:
             raise HTTPException(status_code=400, detail="User already registered")
+
+        # Refer & Earn: refuse an unknown / mistyped code (HTTP 400) BEFORE anything is created
+        referral_code = (getattr(data, "referral_code", None) or "").strip()
+        if referral_code:
+            from core_functions import referral_functions as referral_fn
+            referral_fn.resolve_code_for_registration(cursor, referral_code)
        
         # Generate IDs
         user_id = str(uuid.uuid4())
@@ -541,6 +548,10 @@ async def admin_register_json(data: AdminRegisterRequest, device_token: str = No
             "INSERT INTO users (user_id, org_id, name, emp_id, branch_id, dept_id, mobile_number, email, role_id, device_token, push_token, created_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (user_id, org_id, data.name, data.emp_id or '', primary_branch_id, None, data.mobile_number, data.email, 1, device_token, '', get_utc_now())
         )
+
+        # Refer & Earn: the referral and both rewards are written in THIS transaction (committed with the organisation below)
+        if referral_code:
+            referral_fn.attach_referral_at_registration(cursor, org_id, referral_code)
        
         # Insert company additional info if provided
         if any([data.pan_number, data.company_website, data.cin_number, data.tan_number, data.msme_number, data.business_category, data.gst_number]):
@@ -562,6 +573,15 @@ async def admin_register_json(data: AdminRegisterRequest, device_token: str = No
             ON CONFLICT (org_id) DO NOTHING
         """, (org_id, user_id, trial_start, trial_end))
         conn.commit()
+
+        # Refer & Earn: give the new organisation its own code now (best effort: it is also created on first view)
+        try:
+            from core_functions import referral_functions as referral_fn
+            referral_fn.get_or_create_code(cursor, org_id)
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            logger.warning("Referral code not created at registration for org %s (it is created on first view)", org_id, exc_info=True)
  
         # Get org logo URL if exists
         from ml.s3 import get_org_logo_url

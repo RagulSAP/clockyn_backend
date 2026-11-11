@@ -315,7 +315,11 @@ async def get_all_organizations():
                 AND emp.status = 1
                 AND emp.role_id IN (2, 3)
             LEFT JOIN LATERAL (
-                SELECT plan_id, status, start_date, end_date
+                -- the stored status only flips to EXPIRED when someone from the org opens the app (lazy sweep), so an
+                -- ACTIVE plan past its end date (IST, end date inclusive) is reported as EXPIRED here
+                SELECT plan_id,
+                       CASE WHEN status = 'ACTIVE' AND end_date < %s THEN 'EXPIRED' ELSE status END AS status,
+                       start_date, end_date
                 FROM punchapp_subscription
                 WHERE org_id = o.org_id
                 ORDER BY created_at DESC
@@ -344,7 +348,7 @@ async def get_all_organizations():
                 sub.status, gp.plan_name, sub.start_date, sub.end_date,
                 ft.end_date, att.attendance_activity_count
             ORDER BY o.created_at DESC
-        """, (ist_today(),))
+        """, (ist_today(), ist_today()))
         rows = cursor.fetchall()
         return [
             {
@@ -394,7 +398,9 @@ async def get_recent_orgs():
             FROM org_info o
             LEFT JOIN users u ON u.parent_id = o.org_id AND u.status = 1
             LEFT JOIN LATERAL (
-                SELECT plan_id, status, end_date
+                SELECT plan_id,
+                       CASE WHEN status = 'ACTIVE' AND end_date < %s THEN 'EXPIRED' ELSE status END AS status,
+                       end_date
                 FROM punchapp_subscription
                 WHERE org_id = o.org_id
                 ORDER BY created_at DESC
@@ -403,7 +409,7 @@ async def get_recent_orgs():
             LEFT JOIN gen_plans gp ON gp.plan_id = sub.plan_id
             GROUP BY o.org_id, o.org_name, o.created_at, sub.status, gp.plan_name, sub.end_date
             ORDER BY o.created_at DESC
-        """)
+        """, (ist_today(),))
         rows = cursor.fetchall()
         return [
             {
@@ -916,19 +922,28 @@ async def get_org_subscriptions_list():
                    p.plan_name, ps.staff_limit, ps.start_date, ps.end_date, ps.status,
                    gi.invoice_number, gi.total_amount, gi.base_amount, gi.cgst, gi.sgst,
                    gi.razorpay_payment_id, gi.payment_date, gi.valid_till, gi.coupon_code,
-                   gi.invoice_user_id
+                   gi.invoice_user_id,
+                   (rrw.reward_id IS NOT NULL) AS referral_applied,
+                   rrw.used_discount_amount AS referral_discount,
+                   rrw.role AS referral_role,
+                   rpo.org_name AS referral_with_org_name
             FROM punchapp_subscription ps
             LEFT JOIN org_info o ON o.org_id = ps.org_id
             LEFT JOIN users u ON u.user_id = o.parent_id
             LEFT JOIN gen_plans p ON p.plan_id = ps.plan_id
             LEFT JOIN LATERAL (
                 SELECT invoice_number, total_amount, base_amount, cgst, sgst,
-                       razorpay_payment_id, payment_date, valid_till, user_id AS invoice_user_id, coupon_code
+                       razorpay_payment_id, payment_date, valid_till, user_id AS invoice_user_id, coupon_code,
+                       referral_reward_id
                 FROM gen_invoices gi2
                 WHERE gi2.org_id = ps.org_id
                 ORDER BY gi2.payment_date DESC
                 LIMIT 1
             ) gi ON true
+            -- Refer & Earn of the LATEST invoice: its reward, the referral and the organisation on the other side
+            LEFT JOIN referral_reward rrw ON rrw.reward_id = gi.referral_reward_id
+            LEFT JOIN referral rf ON rf.referral_id = rrw.referral_id
+            LEFT JOIN org_info rpo ON rpo.org_id = (CASE WHEN rrw.role = 'referrer' THEN rf.referred_org_id ELSE rf.referrer_org_id END)
             WHERE ps.status = 'ACTIVE'
             ORDER BY ps.end_date ASC
         """)
@@ -944,6 +959,8 @@ async def get_org_subscriptions_list():
             item['base_amount']   = float(item['base_amount'])   if item.get('base_amount')   else None
             item['cgst']          = float(item['cgst'])          if item.get('cgst')          else None
             item['sgst']          = float(item['sgst'])          if item.get('sgst')          else None
+            item['referral_applied']  = bool(item.get('referral_applied'))
+            item['referral_discount'] = float(item['referral_discount']) if item.get('referral_discount') is not None else None
             result.append(item)
         return {"success": True, "data": result}
     except Exception as e:

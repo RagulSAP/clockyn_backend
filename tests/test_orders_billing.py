@@ -55,6 +55,10 @@ class FakeDB:
         self.invoices = []
         self.events = []
         self.free_trial = []
+        # Refer & Earn (core_functions/referral_functions.py)
+        self.codes = {}         # org_id -> code
+        self.referrals = []     # {referral_id, referrer_org_id, referred_org_id, code, created_at, qualified_at}
+        self.rewards = []       # {reward_id, referral_id, org_id, role, status, percent, created_at, available_at, used_*}
         self.seq = 0
         self.fail_invoice_insert = False
         self.log = []           # (sql, params)
@@ -72,7 +76,7 @@ class FakeDB:
         o = {"id": len(self.orders) + 1, "user_id": ADMIN, "org_id": ORG, "plan_id": plan_id, "razorpay_order_id": oid,
              "amount": amount, "currency": "INR", "status": status, "staff_limit": staff, "coupon_code": None,
              "purchase_mode": mode, "term_months": term, "base_amount": base, "gst_amount": gst, "payment_flag": None,
-             "activated_at": None}
+             "activated_at": None, "discount_amount": D("0.00"), "referral_reward_id": None}
         o.update(kw)
         self.orders.append(o)
         return o
@@ -147,7 +151,7 @@ class FakeCursor:
         if s.startswith("INSERT INTO gen_orders"):
             keys = ["user_id", "org_id", "plan_id", "razorpay_order_id", "amount", "currency", "status", "staff_limit", "coupon_code",
                     "purchase_mode", "term_months", "base_amount", "gst_amount", "discount_amount", "credit_amount",
-                    "client_amount", "pricing"]
+                    "client_amount", "pricing", "referral_reward_id"]
             assert len(p) == len(keys) == s.split("VALUES")[1].count("%s")
             row = dict(zip(keys, p))
             row.update({"id": len(db.orders) + 1, "payment_flag": None, "activated_at": None})
@@ -196,6 +200,11 @@ class FakeCursor:
                 if o["id"] == p[0]:
                     o["payment_flag"] = "AMOUNT_MISMATCH"
             return self._set(None, rowcount=1)
+        if s.startswith("UPDATE gen_orders SET payment_flag = 'REFERRAL_ALREADY_USED'"):
+            for o in db.orders:
+                if o["id"] == p[0]:
+                    o["payment_flag"] = "REFERRAL_ALREADY_USED"
+            return self._set(None, rowcount=1)
         if s.startswith("UPDATE gen_orders SET status = 'FAILED'"):
             n = 0
             for o in db.orders:
@@ -219,13 +228,50 @@ class FakeCursor:
             if db.fail_invoice_insert:
                 raise RuntimeError("invoice insert failed")
             keys = ["invoice_id", "invoice_number", "user_id", "org_id", "razorpay_payment_id", "razorpay_order_id", "plan_name",
-                    "staff_count", "base_amount", "cgst", "sgst", "igst", "total_amount", "payment_date", "valid_till", "coupon_code"]
+                    "staff_count", "base_amount", "cgst", "sgst", "igst", "total_amount", "payment_date", "valid_till", "coupon_code",
+                    "referral_reward_id"]
             assert len(p) == len(keys) == s.split("VALUES")[1].split("ON CONFLICT")[0].count("%s")
             row = dict(zip(keys, p))
             if any(i["razorpay_payment_id"] == row["razorpay_payment_id"] or i["invoice_number"] == row["invoice_number"] for i in db.invoices):
                 return self._set(None, rowcount=0)
             db.invoices.append(row)
             return self._set({"invoice_number": row["invoice_number"]}, rowcount=1)
+
+        # ── Refer & Earn ──────────────────────────────────────────────────
+        if s.startswith("SELECT reward_id, percent, COUNT(*) OVER () AS available_count FROM referral_reward"):
+            rows = sorted((r for r in db.rewards if r["org_id"] == p[0] and r["status"] == "AVAILABLE"),
+                          key=lambda r: (r["available_at"] or r["created_at"], r["reward_id"]))
+            if not rows:
+                return self._set(None)
+            return self._set({"reward_id": rows[0]["reward_id"], "percent": rows[0]["percent"], "available_count": len(rows)})
+        if s.startswith("UPDATE referral_reward SET status = 'USED'"):
+            order_id, invoice_number, plan_name, discount, reward_id, org_id = p
+            for r in db.rewards:
+                if r["reward_id"] == reward_id and r["org_id"] == org_id and r["status"] == "AVAILABLE":
+                    r.update(status="USED", used_at=datetime(2026, 11, 2), used_order_id=order_id, used_invoice_number=invoice_number,
+                             used_plan_name=plan_name, used_discount_amount=discount)
+                    return self._set(None, rowcount=1)
+            return self._set(None, rowcount=0)
+        if s.startswith("UPDATE referral_reward SET used_invoice_number = %s WHERE reward_id = %s AND used_order_id = %s"):
+            n = 0
+            for r in db.rewards:
+                if r["reward_id"] == p[1] and r.get("used_order_id") == p[2] and r["status"] == "USED":
+                    r["used_invoice_number"] = p[0]
+                    n += 1
+            return self._set(None, rowcount=n)
+        if s.startswith("UPDATE referral SET qualified_at = NOW() WHERE referred_org_id = %s AND qualified_at IS NULL"):
+            for ref in db.referrals:
+                if ref["referred_org_id"] == p[0] and ref["qualified_at"] is None:
+                    ref["qualified_at"] = datetime(2026, 11, 2)
+                    return self._set({"referral_id": ref["referral_id"]}, rowcount=1)
+            return self._set(None, rowcount=0)
+        if s.startswith("UPDATE referral_reward SET status = 'AVAILABLE', available_at = NOW() WHERE referral_id = %s AND role = 'referrer'"):
+            n = 0
+            for r in db.rewards:
+                if r["referral_id"] == p[0] and r["role"] == "referrer" and r["status"] == "PENDING":
+                    r.update(status="AVAILABLE", available_at=datetime(2026, 11, 2))
+                    n += 1
+            return self._set(None, rowcount=n)
 
         # ── webhook events ────────────────────────────────────────────────
         if s.startswith("INSERT INTO gen_webhook_events"):

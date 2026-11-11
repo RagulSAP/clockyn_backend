@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from core_functions.db_function import get_db_connection, return_connection
 from core_functions import pricing
+from core_functions import referral_functions as referral_fn
 from psycopg2.extras import RealDictCursor, Json
 from utils.razorpay import get_razorpay_client
 from utils.timezone import ist_today
@@ -19,7 +20,9 @@ def _owner_check_enabled() -> bool:
 
 
 def _fail(exc: pricing.PricingError):
-    return HTTPException(status_code=exc.status, detail=exc.message)
+    # `detail` stays the human message (what the app shows); the machine code of a referral error rides in a header.
+    headers = {"X-Error-Code": exc.code} if str(exc.code).startswith("referral_") else None
+    return HTTPException(status_code=exc.status, detail=exc.message, headers=headers)
 
 
 # ── data the price depends on (all read from the database, never from the request) ──────────────
@@ -146,6 +149,7 @@ def compute_server_quote(
     client_amount=None,
     strict_coupon=True,
     today=None,
+    apply_referral=False,
 ):
     """Price a purchase entirely from database data. Returns the pricing.Quote. Raises HTTPException (404 / 400)."""
     today = today or ist_today()
@@ -163,16 +167,21 @@ def compute_server_quote(
     if mode is None and plan_id is not None and target is None:
         raise HTTPException(status_code=404, detail="Plan not found")
     coupon = _load_coupon(cursor, code)
+    # The reward is always looked up (the quote reports the available count even when it is not applied); the id is the
+    # server's pick (oldest AVAILABLE of THIS organisation), never something the client sent.
+    offer = referral_fn.load_available_reward(cursor, org_id)
 
     try:
         if mode is None:
             mode = pricing.pick_mode(
                 target=target, staff=staff_limit, current=current, today=today,
                 coupon=coupon, coupon_code=code, client_amount=client_amount,
+                referral=offer, apply_referral=apply_referral,
             )
         return pricing.build_quote(
             mode=mode, target=target, staff=staff_limit, current=current, today=today,
             coupon=coupon, coupon_code=code, strict_coupon=strict_coupon,
+            referral=offer, apply_referral=apply_referral, strict_referral=strict_coupon,
         )
     except pricing.PricingError as exc:
         raise _fail(exc)
@@ -185,6 +194,7 @@ async def quote_order(
     staff_limit: int = 10,
     coupon_code: str = None,
     mode: str = None,
+    apply_referral: bool = False,
 ):
     """POST /orders/quote: the price breakdown the checkout screen shows. Read-only; nothing is stored."""
     conn = None
@@ -199,7 +209,7 @@ async def quote_order(
         # the order itself refuses it.
         quote = compute_server_quote(
             cursor, org_id=org_id, plan_id=plan_id, staff_limit=staff_limit,
-            coupon_code=coupon_code, mode=mode, strict_coupon=False,
+            coupon_code=coupon_code, mode=mode, strict_coupon=False, apply_referral=bool(apply_referral),
         )
         return {"success": True, "data": quote.to_dict()}
     except HTTPException:
@@ -222,6 +232,7 @@ async def create_new_order(
     staff_limit: int = 10,
     coupon_code: str = None,
     mode: str = None,
+    apply_referral: bool = False,
 ):
     """
     Creates the payment order. The amount charged is ALWAYS recomputed here from the database (plan price, coupon,
@@ -242,6 +253,7 @@ async def create_new_order(
         quote = compute_server_quote(
             cursor, org_id=org_id, plan_id=plan_id, staff_limit=staff_limit,
             coupon_code=coupon_code, mode=mode, client_amount=amount, strict_coupon=True,
+            apply_referral=bool(apply_referral),
         )
         if not quote.payable:
             raise HTTPException(status_code=400, detail="Amount must be greater than 0")
@@ -327,9 +339,9 @@ async def create_new_order(
             INSERT INTO gen_orders (
                 user_id, org_id, plan_id, razorpay_order_id, amount, currency, status, staff_limit, coupon_code,
                 purchase_mode, term_months, base_amount, gst_amount, discount_amount, credit_amount,
-                client_amount, pricing
+                client_amount, pricing, referral_reward_id
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             user_id,
             org_id,
@@ -348,6 +360,7 @@ async def create_new_order(
             quote.credit,
             client_amount,
             Json(quote.to_dict()),
+            quote.referral_reward_id if quote.referral_applied else None,
         ))
 
         conn.commit()
