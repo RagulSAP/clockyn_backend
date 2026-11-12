@@ -973,6 +973,8 @@ def _authorize_invoice_download(request: Request) -> str:
       * REQUIRE_AUTH off: the legacy unsigned call, as before                                -> "open"
       * REQUIRE_AUTH on: a valid app token of an administrator (the organisation of the invoice
         is checked once the row is read)                                                     -> "token"
+      * REQUIRE_AUTH on: a platform operator (the admin console: operator session token or the key, see
+        core_functions/operator_auth.py); an operator may fetch any organisation's invoice    -> "operator"
     otherwise 401 / 403."""
     state = signed_urls.verify(DOWNLOAD_PATH, dict(request.query_params))
     if state == "ok":
@@ -981,6 +983,11 @@ def _authorize_invoice_download(request: Request) -> str:
         return "open"
     identity = getattr(request.state, "identity", None)
     if identity is None:
+        # Not an app user: the console sends an operator session token (Authorization) or the operator key.
+        # authorize() raises its own 401 / 403 / 429 when that credential is wrong.
+        if request.headers.get("authorization") or request.headers.get(operator_auth.KEY_HEADER):
+            operator_auth.authorize(request, always_check=True)
+            return "operator"
         raise HTTPException(status_code=401, detail="Link expired" if state == "expired" else "Not authenticated",
                             headers={"WWW-Authenticate": "Bearer"})
     if identity.role_id != 1:

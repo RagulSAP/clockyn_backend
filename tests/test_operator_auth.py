@@ -125,8 +125,9 @@ def test_an_app_token_never_satisfies_the_guard(monkeypatch):
     monkeypatch.setenv("OPERATOR_ENFORCE", "1")
     FakeDirectory({"adm": {"role": 1, "org": "o"}}).install()
     c = operator_app()
-    assert c.get("/open", headers=auth("adm", "o", 1)).status_code == 403
-    assert c.get("/login", headers=auth("adm", "o", 1)).status_code == 403
+    # a Bearer token that is not an operator session is "not authenticated" (401; the console redirects to login)
+    assert c.get("/open", headers=auth("adm", "o", 1)).status_code == 401
+    assert c.get("/login", headers=auth("adm", "o", 1)).status_code == 401
     # not even when the token value is sent as the key
     token = auth("adm", "o", 1)["Authorization"].split()[1]
     monkeypatch.setenv("OPERATOR_API_KEY", OPERATOR_KEY)

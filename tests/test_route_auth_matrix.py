@@ -23,10 +23,9 @@ from test_route_table import mounted_routes  # noqa: E402
 
 ROUTES = mounted_routes()          # [(file, METHOD, normalised path with {} for parameters)]
 
-# Paths that are public on purpose but are not in the router table: FastAPI's own docs routes, the root route that
-# app.py defines directly, and static-file prefixes the app does not mount today (kept in the list for when it does).
-UNMOUNTED_PUBLIC = {"/", "/docs", "/docs/oauth2-redirect", "/redoc", "/openapi.json",
-                    "/static/*", "/files/*", "/uploads/*"}
+# Paths that are public on purpose but are not in the router table: FastAPI's own docs routes and the root route that
+# app.py defines directly. (There is no static-file prefix: tests/test_auth_route_sweep.py checks the real app.)
+UNMOUNTED_PUBLIC = {"/", "/docs", "/docs/oauth2-redirect", "/redoc", "/openapi.json"}
 
 
 def kind_of(method, path):

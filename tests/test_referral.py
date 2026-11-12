@@ -980,7 +980,7 @@ class TestOperator:
         assert env.client.post("/gen-dashboard/referrals/rewards/4/void").status_code == 403                 # no credential
         assert env.client.post("/gen-dashboard/referrals/rewards/4/void", headers={"x-admin-id": "2"}).status_code == 403   # role 2
         assert env.client.post("/gen-dashboard/referrals/rewards/4/void", headers={"x-admin-id": "77"}).status_code == 403  # not an operator
-        assert env.client.post("/gen-dashboard/referrals/rewards/4/void", headers={"authorization": "Bearer abc"}).status_code == 403   # an app token is not enough
+        assert env.client.post("/gen-dashboard/referrals/rewards/4/void", headers={"authorization": "Bearer abc"}).status_code == 401   # an app token is not enough (not an operator session)
         assert [x for x in env.db.rewards if x["reward_id"] == 4][0]["status"] == "PENDING"
         assert env.client.get("/gen-dashboard/referrals").status_code == 403
         assert env.client.get("/gen-dashboard/referrals", headers={"x-admin-id": "2"}).status_code == 200      # any operator may read

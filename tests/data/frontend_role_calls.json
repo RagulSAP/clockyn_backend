@@ -10,15 +10,13 @@
   "/auth/verify-device-token",
   "/health",
   "/ready",
+  "/referral/validate",
   "/version/check"
  ],
  "public_prefixes": [
   "/auth/check-mobile/",
   "/auth/check-email/",
   "/auth/org-logo/",
-  "/files/",
-  "/static/",
-  "/uploads/",
   "/webhook/"
  ],
  "staff_area": [
@@ -148,6 +146,10 @@
   },
   {
    "method": "GET",
+   "path": "/live-chat/unread/{param}"
+  },
+  {
+   "method": "GET",
    "path": "/plans/plan-status/{param}"
   },
   {
@@ -177,6 +179,10 @@
   {
    "method": "GET",
    "path": "/version/check"
+  },
+  {
+   "method": "POST",
+   "path": "/analytics/events"
   },
   {
    "method": "POST",
@@ -674,6 +680,14 @@
   },
   {
    "method": "GET",
+   "path": "/live-chat/messages/{param}"
+  },
+  {
+   "method": "GET",
+   "path": "/live-chat/unread/{param}"
+  },
+  {
+   "method": "GET",
    "path": "/managers"
   },
   {
@@ -718,6 +732,10 @@
   },
   {
    "method": "GET",
+   "path": "/referral/{param}"
+  },
+  {
+   "method": "GET",
    "path": "/requests/admin/{param}"
   },
   {
@@ -754,6 +772,10 @@
   },
   {
    "method": "GET",
+   "path": "/support/faqs"
+  },
+  {
+   "method": "GET",
    "path": "/support/requests/{param}"
   },
   {
@@ -762,11 +784,19 @@
   },
   {
    "method": "GET",
+   "path": "/support/videos"
+  },
+  {
+   "method": "GET",
    "path": "/version/check"
   },
   {
    "method": "POST",
    "path": "/addstaff"
+  },
+  {
+   "method": "POST",
+   "path": "/analytics/events"
   },
   {
    "method": "POST",
@@ -942,6 +972,14 @@
   },
   {
    "method": "POST",
+   "path": "/live-chat/send"
+  },
+  {
+   "method": "POST",
+   "path": "/live-chat/send-file"
+  },
+  {
+   "method": "POST",
    "path": "/managers/assign"
   },
   {
@@ -951,6 +989,10 @@
   {
    "method": "POST",
    "path": "/orders/create"
+  },
+  {
+   "method": "POST",
+   "path": "/orders/quote"
   },
   {
    "method": "POST",
@@ -975,6 +1017,10 @@
   {
    "method": "POST",
    "path": "/support/submit"
+  },
+  {
+   "method": "POST",
+   "path": "/support/videos/{param}/view"
   },
   {
    "method": "POST",
@@ -1067,6 +1113,10 @@
   {
    "method": "PUT",
    "path": "/home/update-attendance-punch"
+  },
+  {
+   "method": "PUT",
+   "path": "/live-chat/mark-read"
   },
   {
    "method": "PUT",
@@ -1189,6 +1239,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -1214,6 +1268,10 @@
    {
     "method": "POST",
     "path": "/addstaff"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -1303,6 +1361,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -1312,6 +1374,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -1377,6 +1443,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -1386,6 +1456,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -1511,6 +1585,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -1532,6 +1610,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -1637,6 +1719,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -1646,6 +1732,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -1715,6 +1805,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -1736,6 +1830,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -1829,6 +1927,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -1838,6 +1940,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -1971,6 +2077,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -1980,6 +2090,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -2089,6 +2203,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -2098,6 +2216,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -2179,6 +2301,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -2192,6 +2318,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -2244,6 +2374,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -2253,6 +2387,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -2316,6 +2454,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -2325,6 +2467,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -2382,6 +2528,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -2391,6 +2541,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -2407,6 +2561,72 @@
    {
     "method": "PUT",
     "path": "/api/leads/carry-forward/{param}/action"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/leads/{param}/work-status"
+   }
+  ],
+  "admin/(tabs)/help": [
+   {
+    "method": "GET",
+    "path": "/api/announcements/employee/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/leads/carry-forward/my/{param}/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/leads/employee/{param}/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/attendance/today/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/auth/org-logo/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/chat/list/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/group-chat/list/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/plans/plan-status/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/requests/check-session/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
+   },
+   {
+    "method": "POST",
+    "path": "/api/leads/carry-forward/request"
+   },
+   {
+    "method": "POST",
+    "path": "/auth/logout"
+   },
+   {
+    "method": "POST",
+    "path": "/auth/update-push-token"
    },
    {
     "method": "PUT",
@@ -2460,6 +2680,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -2477,6 +2701,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -2526,6 +2754,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -2535,6 +2767,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -2598,6 +2834,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -2607,6 +2847,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -2668,6 +2912,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/orders/check_first_payment"
    },
    {
@@ -2700,6 +2948,10 @@
    },
    {
     "method": "POST",
+    "path": "/analytics/events"
+   },
+   {
+    "method": "POST",
     "path": "/api/leads/carry-forward/request"
    },
    {
@@ -2713,6 +2965,10 @@
    {
     "method": "POST",
     "path": "/orders/create"
+   },
+   {
+    "method": "POST",
+    "path": "/orders/quote"
    },
    {
     "method": "POST",
@@ -2762,6 +3018,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/get_plans"
    },
    {
@@ -2779,6 +3039,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -2836,6 +3100,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/get_plans"
    },
    {
@@ -2853,6 +3121,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -2910,6 +3182,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/get_plans"
    },
    {
@@ -2930,6 +3206,10 @@
    },
    {
     "method": "POST",
+    "path": "/analytics/events"
+   },
+   {
+    "method": "POST",
     "path": "/api/leads/carry-forward/request"
    },
    {
@@ -2939,6 +3219,10 @@
    {
     "method": "POST",
     "path": "/auth/update-push-token"
+   },
+   {
+    "method": "POST",
+    "path": "/orders/quote"
    },
    {
     "method": "PUT",
@@ -2984,6 +3268,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -2993,6 +3281,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -3062,6 +3354,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -3071,6 +3367,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -3148,6 +3448,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -3157,6 +3461,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -3230,6 +3538,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -3239,6 +3551,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -3312,6 +3628,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -3325,6 +3645,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -3402,6 +3726,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -3411,6 +3739,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -3500,6 +3832,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -3509,6 +3845,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -3610,6 +3950,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -3619,6 +3963,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -3688,6 +4036,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -3697,6 +4049,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -3794,6 +4150,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -3803,6 +4163,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -3880,6 +4244,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -3889,6 +4257,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -3954,6 +4326,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -3963,6 +4339,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -4016,6 +4396,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -4025,6 +4409,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -4086,6 +4474,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -4095,6 +4487,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -4168,6 +4564,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -4177,6 +4577,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -4250,6 +4654,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -4259,6 +4667,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -4287,6 +4699,232 @@
    {
     "method": "PUT",
     "path": "/expenses/admin/travel-bill/{param}/status"
+   }
+  ],
+  "admin/help/faq": [
+   {
+    "method": "GET",
+    "path": "/api/announcements/employee/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/leads/carry-forward/my/{param}/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/leads/employee/{param}/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/attendance/today/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/auth/org-logo/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/chat/list/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/group-chat/list/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/plans/plan-status/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/requests/check-session/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/support/faqs"
+   },
+   {
+    "method": "GET",
+    "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
+   },
+   {
+    "method": "POST",
+    "path": "/api/leads/carry-forward/request"
+   },
+   {
+    "method": "POST",
+    "path": "/auth/logout"
+   },
+   {
+    "method": "POST",
+    "path": "/auth/update-push-token"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/leads/{param}/work-status"
+   }
+  ],
+  "admin/help/live-chat": [
+   {
+    "method": "GET",
+    "path": "/api/announcements/employee/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/leads/carry-forward/my/{param}/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/leads/employee/{param}/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/attendance/today/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/auth/org-logo/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/chat/list/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/group-chat/list/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/live-chat/messages/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/plans/plan-status/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/requests/check-session/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
+   },
+   {
+    "method": "POST",
+    "path": "/api/leads/carry-forward/request"
+   },
+   {
+    "method": "POST",
+    "path": "/auth/logout"
+   },
+   {
+    "method": "POST",
+    "path": "/auth/update-push-token"
+   },
+   {
+    "method": "POST",
+    "path": "/live-chat/send"
+   },
+   {
+    "method": "POST",
+    "path": "/live-chat/send-file"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/leads/{param}/work-status"
+   },
+   {
+    "method": "PUT",
+    "path": "/live-chat/mark-read"
+   }
+  ],
+  "admin/help/videos": [
+   {
+    "method": "GET",
+    "path": "/api/announcements/employee/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/leads/carry-forward/my/{param}/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/leads/employee/{param}/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/attendance/today/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/auth/org-logo/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/chat/list/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/group-chat/list/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/plans/plan-status/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/requests/check-session/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/support/videos"
+   },
+   {
+    "method": "GET",
+    "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
+   },
+   {
+    "method": "POST",
+    "path": "/api/leads/carry-forward/request"
+   },
+   {
+    "method": "POST",
+    "path": "/auth/logout"
+   },
+   {
+    "method": "POST",
+    "path": "/auth/update-push-token"
+   },
+   {
+    "method": "POST",
+    "path": "/support/videos/{param}/view"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/leads/{param}/work-status"
    }
   ],
   "admin/holidays": [
@@ -4340,6 +4978,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -4349,6 +4991,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -4414,6 +5060,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -4431,6 +5081,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -4488,6 +5142,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/managers"
    },
    {
@@ -4513,6 +5171,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -4578,6 +5240,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/managers"
    },
    {
@@ -4603,6 +5269,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -4656,6 +5326,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -4665,6 +5339,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -4766,6 +5444,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -4779,6 +5461,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -4888,6 +5574,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -4897,6 +5587,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -5042,6 +5736,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -5051,6 +5749,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -5164,6 +5866,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -5173,6 +5879,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -5270,6 +5980,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -5279,6 +5993,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -5348,6 +6066,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -5357,6 +6079,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -5426,6 +6152,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -5447,6 +6177,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -5560,6 +6294,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -5569,6 +6307,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -5658,6 +6400,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -5667,6 +6413,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -5748,6 +6498,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -5757,6 +6511,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -5834,6 +6592,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -5855,6 +6617,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -5964,6 +6730,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -5973,6 +6743,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6058,6 +6832,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -6067,6 +6845,80 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
+   },
+   {
+    "method": "POST",
+    "path": "/api/leads/carry-forward/request"
+   },
+   {
+    "method": "POST",
+    "path": "/auth/logout"
+   },
+   {
+    "method": "POST",
+    "path": "/auth/update-push-token"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/leads/{param}/work-status"
+   }
+  ],
+  "admin/referral": [
+   {
+    "method": "GET",
+    "path": "/api/announcements/employee/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/leads/carry-forward/my/{param}/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/leads/employee/{param}/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/attendance/today/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/auth/org-logo/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/chat/list/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/group-chat/list/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/plans/plan-status/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/referral/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/requests/check-session/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6120,6 +6972,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -6129,6 +6985,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6198,6 +7058,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -6219,6 +7083,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6268,6 +7136,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -6277,6 +7149,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6346,6 +7222,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -6367,6 +7247,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6420,6 +7304,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/managers/{param}/staff"
    },
    {
@@ -6433,6 +7321,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6502,6 +7394,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -6523,6 +7419,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6592,6 +7492,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -6613,6 +7517,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6662,6 +7570,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -6675,6 +7587,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6728,6 +7644,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -6741,6 +7661,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6790,6 +7714,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -6803,6 +7731,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6856,6 +7788,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -6869,6 +7805,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6922,6 +7862,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -6935,6 +7879,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -6996,6 +7944,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -7017,6 +7969,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -7110,6 +8066,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -7127,6 +8087,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -7220,6 +8184,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -7237,6 +8205,10 @@
    {
     "method": "POST",
     "path": "/addstaff"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -7326,6 +8298,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -7335,6 +8311,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -7388,6 +8368,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -7397,6 +8381,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -7450,6 +8438,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -7467,6 +8459,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -7548,6 +8544,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -7557,6 +8557,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -7631,6 +8635,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -7640,6 +8648,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -7693,6 +8705,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -7702,6 +8718,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -7783,7 +8803,15 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/referral/validate"
    },
    {
     "method": "GET",
@@ -7792,6 +8820,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -7887,6 +8919,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -7896,6 +8932,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -7957,6 +8997,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -7966,6 +9010,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -8035,6 +9083,10 @@
    },
    {
     "method": "GET",
+    "path": "/company/details/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/employee/personal-details/{param}"
    },
    {
@@ -8052,6 +9104,10 @@
    {
     "method": "GET",
     "path": "/group-chat/list/{param}"
+   },
+   {
+    "method": "GET",
+    "path": "/live-chat/unread/{param}"
    },
    {
     "method": "GET",
@@ -8080,6 +9136,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -8141,6 +9201,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -8150,6 +9214,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -8233,6 +9301,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -8254,6 +9326,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -8303,6 +9379,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -8312,6 +9392,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -8381,6 +9465,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -8394,6 +9482,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -8471,6 +9563,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -8480,6 +9576,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -8549,6 +9649,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -8558,6 +9662,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -8615,6 +9723,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -8624,6 +9736,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -8689,6 +9805,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -8698,6 +9818,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -8755,6 +9879,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -8764,6 +9892,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -8833,6 +9965,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -8842,6 +9978,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -8903,6 +10043,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -8912,6 +10056,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -8961,6 +10109,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -8970,6 +10122,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -9023,6 +10179,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -9032,6 +10192,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -9085,6 +10249,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -9094,6 +10262,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -9143,6 +10315,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -9152,6 +10328,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -9205,6 +10385,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -9226,6 +10410,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -9275,6 +10463,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -9296,6 +10488,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -9349,6 +10545,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -9370,6 +10570,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -9423,6 +10627,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -9444,6 +10652,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",
@@ -9521,6 +10733,10 @@
    },
    {
     "method": "GET",
+    "path": "/live-chat/unread/{param}"
+   },
+   {
+    "method": "GET",
     "path": "/plans/plan-status/{param}"
    },
    {
@@ -9530,6 +10746,10 @@
    {
     "method": "GET",
     "path": "/version/check"
+   },
+   {
+    "method": "POST",
+    "path": "/analytics/events"
    },
    {
     "method": "POST",

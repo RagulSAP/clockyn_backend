@@ -1,11 +1,14 @@
 """Live Chat, OPERATOR side: the Clockyn support team in the web console (UI_ADMIN_APP).
 
 HTTP routes live under /gen-dashboard/live-chat (an OPERATOR route class: `auth_policy.OPERATOR_RULES`), each guarded by
-`operator_auth.require_operator` (the operator's e-mail in the legacy admin header, or the operator key). The console's realtime
-channel is the WebSocket /ws/support-ops?admin_id=<operator e-mail>: every open console registers under ONE key in the
+`operator_auth.require_operator` (operator session token, the operator key, or the legacy admin header while it is enabled).
+The console's realtime channel is the WebSocket /ws/support-ops?token=<operator session token> (legacy: ?admin_id=<operator
+e-mail>, accepted only while OPERATOR_LEGACY_ADMIN_ID is not 0): every open console registers under ONE key in the
 shared socket registry, so a single publish reaches all of them (frames: live_chat_message / live_chat_read /
-live_chat_status / live_chat_message_deleted, see services/realtime.py). Browsers cannot set headers on a WebSocket, hence the query parameter; like
-the other open operator routes, the operator is only checked when `operator_auth.enforced()`.
+live_chat_status / live_chat_message_deleted, see services/realtime.py). Browsers cannot set headers on a WebSocket, hence the
+query parameter. The token is verified and the operator re-looked-up exactly as for HTTP (operator_auth.verify_session); like
+the other open operator routes, the operator is only checked when `operator_auth.enforced()`, and then a refused handshake is
+closed with code 4403 (a token that is present but invalid is refused, it never falls back to `admin_id`).
 """
 import asyncio
 import logging
@@ -27,7 +30,8 @@ WS_CLOSE_FORBIDDEN = 4403
 
 
 def _admin_id(request: Request) -> Optional[str]:
-    return request.headers.get(operator_auth.LEGACY_HEADER)
+    """The operator for the sender name of a reply: the verified session e-mail, else the legacy header (see operator_auth)."""
+    return operator_auth.operator_id(request)
 
 
 @router.get("/gen-dashboard/live-chat/threads", dependencies=[Depends(require_operator)])
@@ -71,17 +75,25 @@ async def live_chat_status_route(org_id: str, req: live.OperatorStatusRequest):
 
 
 @router.websocket("/ws/support-ops")
-async def support_ops_socket(websocket: WebSocket, admin_id: str = Query("")):
+async def support_ops_socket(websocket: WebSocket, admin_id: str = Query(""), token: str = Query("")):
     admin_id = (admin_id or "").strip()
+    token = (token or "").strip()
     if operator_auth.enforced():
         role = None
-        if admin_id:
-            try:
+        try:
+            if token:
+                # present but invalid: refused, never falls back to admin_id
+                try:
+                    _email, role = await asyncio.to_thread(operator_auth.verify_session, token)
+                except operator_auth.SessionError:
+                    role = None
+            elif admin_id and operator_auth.legacy_enabled():
                 role = await asyncio.to_thread(operator_auth._lookup, admin_id)
-            except Exception:
-                logger.exception("support-ops operator lookup failed")
+        except Exception:
+            logger.exception("support-ops operator lookup failed")
+            role = None
         if role is None:
-            logger.warning("support-ops socket refused: unknown operator")
+            logger.warning("support-ops socket refused: no valid operator credential")
             await websocket.close(code=WS_CLOSE_FORBIDDEN)
             return
     await manager.connect(SUPPORT_OPS_KEY, websocket)

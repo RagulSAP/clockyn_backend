@@ -1,5 +1,7 @@
 ﻿import asyncio
+import hmac
 import os
+import secrets
 from fastapi import APIRouter, Depends, File, UploadFile, HTTPException, Request
 import logging
 from fastapi.responses import StreamingResponse
@@ -21,7 +23,7 @@ from psycopg2.extras import RealDictCursor
 from ml.s3 import save_org_logo, get_org_logo_url, save_employee_profile, get_employee_profile_url
 from core_functions import operator_auth
 from core_functions.owner_guard import require_owner
-from utils import rate_limit
+from utils import operator_token, rate_limit
 from utils.uploads import read_upload
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -57,10 +59,16 @@ class GenAdminOTPVerifyRequest(BaseModel):
     email: str
     otp: str
 
+OPERATOR_OTP_MAX_ATTEMPTS = 5        # wrong codes allowed per issued code (same as the app OTP, core_functions/auth_function.py)
+
+
+def _otp_digits(value) -> bytes:
+    return ("%06d" % int(value)).encode("ascii")
+
+
 @router.post("/admin-login", dependencies=[Depends(rate_limit.by_ip("OTP_GENERATE"))])
 async def gen_admin_login_route(data: GenAdminLoginRequest):
     from core_functions.auth_function import _send_email_otp_async
-    import random
     from datetime import timedelta
     from utils.timezone import get_utc_now
 
@@ -76,7 +84,18 @@ async def gen_admin_login_route(data: GenAdminLoginRequest):
         if not admin:
             raise HTTPException(status_code=401, detail="Email not found")
 
-        otp_code = random.randint(100000, 999999)
+        # A locked code (5 wrong attempts) cannot be replaced by asking for a new one before it expires: otherwise the
+        # attempt counter could be reset at will.
+        cursor.execute("SELECT attempts, expires_at FROM email_otp_verification WHERE email = %s", (email,))
+        existing_otp = cursor.fetchone()
+        if (existing_otp and (existing_otp["attempts"] or 0) >= OPERATOR_OTP_MAX_ATTEMPTS
+                and existing_otp["expires_at"] > get_utc_now()):
+            raise HTTPException(
+                status_code=429,
+                detail="Too many incorrect OTP attempts. Please wait for the current OTP to expire before requesting a new one."
+            )
+
+        otp_code = secrets.randbelow(900000) + 100000
         expires_at = get_utc_now() + timedelta(minutes=5)
 
         cursor.execute("DELETE FROM email_otp_verification WHERE email = %s", (email,))
@@ -104,6 +123,9 @@ async def gen_admin_login_route(data: GenAdminLoginRequest):
 
 @router.post("/admin-login/verify-otp", dependencies=[Depends(rate_limit.by_ip("AUTH_LOGIN"))])
 async def gen_admin_verify_otp_route(data: GenAdminOTPVerifyRequest):
+    """Operator sign-in, step 2. Answers `{success, email, role_id}` and, when AUTH_TOKEN_SECRET is configured, the operator
+    session token `access_token` / `token_type` ("Bearer") / `expires_in` (seconds) that the console sends as
+    `Authorization: Bearer` (core_functions/operator_auth.py). Five wrong codes lock the issued code until it expires."""
     from utils.timezone import get_utc_now
 
     conn = get_db_connection()
@@ -116,11 +138,25 @@ async def gen_admin_verify_otp_route(data: GenAdminOTPVerifyRequest):
 
         email = data.email.lower().strip()
         cursor.execute(
-            "SELECT * FROM email_otp_verification WHERE email = %s AND otp_code = %s AND expires_at > %s",
-            (email, otp_int, get_utc_now())
+            "SELECT * FROM email_otp_verification WHERE email = %s AND expires_at > %s",
+            (email, get_utc_now())
         )
         otp_record = cursor.fetchone()
         if not otp_record:
+            raise HTTPException(status_code=400, detail="Invalid or expired OTP")
+
+        if (otp_record["attempts"] or 0) >= OPERATOR_OTP_MAX_ATTEMPTS:
+            raise HTTPException(
+                status_code=429,
+                detail="Too many incorrect OTP attempts. Please request a new OTP."
+            )
+
+        if not hmac.compare_digest(_otp_digits(otp_record["otp_code"]), _otp_digits(otp_int)):
+            cursor.execute(
+                "UPDATE email_otp_verification SET attempts = attempts + 1 WHERE email = %s",
+                (email,)
+            )
+            conn.commit()
             raise HTTPException(status_code=400, detail="Invalid or expired OTP")
 
         cursor.execute("DELETE FROM email_otp_verification WHERE email = %s", (email,))
@@ -131,8 +167,17 @@ async def gen_admin_verify_otp_route(data: GenAdminOTPVerifyRequest):
         )
         admin = cursor.fetchone()
         conn.commit()
+        if not admin:
+            raise HTTPException(status_code=401, detail="Email not found")
 
-        return {"success": True, "email": admin["email"], "role_id": admin["role_id"]}
+        response = {"success": True, "email": admin["email"], "role_id": admin["role_id"]}
+        if admin["role_id"] is not None and operator_token.tokens_enabled():
+            try:
+                token, expires_in = operator_token.issue_operator_token(admin["email"], admin["role_id"])
+                response.update({"access_token": token, "token_type": "Bearer", "expires_in": expires_in})
+            except Exception:
+                logger.exception("operator session token not issued")
+        return response
     except HTTPException:
         raise
     except Exception:

@@ -2,38 +2,51 @@
 
 Operator routes are the vendor-side routes that no organisation user may call: `/gen-dashboard/*`,
 `/auth/gen-admin-users*`, plan and coupon administration, support / suggestion administration lists, invoice bulk
-download, attribution report, deletion requests (see `OPERATOR_RULES` in core_functions/auth_policy.py). An app access
-token (the bearer token of `utils/auth_token.py`) NEVER satisfies this guard: the `Authorization` header is not read here.
+download, attribution report, deletion requests (see `OPERATOR_RULES` in core_functions/auth_policy.py). An APP access
+token (the bearer token of `utils/auth_token.py`) NEVER satisfies this guard: only an OPERATOR session token
+(`utils/operator_token.py`, other signing key and audience) is read from the `Authorization` header here.
 
 Credentials accepted, in this order:
   1. `X-Operator-Key: <OPERATOR_API_KEY>`: a shared secret from the environment, compared in constant time. Header sent
      but `OPERATOR_API_KEY` unset (or shorter than 24 characters): 503 (the routes fail closed). Wrong key: 403.
-  2. LEGACY platform-admin login: header `x-admin-id: <phone>` where the phone is a row of `gen_admin_login`. This is how
-     the existing operator web dashboard authenticates today: the operator signs in with `POST /auth/admin-login` (SMS code)
-     + `/auth/admin-login/verify-otp`, which answers `{phone_number, role_id}` and NO token; the web panel then sends the
-     phone as `x-admin-id`. It proves nothing beyond knowing an operator's phone number, which is why the key above exists.
-     Accepted unless `OPERATOR_LEGACY_ADMIN_ID=0` (key-only mode).
+  2. OPERATOR SESSION: `Authorization: Bearer <operator token>`. The operator proves who they are with the e-mailed code
+     (`POST /auth/admin-login` + `/auth/admin-login/verify-otp`), which answers `access_token` (HS256, signed with a key
+     derived from `AUTH_TOKEN_SECRET`, claims sub = e-mail, role, iat, exp, aud; lifetime `OPERATOR_TOKEN_TTL_HOURS`, default
+     12). The signature and expiry are verified, then the operator is RE-LOOKED-UP in `gen_admin_login` on EVERY request, so
+     deleting an operator or changing the role takes effect at once (the role of the database is used, never the claim;
+     `super_only` needs role_id 1). Expired token: 401 `Token expired`. Invalid token (bad signature, an app token, wrong
+     audience) or an operator that no longer exists: 401 `Not authenticated`. A role that is not allowed: 403. A Bearer token
+     that is present but invalid NEVER falls through to the legacy header below. Result "session".
+  3. LEGACY platform-admin login: header `x-admin-id: <e-mail or phone>` where the value is a row of `gen_admin_login`. It
+     proves nothing beyond knowing an operator's e-mail address or phone number (there is no secret in it), so it exists only
+     for the roll-out of the session token. Accepted unless `OPERATOR_LEGACY_ADMIN_ID=0`.
 
-When the guard is ENFORCED, a request with neither credential gets 403 (503 when neither mechanism is configured).
+Recommended production roll-out: deploy the backend, deploy the console (it sends the session token), then set
+`OPERATOR_ENFORCE=1` and `OPERATOR_LEGACY_ADMIN_ID=0` (operator sessions and the key only). Start-up logs a SECURITY
+warning while either is not set (`startup_security_warnings`).
+
+When the guard is ENFORCED, a request with no credential gets 403 (503 when no mechanism is configured: legacy off, no key).
 Enforcement is on when `REQUIRE_AUTH` is on, or `OPERATOR_ENFORCE=1`; `OPERATOR_ENFORCE=0` forces it off. While it is off
-(the default, so today's behaviour is unchanged) routes that were open before stay open, and only the routes that always
-demanded `x-admin-id` (`/auth/gen-admin-users*` role 1; `/auth/check-mobile` and `/auth/check-email` are PUBLIC since QW-13) keep demanding a
-credential, now also accepting the key.
+(the default, so today's behaviour is unchanged) routes that were open before stay open (a Bearer token that is not a valid
+operator session is then ignored), and only the routes that always demanded a login (`/auth/gen-admin-users*` role 1;
+`/auth/check-mobile` and `/auth/check-email` are PUBLIC since QW-13) keep demanding a credential.
 
-Failed attempts are counted per client IP (rule OPERATOR_FAIL, default 20/60 s, see utils/rate_limit.py): beyond it the
-answer is 429 for everybody from that IP, including a correct key, so the key cannot be guessed online.
+Failed attempts (wrong key, invalid / expired session token, unknown or malformed legacy header) are counted per client IP
+(rule OPERATOR_FAIL, default 20/60 s, see utils/rate_limit.py): beyond it the answer is 429 for everybody from that IP,
+including a correct credential, so nothing can be guessed online.
 
-Env (read on every call): OPERATOR_API_KEY, OPERATOR_ENFORCE, OPERATOR_LEGACY_ADMIN_ID.
+Env (read on every call): OPERATOR_API_KEY, OPERATOR_ENFORCE, OPERATOR_LEGACY_ADMIN_ID, OPERATOR_TOKEN_TTL_HOURS (token
+lifetime), AUTH_TOKEN_SECRET (signing).
 """
 import hashlib
 import hmac
 import logging
 import os
-from typing import Optional
+from typing import List, Optional, Tuple
 
 from fastapi import HTTPException, Request
 
-from utils import auth_token, rate_limit
+from utils import auth_token, operator_token, rate_limit
 
 logger = logging.getLogger("operator_auth")
 
@@ -45,6 +58,7 @@ _TRUE = ("1", "true", "yes", "on")
 _FALSE = ("0", "false", "no", "off")
 
 KEY = "key"                # authorize() results
+SESSION = "session"
 LEGACY = "legacy"
 OPEN = "open"
 
@@ -105,18 +119,57 @@ def set_lookup(fn) -> None:
     _lookup = fn or lookup_gen_admin_role
 
 
+class SessionError(Exception):
+    """An operator session token that must not be accepted. `status` 401, `detail` "Token expired" or "Not authenticated"."""
+
+    def __init__(self, status: int, detail: str):
+        super().__init__(detail)
+        self.status = status
+        self.detail = detail
+
+
+def verify_session(token: str) -> Tuple[str, int]:
+    """(operator e-mail, role_id FROM THE DATABASE) of a valid operator session token. The signature / expiry are verified
+    and the operator is looked up in `gen_admin_login` right now. Raises SessionError (expired / invalid token, operator
+    deleted or without a role); a lookup failure propagates (the callers answer 503). Blocking (database): call it in a
+    thread from async code."""
+    try:
+        claims = operator_token.verify_operator_token(token)
+    except auth_token.TokenError as exc:
+        logger.debug("operator token rejected: %s", exc.reason)
+        raise SessionError(401, "Token expired" if exc.code == "expired" else "Not authenticated")
+    email = claims["sub"].strip().lower()
+    role = _lookup(email)
+    if role is None:
+        logger.debug("operator token of a deleted / unknown operator")
+        raise SessionError(401, "Not authenticated")
+    return email, role
+
+
 def _fail(request, status: int, detail: str) -> HTTPException:
     rate_limit.record("OPERATOR_FAIL", "ip:" + rate_limit.client_ip(request))
     logger.warning("operator access denied: %s %s from %s", request.method, request.url.path, rate_limit.client_ip(request))
-    return HTTPException(status_code=status, detail=detail)
+    headers = {"WWW-Authenticate": "Bearer"} if status == 401 else None
+    return HTTPException(status_code=status, detail=detail, headers=headers)
+
+
+def operator_id(request) -> Optional[str]:
+    """Who the operator is, for attribution (live-chat sender): the e-mail of a verified session, else the legacy header
+    value while the legacy login is enabled, else None (the key alone is not a person)."""
+    who = getattr(getattr(request, "state", None), "operator_id", None)
+    if who:
+        return who
+    if legacy_enabled():
+        return request.headers.get(LEGACY_HEADER)
+    return None
 
 
 def authorize(request: Request, *, super_only: bool = False, always_check: bool = False,
               denied_detail: str = "Authentication required") -> str:
-    """Raise unless the request carries an operator credential (see the module docstring). Returns "key", "legacy" or
-    "open" (not enforced and the route was open before). `super_only`: the legacy login must be a role_id=1 operator
-    (the key is always the full operator). `always_check`: demand a credential even while enforcement is off (routes
-    that already demanded `x-admin-id` before this guard existed)."""
+    """Raise unless the request carries an operator credential (see the module docstring). Returns "key", "session",
+    "legacy" or "open" (not enforced and the route was open before). `super_only`: a session / legacy login must be a
+    role_id=1 operator (the key is always the full operator). `always_check`: demand a credential even while enforcement is
+    off (routes that already demanded a platform-admin login before this guard existed)."""
     rate_limit.ensure_open("OPERATOR_FAIL", "ip:" + rate_limit.client_ip(request))
     presented = request.headers.get(KEY_HEADER)
     if presented is not None:
@@ -129,10 +182,34 @@ def authorize(request: Request, *, super_only: bool = False, always_check: bool 
         raise _fail(request, 403, denied_detail)
 
     must_check = always_check or enforced()
+    bearer = auth_token.bearer_from_header(request.headers.get("authorization"))
+    if bearer is not None:
+        # A Bearer token that is present decides the request on its own: when it is not a valid operator session the
+        # answer is 401 and the legacy header is NOT consulted. While nothing is demanded (open route, not enforced) an
+        # invalid token (e.g. an app token) is ignored, exactly as the Authorization header was ignored before.
+        try:
+            email, role = verify_session(bearer)
+        except SessionError as exc:
+            if not must_check:
+                return OPEN
+            raise _fail(request, exc.status, exc.detail)
+        except HTTPException:
+            raise
+        except Exception:
+            if not must_check:
+                return OPEN
+            logger.exception("operator lookup failed")
+            raise HTTPException(status_code=503, detail="Operator authentication temporarily unavailable")
+        if super_only and role != SUPER_ROLE:
+            logger.warning("operator %s refused: role %s on a role_id=1 route", request.url.path, role)
+            raise HTTPException(status_code=403, detail=denied_detail)
+        request.state.operator_id = email
+        return SESSION
+
     if not must_check:
         return OPEN
     if not legacy_enabled():
-        if not configured_key():
+        if not configured_key() and not operator_token.tokens_enabled():
             raise HTTPException(status_code=503, detail="Operator access is not configured")
         raise _fail(request, 403, denied_detail)
 
@@ -149,6 +226,28 @@ def authorize(request: Request, *, super_only: bool = False, always_check: bool 
     if role is None or (super_only and role != SUPER_ROLE):
         raise _fail(request, 403, denied_detail)
     return LEGACY
+
+
+def startup_security_warnings() -> List[str]:
+    """Human-readable SECURITY warnings about the current settings (empty list = nothing to warn about). Never raises."""
+    messages: List[str] = []
+    try:
+        if not auth_token.require_auth_enabled():
+            messages.append("SECURITY: REQUIRE_AUTH is off: the app API does not demand an access token, any caller that "
+                            "knows a user id can act as that user. Set REQUIRE_AUTH=1 (needs AUTH_TOKEN_SECRET) in production.")
+        if not enforced():
+            messages.append("SECURITY: operator routes are not enforced (OPERATOR_ENFORCE is off): the admin-console API is "
+                            "open to anyone who can reach it. Set OPERATOR_ENFORCE=1 and OPERATOR_LEGACY_ADMIN_ID=0 in production.")
+        elif legacy_enabled():
+            messages.append("SECURITY: the operator API still accepts the legacy x-admin-id header (OPERATOR_LEGACY_ADMIN_ID is "
+                            "not 0): knowing an operator e-mail or phone number is enough. After the console is deployed, set "
+                            "OPERATOR_LEGACY_ADMIN_ID=0.")
+        elif not operator_token.tokens_enabled() and not configured_key():
+            messages.append("SECURITY: operator routes are enforced with the legacy header off, but neither AUTH_TOKEN_SECRET "
+                            "(operator sessions) nor OPERATOR_API_KEY is configured: every operator request is refused (503).")
+    except Exception:
+        logger.exception("security configuration check failed")
+    return messages
 
 
 # ---------------------------------------------------------------------------------------------- FastAPI dependencies

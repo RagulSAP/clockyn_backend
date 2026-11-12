@@ -30,12 +30,14 @@ STAFF_AREA_FALSE_POSITIVES = {
     ("POST", "/api/leads/assign"): "AssignLeadsScreen mutation lives in the same hook file (useLeadWrites) as the staff add-lead hook",
     ("PUT", "/api/leads/assignment/{param}"): "same hook file; admin screen only",
     ("DELETE", "/api/leads/categories/{param}"): "CategoryPicker shows delete only when allowDelete (admin lead form)",
+    ("GET", "/live-chat/unread/{param}"): "useLiveChatBadgeSeed (mounted by the shared Bootstrap) asks only when role === 1; managers and staff have no Live Chat",
 }
 MANAGER_FALSE_POSITIVES = {
     ("DELETE", "/addstaff/{param}/permanent"): "StaffDetailScreen shows the delete button only for role 1 (canPermanentlyDelete)",
     ("DELETE", "/company/delete/{param}/{param}"): "needs more than one company; a manager belongs to exactly one",
     ("POST", "/auth/upload-org-logo/{param}"): "add-company flow (admin multi-company); manager edits use /company/update-logo",
     ("GET", "/api/incentive/overtime-report/{param}"): "the salary screens share a loader file with the overtime report screen",
+    ("GET", "/live-chat/unread/{param}"): "useLiveChatBadgeSeed (shared Bootstrap) asks only when role === 1; managers have no Live Chat",
 }
 # Real but deliberate: a manager with only 'Staff Management' sees the Advance tab of the staff detail, and adding an advance
 # needs 'Salary Management' (money). Owner decision; documented here so a change is noticed.
@@ -46,11 +48,16 @@ def key(call):
     return call["method"], call["path"]
 
 
+# The client sends these WITHOUT a token and the server marks only the listed method public (the app calls GET, see
+# src/api/referral.ts validateCode).
+PUBLIC_METHOD_ONLY = {"/referral/validate": ("GET",)}
+
+
 def test_every_path_the_app_sends_without_a_token_is_public_on_the_server():
     exact, prefixes = DATA["public_exact"], DATA["public_prefixes"]
     assert "/auth/validate-otp" in exact and "/version/check" in exact
     for path in exact:
-        for method in ("GET", "POST"):
+        for method in PUBLIC_METHOD_ONLY.get(path, ("GET", "POST")):
             assert P.classify(method, path) == P.PUBLIC, "app sends %s %s without a token but the server wants one" % (method, path)
     for prefix in prefixes:
         assert P.classify("GET", prefix + "x") == P.PUBLIC, "app sends %s* without a token but the server wants one" % prefix

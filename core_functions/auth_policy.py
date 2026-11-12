@@ -88,12 +88,10 @@ PUBLIC_RULES: Tuple[Tuple[object, str], ...] = (
     # Refer & Earn: the signup screen checks a typed referral code before the account exists (rate limited per IP,
     # answers only the referrer's organisation name); every other /referral/* route is an organisation-admin route
     (("GET",), "/referral/validate"),
-    # payment / messaging webhooks carry their own HMAC signature
+    # payment / messaging webhooks carry their own HMAC signature. (No /static, /files or /uploads rule: the app mounts no
+    # static route and serves files from S3 presigned URLs; a public rule for a route that does not exist would make the
+    # first route someone adds under that prefix public. tests/test_auth_route_sweep.py keeps every rule tied to a route.)
     ("*", "/webhook/*"),
-    # static files
-    ("*", "/static/*"),
-    ("*", "/files/*"),
-    ("*", "/uploads/*"),
 )
 
 OPERATOR_RULES: Tuple[Tuple[object, str], ...] = (

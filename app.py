@@ -110,6 +110,20 @@ def _validate_auth_config():
 
 
 @app.on_event("startup")
+def _warn_insecure_auth_config():
+    """Loud WARNING (CloudWatch) while REQUIRE_AUTH is off or the operator API is not enforced / still accepts the legacy
+    x-admin-id header, so a mis-configured production is visible. Never raises."""
+    try:
+        import logging
+        from core_functions.operator_auth import startup_security_warnings
+        log = logging.getLogger("auth")
+        for message in startup_security_warnings():
+            log.warning(message)
+    except Exception:
+        pass
+
+
+@app.on_event("startup")
 def _run_migrations_if_enabled():
     """RUN_MIGRATIONS=1 applies pending migrations (migrate.py). Never fatal: an error is logged and startup goes on."""
     try:

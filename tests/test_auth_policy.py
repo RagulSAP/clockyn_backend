@@ -114,7 +114,7 @@ def test_normalise_path():
     ("POST", "/auth/verify-device-token"), ("POST", "/auth/login"), ("POST", "/auth/employee-login"),
     ("POST", "/auth/register"), ("POST", "/auth/logout"), ("GET", "/auth/check-mobile/9876"), ("GET", "/auth/check-email/a@b.c"),
     ("GET", "/auth/org-logo/o1"), ("GET", "/profile-photo/u1"), ("GET", "/auth/session-events/u1"),
-    ("POST", "/webhook/razorpay"), ("POST", "/webhook/msg91/whatsapp"), ("GET", "/static/a.png"),
+    ("POST", "/webhook/razorpay"), ("POST", "/webhook/msg91/whatsapp"),
     ("POST", "/requests/device-change/submit"), ("POST", "/auth/admin-login"), ("GET", "/referral/validate"),
 ])
 def test_public_paths(method, path):

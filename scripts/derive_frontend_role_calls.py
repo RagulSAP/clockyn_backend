@@ -20,7 +20,7 @@ from pathlib import Path
 
 BE = Path(__file__).resolve().parents[1]
 OUT = BE / "tests" / "data" / "frontend_role_calls.json"
-DEFAULT_FE = Path(os.environ.get("CLOCKYN_FRONTEND", r"C:\POC\pa_frontend\Clockyn"))
+DEFAULT_FE = Path(os.environ.get("CLOCKYN_FRONTEND", r"C:\POC\clockyn_frontend"))
 
 _spec = importlib.util.spec_from_file_location("check_frontend_contract", BE / "scripts" / "check_frontend_contract.py")
 cfc = importlib.util.module_from_spec(_spec)

@@ -6,7 +6,7 @@ really mounts (AST of router/*.py, the same parser as tests/test_route_table.py;
 
     python scripts/check_frontend_contract.py                     # check the vendored list tests/data/frontend_calls.json
     python scripts/check_frontend_contract.py --regenerate        # re-extract from the frontend repo, rewrite the list, then check
-    python scripts/check_frontend_contract.py --frontend <path>   # frontend repo root (default C:/POC/pa_frontend/Clockyn or $CLOCKYN_FRONTEND)
+    python scripts/check_frontend_contract.py --frontend <path>   # frontend repo root (default C:/POC/clockyn_frontend or $CLOCKYN_FRONTEND)
 
 Exit code 1 when a call has no route (or only a route with another method), except the KNOWN_ABSENT entries below.
 """
@@ -20,7 +20,7 @@ from pathlib import Path
 
 BE = Path(__file__).resolve().parents[1]
 VENDORED = BE / "tests" / "data" / "frontend_calls.json"
-DEFAULT_FE = Path(os.environ.get("CLOCKYN_FRONTEND", r"C:\POC\pa_frontend\Clockyn"))
+DEFAULT_FE = Path(os.environ.get("CLOCKYN_FRONTEND", r"C:\POC\clockyn_frontend"))
 
 # Calls the app makes that the backend deliberately does not (yet) serve. The key is (METHOD, normalised path with `{}`).
 # Every entry needs a reason. A stale entry (the route now exists) is reported too, so the list can only shrink.
