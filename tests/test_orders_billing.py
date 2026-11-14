@@ -47,6 +47,10 @@ class FakeDB:
             1: {"plan_id": 1, "plan_name": "Core", "plan_amount": D("25.00"), "plan_month": 6},
             2: {"plan_id": 2, "plan_name": "Prime", "plan_amount": D("40.00"), "plan_month": 12},
             3: {"plan_id": 3, "plan_name": "Elite", "plan_amount": D("40.00"), "plan_month": 12},
+            # other durations of the same plans, with free months (the rows above have none: free_months is absent = 0)
+            11: {"plan_id": 11, "plan_name": "Core", "plan_amount": D("25.00"), "plan_month": 12, "free_months": 2},
+            12: {"plan_id": 12, "plan_name": "Prime", "plan_amount": D("40.00"), "plan_month": 6, "free_months": 1},
+            13: {"plan_id": 13, "plan_name": "Prime", "plan_amount": D("40.00"), "plan_month": 12, "free_months": 2},
         }
         self.coupons = {}
         self.subs = []          # newest last
@@ -133,7 +137,7 @@ class FakeCursor:
             r = dict(rows[-1])
             r.update(db.plans[r["plan_id"]])
             return self._set(r)
-        if s.startswith("SELECT plan_id, plan_name, plan_amount, plan_month FROM gen_plans WHERE plan_id = %s"):
+        if s.startswith("SELECT plan_id, plan_name, plan_amount, plan_month, free_months FROM gen_plans WHERE plan_id = %s"):
             return self._set(db.plans.get(p[0]))
         if s == "SELECT plan_name, plan_month FROM gen_plans WHERE plan_id = %s":
             return self._set(db.plans.get(p[0]))
@@ -399,6 +403,53 @@ class TestQuote:
         env.db.add_sub(3, date(2027, 3, 1), 12)
         q = env.client.post("/orders/quote", json={"user_id": ADMIN, "org_id": ORG, "staff_limit": 8, "mode": "upgrade"}).json()["data"]
         assert q["grand_total"] == 1510.0 and q["resulting_staff_limit"] == 20
+
+    # ── plans with free months: 6 months / 1 free charges 5 and is valid for 6 ─────────────────────────────────────────
+    def quote(self, env, **body):
+        r = env.client.post("/orders/quote", json={"user_id": ADMIN, "org_id": ORG, **body})
+        assert r.status_code == 200, r.text
+        return r.json()["data"]
+
+    def test_new_plan_with_free_months_charges_the_paid_months_and_is_valid_for_the_whole_term(self, env):
+        q = self.quote(env, plan_id=13, staff_limit=15, mode="new")             # Prime 12 months, 2 free, 40 / staff / month
+        assert (q["charged_months"], q["term_months"], q["free_months"]) == (10, 12, 2)
+        assert (q["staff_charge"], q["gst"], q["grand_total"]) == (6000.0, 1080.0, 7080.0)     # 15 x 40 x 10
+        assert q["valid_till"] == "2027-11-02" and q["price_per_staff_month"] == 40.0          # the list price stays per month
+        q = self.quote(env, plan_id=12, staff_limit=10, mode="new")             # Prime 6 months, 1 free
+        assert (q["charged_months"], q["term_months"], q["free_months"]) == (5, 6, 1)
+        assert (q["staff_charge"], q["grand_total"]) == (2000.0, 2360.0) and q["valid_till"] == "2027-05-02"
+
+    def test_plans_without_free_months_are_priced_exactly_as_before(self, env):
+        q = self.quote(env, plan_id=2, staff_limit=15, mode="new")
+        assert (q["charged_months"], q["term_months"], q["free_months"], q["grand_total"]) == (12, 12, 0, 8496.0)
+
+    def test_adding_staff_ignores_free_months(self, env):
+        env.db.add_sub(13, date(2027, 3, 1), 12)                                # on the 12 month plan with 2 free months
+        q = self.quote(env, staff_limit=8, mode="upgrade")
+        assert q["grand_total"] == 1510.0 and q["resulting_staff_limit"] == 20  # same as the plan without free months
+        assert (q["charged_months"], q["free_months"], q["term_months"]) == (4, 0, 0) and q["valid_till"] == "2027-03-01"
+
+    def test_changing_plan_credits_the_paid_months_of_the_current_plan(self, env):
+        env.db.add_sub(11, date(2027, 11, 2), 10)                               # Core 12 months, 2 free, 25: it cost 10 x 25 x 10
+        q = self.quote(env, plan_id=13, staff_limit=10, mode="new")             # to Prime 12 months, 2 free
+        assert q["credit"] == 2500.0 and q["staff_charge"] == 4000.0
+        assert (q["after_credit"], q["gst"], q["grand_total"]) == (1500.0, 270.0, 1770.0)
+
+    def test_credit_of_a_plan_without_free_months_is_unchanged(self, env):
+        env.db.add_sub(1, date(2027, 3, 1), 10)                                 # Core 6 months, no free months
+        q = self.quote(env, plan_id=13, staff_limit=10, mode="new")
+        assert q["credit"] == 1500.0                                            # 10 x 25 x 6
+
+    def test_renewal_keeps_the_free_month_share(self, env):
+        env.db.add_sub(11, date(2027, 3, 1), 12)                                # Core 12 months, 2 free
+        q = self.quote(env, staff_limit=10, mode="renew")
+        assert (q["charged_months"], q["term_months"], q["free_months"]) == (10, 12, 2)
+        assert (q["staff_charge"], q["gst"], q["grand_total"]) == (2500.0, 450.0, 2950.0)
+        assert q["valid_from"] == "2027-03-01" and q["valid_till"] == "2028-03-01"
+        env.db.subs.clear()
+        env.db.add_sub(12, date(2027, 3, 1), 12)                                # Prime 6 months, 1 free renews as 12 months, 2 free
+        q = self.quote(env, staff_limit=10, mode="renew")
+        assert (q["charged_months"], q["free_months"], q["grand_total"]) == (10, 2, 4720.0)    # 10 x 40 x 10 + 18 %
 
     def test_errors_are_real_status_codes(self, env):
         post = lambda **kw: env.client.post("/orders/quote", json={"user_id": ADMIN, "org_id": ORG, "plan_id": 2, "staff_limit": 15,

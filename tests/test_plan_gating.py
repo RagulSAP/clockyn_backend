@@ -152,6 +152,37 @@ class TestPlanStatus:
         st, *_ = self.status(db)
         assert st == {"plan_id": None, "is_free_trial": False, "is_expired": True}
 
+    @pytest.mark.parametrize("row_id,name,tier_id", [
+        (1, "Core", 1), (4, "Core", 1), (7, "core ", 1),      # every duration of a plan reports its TIER id
+        (2, "Prime", 2), (5, "Prime", 2), (8, "PRIME", 2),
+        (3, "Elite", 3), (6, "Elite", 3), (9, "Elite", 3),
+        (20, "Platinum", 20),                                   # a name that is not one of the three keeps its own id
+        (6, None, 6),                                           # no gen_plans row to read the name from
+    ])
+    def test_plan_id_is_the_tier_for_every_duration_row(self, db, row_id, name, tier_id):
+        st, *_ = self.status(db, sub={"plan_id": row_id, "plan_name": name, "end_date": date(2027, 1, 1), "status": "ACTIVE"})
+        assert st == {"plan_id": tier_id, "is_free_trial": False, "is_expired": False}
+
+    def test_the_plan_name_is_read_with_a_left_join(self, db):
+        _, cur, _ = self.status(db, sub={"plan_id": 5, "plan_name": "Prime", "end_date": date(2027, 1, 1), "status": "ACTIVE"})
+        assert "LEFT JOIN gen_plans gp ON gp.plan_id = ps.plan_id" in cur.find("FROM subscription ps")[0][0]
+
+    @pytest.mark.parametrize("row_id,name,blocked", [
+        (4, "Core", {"staff_location", "crm"}), (7, "Core", {"staff_location", "crm"}),     # Core 6 / 12 months
+        (5, "Prime", {"crm"}), (8, "Prime", {"crm"}),                                       # Prime 6 / 12 months
+        (6, "Elite", set()), (9, "Elite", set()),                                           # Elite 6 / 12 months
+    ])
+    def test_features_of_a_longer_duration_are_those_of_its_tier(self, db, row_id, name, blocked):
+        db({"FROM free_trial": None,
+            "FROM subscription ps": {"plan_id": row_id, "plan_name": name, "end_date": date(2027, 1, 1), "status": "ACTIVE"}})
+        for feature in ("staff_location", "crm"):
+            if feature in blocked:
+                with pytest.raises(HTTPException) as exc:
+                    run(gp.check_plan_feature("org-1", feature))
+                assert exc.value.status_code == 403
+            else:
+                run(gp.check_plan_feature("org-1", feature))      # allowed: no exception
+
 
 class TestSubscriptionRead:
     def sub(self, db, trial=None, row=None, rowcount=0):

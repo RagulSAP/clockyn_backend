@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from core_functions.operator_auth import require_operator
@@ -24,14 +26,18 @@ class CouponUpdate(BaseModel):
 
 class PlanCreate(BaseModel):
     plan_name: str
-    plan_amount: float
-    plan_month: int
+    plan_amount: float          # list price per staff per MONTH
+    plan_month: int             # duration of this plan in months (1, 6, 12 ...)
+    free_months: int = 0        # months of plan_month that are not charged (6 months with 1 free charges 5)
+    offer_text: Optional[str] = None   # optional wording for the app, e.g. "Pay 5 months, get 1 free"
 
 
 class PlanUpdate(BaseModel):
     plan_name: str
     plan_amount: float
     plan_month: int
+    free_months: Optional[int] = None   # left out = keep the stored value
+    offer_text: Optional[str] = None    # left out = keep; "" = clear
 
 
 @router.get("/get_plans")
@@ -77,11 +83,11 @@ async def list_plans_route():
 
 @router.post("/", dependencies=[Depends(require_operator)])
 async def create_plan_route(body: PlanCreate):
-    return await create_plan(body.plan_name, body.plan_amount, body.plan_month)
+    return await create_plan(body.plan_name, body.plan_amount, body.plan_month, body.free_months, body.offer_text)
 
 @router.put("/{plan_id}", dependencies=[Depends(require_operator)])
 async def update_plan_route(plan_id: int, body: PlanUpdate):
-    return await update_plan(plan_id, body.plan_name, body.plan_amount, body.plan_month)
+    return await update_plan(plan_id, body.plan_name, body.plan_amount, body.plan_month, body.free_months, body.offer_text)
 
 @router.delete("/{plan_id}", dependencies=[Depends(require_operator)])
 async def delete_plan_route(plan_id: int):

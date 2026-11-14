@@ -639,12 +639,16 @@ CREATE TABLE clockyn_dev.gen_plans (
 	plan_id int4 NOT NULL,
 	plan_name varchar(100) NOT NULL,
 	plan_month int4 NOT NULL,
-	plan_amount numeric(10, 2) NOT NULL,
+	plan_amount numeric(10, 2) NOT NULL,         -- list price per staff per MONTH (the same on every duration of a plan)
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
 	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
+	-- migration 039: one row per plan and duration. free_months of plan_month are not charged (6 months with 1 free = pay for 5)
+	free_months int4 DEFAULT 0 NOT NULL CONSTRAINT gen_plans_free_months_check CHECK (free_months >= 0 AND free_months < plan_month),
+	offer_text varchar(80) NULL,                 -- optional wording for the duration card, e.g. 'Pay for 5 months, get 1 free'
 	CONSTRAINT gen_plans_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX gen_plans_plan_id_key ON clockyn_dev.gen_plans USING btree (plan_id);
+CREATE UNIQUE INDEX gen_plans_name_month_key ON clockyn_dev.gen_plans USING btree (lower(plan_name), plan_month);
 
 -----------
 
@@ -1417,15 +1421,24 @@ FROM (VALUES
 ) AS v(role_id, role_name, description)
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.role_info r WHERE r.role_id = v.role_id);
 
--- gen_plans: ids 1/2/3 are constants in gen_plans_functions.py (Core/Prime/Elite).
--- plan_amount is the price PER STAFF PER MONTH (the app computes staff x plan_amount x months
--- + GST and sends the total to /orders); plan_month is the billing period in months.
+-- gen_plans: one row per plan and duration. The 1 month rows keep ids 1/2/3 (Core/Prime/Elite); every other duration of a
+-- plan has the same plan_name and is matched to its tier by NAME (pricing.plan_family_id), so features, coupons and
+-- referral rewards work for all of them.
+-- plan_amount is the LIST price PER STAFF PER MONTH on every row (the server charges staff x plan_amount x
+-- (plan_month - free_months) + GST); plan_month is the duration; free_months of it are not charged:
+-- 6 months with 1 free = pay for 5 (5 x 49 = 245 per staff), 12 months with 2 free = pay for 10 (490 per staff).
 -- OWNER: set real prices (the amounts below are placeholders).
-INSERT INTO clockyn_dev.gen_plans (plan_id, plan_name, plan_month, plan_amount)
+INSERT INTO clockyn_dev.gen_plans (plan_id, plan_name, plan_month, plan_amount, free_months)
 VALUES
-	(1, 'Core',  1, 49.00),   -- OWNER: set real prices
-	(2, 'Prime', 1, 99.00),   -- OWNER: set real prices
-	(3, 'Elite', 1, 149.00)   -- OWNER: set real prices
+	(1, 'Core',   1,  49.00, 0),   -- OWNER: set real prices
+	(2, 'Prime',  1,  99.00, 0),   -- OWNER: set real prices
+	(3, 'Elite',  1, 149.00, 0),   -- OWNER: set real prices
+	(4, 'Core',   6,  49.00, 1),   -- 6 months, 1 free
+	(5, 'Prime',  6,  99.00, 1),
+	(6, 'Elite',  6, 149.00, 1),
+	(7, 'Core',  12,  49.00, 2),   -- 12 months, 2 free
+	(8, 'Prime', 12,  99.00, 2),
+	(9, 'Elite', 12, 149.00, 2)
 ON CONFLICT (plan_id) DO NOTHING;
 
 -- settings: the ten manager permission names, exact strings from the app
@@ -1685,3 +1698,36 @@ BEGIN
         END IF;
     END LOOP;
 END $$;
+
+-- ─── ALTER + INSERT: plans in several durations with free months (migration 039; run once on existing databases) ──────────────
+-- A plan (Core, Prime, Elite) is sold in several durations: one gen_plans row per duration, same plan_name.
+-- plan_amount stays the LIST price per staff per MONTH on every row; free_months of plan_month are not charged:
+--   Core  1 month  49.00 /staff/month                       -> 1 x 49   =  49 per staff
+--   Core  6 months 49.00 /staff/month, free_months 1        -> 5 x 49   = 245 per staff (valid for 6 months)
+--   Core 12 months 49.00 /staff/month, free_months 2        -> 10 x 49  = 490 per staff (valid for 12 months)
+-- The CREATE TABLE and the seed above already contain all of this for a fresh install, so on a fresh install this block does nothing.
+-- On an existing database it adds the two columns and the 6 and 12 month rows (the monthly price is copied from the 1 month row of
+-- each plan; change the prices afterwards with UPDATE). Safe to re-run: IF NOT EXISTS / NOT EXISTS, no existing row is changed.
+-- Backward compatible: the old backend ignores the new columns, so this can run before the new backend is deployed.
+ALTER TABLE clockyn_dev.gen_plans ADD COLUMN IF NOT EXISTS free_months int4 NOT NULL DEFAULT 0
+    CONSTRAINT gen_plans_free_months_check CHECK (free_months >= 0 AND free_months < plan_month);   -- a plan always charges at least one month
+ALTER TABLE clockyn_dev.gen_plans ADD COLUMN IF NOT EXISTS offer_text varchar(80) NULL;               -- optional wording for the duration card
+
+-- one row per plan and duration; created only when no duplicates exist yet
+-- (check first:  SELECT lower(plan_name), plan_month, count(*) FROM clockyn_dev.gen_plans GROUP BY 1, 2 HAVING count(*) > 1;)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM clockyn_dev.gen_plans GROUP BY lower(plan_name), plan_month HAVING count(*) > 1) THEN
+        CREATE UNIQUE INDEX IF NOT EXISTS gen_plans_name_month_key ON clockyn_dev.gen_plans USING btree (lower(plan_name), plan_month);
+    ELSE
+        RAISE NOTICE 'gen_plans_name_month_key not created: gen_plans has duplicate (plan_name, plan_month) rows';
+    END IF;
+END $$;
+
+-- the 6 month (1 free) and 12 month (2 free) rows of Core, Prime and Elite
+INSERT INTO clockyn_dev.gen_plans (plan_id, plan_name, plan_month, plan_amount, free_months)
+SELECT (SELECT COALESCE(MAX(plan_id), 0) FROM clockyn_dev.gen_plans) + row_number() OVER (ORDER BY b.plan_id, t.m),
+       b.plan_name, t.m, b.plan_amount, t.f
+FROM clockyn_dev.gen_plans b CROSS JOIN (VALUES (6, 1), (12, 2)) AS t(m, f)
+WHERE b.plan_month = 1 AND lower(b.plan_name) IN ('core', 'prime', 'elite')
+  AND NOT EXISTS (SELECT 1 FROM clockyn_dev.gen_plans x WHERE lower(x.plan_name) = lower(b.plan_name) AND x.plan_month = t.m);

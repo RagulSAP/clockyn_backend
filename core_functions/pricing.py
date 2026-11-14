@@ -19,9 +19,11 @@ numbers on the checkout screen and the amount charged are identical:
 
 Three purchase modes (the app's ``PurchaseMode``):
 
-    new      buy / change plan: charged for the plan's own duration, minus a credit for the unexpired current plan
-             (10 staff x current price x current months), term starts today.
-    renew    extend the CURRENT plan by 12 months (priced at the current tier): validity runs from the current end date
+    new      buy / change plan: charged for the plan's own duration less its free months (a 6 month row with 1 free month
+             charges 5 and is valid for 6), minus a credit for the unexpired current plan
+             (10 staff x current price x current PAID months), term starts today.
+    renew    extend the CURRENT plan by 12 months (priced at the current tier, with the same share of free months:
+             6 months / 1 free renews as 12 months / 2 free): validity runs from the current end date
              while the plan is still active, from today once it has expired.
     upgrade  add staff capacity to the running term: only the EXTRA staff are charged, for the whole calendar months
              left (day of month ignored, at least 1); no credit, no coupon; the end date does not change.
@@ -116,6 +118,34 @@ def add_months(start: date, months: int) -> date:
     return start + relativedelta(months=int(months))
 
 
+def paid_months(months: Any, free_months: Any = 0) -> int:
+    """Months charged for a plan of ``months`` that gives ``free_months`` away. The free months are clamped to
+    0..months-1, so a plan always charges at least one month and a bad row can never price a purchase at zero."""
+    months = int(months or 0)
+    free = max(0, min(int(free_months or 0), months - 1)) if months > 0 else 0
+    return months - free
+
+
+def free_months_for_term(tier: "PlanTier", term: int) -> int:
+    """Free months of a purchase of ``term`` months at ``tier``'s rate. The plan's own duration gets its free months;
+    a renewal (always 12 months) gets the same share, rounded down: 6 months with 1 free renews as 12 months with 2 free."""
+    term = int(term)
+    if tier.months <= 0:
+        return 0
+    free = tier.months - paid_months(tier.months, tier.free_months)
+    return (term * free) // tier.months          # == free for term == tier.months
+
+
+# Core / Prime / Elite are the product tiers; every duration row of a tier (1, 6, 12 months ...) shares its name and
+# therefore its feature set, coupons and referral rules. The three base rows keep these ids.
+PLAN_FAMILY_IDS: Dict[str, int] = {"core": 1, "prime": 2, "elite": 3}
+
+
+def plan_family_id(name: Any, plan_id: Any) -> int:
+    """The tier id (1 Core, 2 Prime, 3 Elite) of a plan row, by name; a name that is not one of them keeps its own id."""
+    return PLAN_FAMILY_IDS.get(str(name or "").strip().lower(), int(plan_id))
+
+
 def calendar_months_left(today: date, end_date: date) -> int:
     """Whole calendar months from today's month to the end date's month (day ignored), at least 1."""
     return max(1, (end_date.year - today.year) * 12 + (end_date.month - today.month))
@@ -137,12 +167,23 @@ def _iso(value: Optional[date]) -> Optional[str]:
 # ── inputs ──────────────────────────────────────────────────────────────────
 @dataclass(frozen=True)
 class PlanTier:
-    """One ``gen_plans`` row: ``price`` is INR per staff per month, ``months`` the plan's own duration."""
+    """One ``gen_plans`` row: ``price`` is INR per staff per month (the list price, the same on every duration of a tier),
+    ``months`` the plan's own duration and ``free_months`` how many of them are not charged."""
 
     plan_id: int
     name: str
     price: Decimal
     months: int
+    free_months: int = 0         # months of ``months`` given free (a 6 month row with 1 free month charges 5)
+
+    @property
+    def paid_months(self) -> int:
+        """Months that are charged for this row's own duration."""
+        return paid_months(self.months, self.free_months)
+
+    @property
+    def family_id(self) -> int:
+        return plan_family_id(self.name, self.plan_id)
 
 
 @dataclass(frozen=True)
@@ -176,15 +217,17 @@ class Coupon:
     status: int = 1
     coupon_id: Optional[int] = None
 
-    def discount_for(self, amount: Decimal, plan_id: int, today: date) -> Decimal:
-        """Discount in whole rupees for ``amount`` (the staff charge after credit); raises CouponError when unusable."""
+    def discount_for(self, amount: Decimal, plan_id: int, today: date, family_id: Optional[int] = None) -> Decimal:
+        """Discount in whole rupees for ``amount`` (the staff charge after credit); raises CouponError when unusable.
+        ``plan_ids`` may name the exact plan row or its tier (``family_id``: 2 = every Prime duration)."""
         if int(self.status or 0) != 1:
             raise CouponError("coupon_invalid", "Invalid or expired coupon")
         if self.valid_from and today < self.valid_from:
             raise CouponError("coupon_not_started", "This coupon is not active yet")
         if self.valid_until and today > self.valid_until:
             raise CouponError("coupon_expired", "Invalid or expired coupon")
-        if self.plan_ids and int(plan_id) not in {int(p) for p in self.plan_ids}:
+        allowed = {int(p) for p in self.plan_ids}
+        if allowed and int(plan_id) not in allowed and (family_id is None or int(family_id) not in allowed):
             raise CouponError("coupon_wrong_plan", "This coupon is not valid for the selected plan")
         if self.min_amount is not None and amount < self.min_amount:
             raise CouponError("coupon_min_amount", f"This coupon needs a minimum order of Rs {whole_rupee(self.min_amount):,.0f}")
@@ -249,6 +292,7 @@ class Quote:
     referral_eligible: bool = False                   # for THIS quote (plan + mode + a reward exists)
     referral_eligible_message: Optional[str] = None   # why not eligible
     referral_reward_id: Optional[int] = None          # the reward priced in (only when referral_applied)
+    free_months: int = 0                              # months of ``term_months`` that are free (charged_months = term - free)
 
     @property
     def payable(self) -> bool:
@@ -267,6 +311,7 @@ class Quote:
             "charged_staff": self.charged_staff,
             "charged_months": self.charged_months,
             "term_months": self.term_months,
+            "free_months": self.free_months,
             "staff_charge": _as_float(self.staff_charge),
             "credit": _as_float(self.credit),
             "after_credit": _as_float(self.after_credit),
@@ -356,24 +401,27 @@ def build_quote(
         tier = target
         # The app floors the stepper at the live limit when there is a current plan (also an expired one), else 10.
         min_staff = max(MIN_STAFF, current.staff_limit) if current else MIN_STAFF
-        months = int(tier.months)
+        term_months = int(tier.months)
+        free_months = free_months_for_term(tier, term_months)
+        months = term_months - free_months                    # months charged; the term (validity) is the full duration
         credit = ZERO
         if current and not expired:
-            credit = money(CREDIT_BASELINE_STAFF * current.plan.price * current.plan.months)
+            # what the unexpired plan cost: its PAID months, not the free ones
+            credit = money(CREDIT_BASELINE_STAFF * current.plan.price * current.plan.paid_months)
         charged_staff = staff
-        term_months = months
         valid_from = today
-        valid_till = add_months(today, months)
+        valid_till = add_months(today, term_months)           # validity is the full duration, free months included
         resulting = staff
     elif mode == "renew":
         if current is None:
             raise PricingError("no_current_plan", "There is no plan to renew")
         tier = current.plan
         min_staff = MIN_STAFF
-        months = RENEW_MONTHS
+        term_months = RENEW_MONTHS
+        free_months = free_months_for_term(tier, RENEW_MONTHS)
+        months = RENEW_MONTHS - free_months
         credit = ZERO
         charged_staff = staff
-        term_months = RENEW_MONTHS
         valid_from = current.end_date if not expired else today
         valid_till = add_months(valid_from, RENEW_MONTHS)
         resulting = staff
@@ -385,6 +433,7 @@ def build_quote(
         tier = current.plan
         min_staff = 1
         months = calendar_months_left(today, current.end_date)
+        free_months = 0                       # extra staff pay the monthly rate for every month left; free months never apply
         credit = ZERO
         charged_staff = staff
         term_months = 0
@@ -410,7 +459,7 @@ def build_quote(
     ref_why: Optional[str] = None                  # why THIS quote cannot use a reward
     if mode not in REFERRAL_MODES:
         ref_why = REFERRAL_MSG_UPGRADE
-    elif int(tier.plan_id) not in REFERRAL_ELIGIBLE_PLAN_IDS:
+    elif int(tier.plan_id) not in REFERRAL_ELIGIBLE_PLAN_IDS and tier.family_id not in REFERRAL_ELIGIBLE_PLAN_IDS:
         ref_why = REFERRAL_MSG_PLAN
     elif ref_available < 1 or offer.reward_id is None:
         ref_why = REFERRAL_MSG_NONE
@@ -442,7 +491,7 @@ def build_quote(
                 raise CouponError("coupon_not_applicable", "Coupons do not apply to staff upgrades")
             if coupon is None:
                 raise CouponError("coupon_invalid", "Invalid or expired coupon")
-            discount = coupon.discount_for(after_credit, tier.plan_id, today)
+            discount = coupon.discount_for(after_credit, tier.plan_id, today, tier.family_id)
             applied = True
             if (coupon.discount_type or "percent") == "percent":
                 percent = to_decimal(coupon.discount)
@@ -488,6 +537,7 @@ def build_quote(
         referral_eligible=ref_eligible,
         referral_eligible_message=ref_why,
         referral_reward_id=ref_reward_id,
+        free_months=free_months,
     )
 
 

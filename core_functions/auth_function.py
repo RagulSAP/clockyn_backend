@@ -1205,12 +1205,15 @@ async def admin_login(data: AdminLoginRequest):
 
             # Get active plan_id for this org
             cursor.execute("""
-                SELECT plan_id FROM subscription
-                WHERE org_id = %s AND status = 'ACTIVE'
-                ORDER BY created_at DESC LIMIT 1
+                SELECT ps.plan_id, gp.plan_name FROM subscription ps
+                LEFT JOIN gen_plans gp ON gp.plan_id = ps.plan_id
+                WHERE ps.org_id = %s AND ps.status = 'ACTIVE'
+                ORDER BY ps.created_at DESC LIMIT 1
             """, (user['current_org_id'],))
             sub = cursor.fetchone()
-            plan_id = sub['plan_id'] if sub else None
+            # the TIER id (1 Core, 2 Prime, 3 Elite), the same for every duration of a plan: the app's feature matrix is keyed on it
+            from core_functions.pricing import plan_family_id
+            plan_id = plan_family_id(sub.get('plan_name'), sub['plan_id']) if sub else None
  
             # Check free trial
             cursor.execute("""

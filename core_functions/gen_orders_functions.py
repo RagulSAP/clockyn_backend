@@ -56,7 +56,7 @@ def _load_tier(cursor, plan_id):
     if plan_id is None:
         return None
     cursor.execute(
-        "SELECT plan_id, plan_name, plan_amount, plan_month FROM gen_plans WHERE plan_id = %s",
+        "SELECT plan_id, plan_name, plan_amount, plan_month, free_months FROM gen_plans WHERE plan_id = %s",
         (plan_id,),
     )
     row = cursor.fetchone()
@@ -67,6 +67,7 @@ def _load_tier(cursor, plan_id):
         name=(row["plan_name"] or "").strip(),
         price=pricing.to_decimal(row["plan_amount"]),
         months=int(row["plan_month"] or 0),
+        free_months=int(row.get("free_months") or 0),
     )
 
 
@@ -76,7 +77,7 @@ def load_current_subscription(cursor, org_id: str):
         """
         SELECT ps.plan_id, ps.status, ps.start_date, ps.end_date,
                COALESCE(ps.staff_limit, 10) AS staff_limit,
-               gp.plan_name, gp.plan_amount, gp.plan_month
+               gp.plan_name, gp.plan_amount, gp.plan_month, gp.free_months
         FROM subscription ps
         JOIN gen_plans gp ON gp.plan_id = ps.plan_id
         WHERE ps.org_id = %s AND ps.status IN ('ACTIVE', 'EXPIRED')
@@ -94,6 +95,7 @@ def load_current_subscription(cursor, org_id: str):
             name=(row["plan_name"] or "").strip(),
             price=pricing.to_decimal(row["plan_amount"]),
             months=int(row["plan_month"] or 0),
+            free_months=int(row.get("free_months") or 0),
         ),
         status=row["status"],
         start_date=row.get("start_date"),

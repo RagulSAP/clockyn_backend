@@ -4,12 +4,18 @@ from datetime import date
 from typing import Optional
 from fastapi import HTTPException, Request
 from core_functions.db_function import get_db_connection, return_connection
-from core_functions.pricing import TRIAL_STAFF_LIMIT
+from core_functions.pricing import TRIAL_STAFF_LIMIT, plan_family_id
 from psycopg2.extras import RealDictCursor
 from utils.timezone import get_utc_now, IST, ist_today
 
 ist = pytz.timezone('Asia/Kolkata')
 logger = logging.getLogger(__name__)
+
+# The plan catalogue, as the app and the operator console read it. plan_amount is the list price per staff per MONTH (the
+# same on every duration of a plan); free_months of plan_month are not charged; offer_text is optional marketing wording.
+# Cheapest first, and within one plan the shorter duration first.
+_PLAN_COLUMNS = "plan_id, plan_name, plan_amount, plan_month, free_months AS plan_free_months, offer_text AS plan_offer_text"
+_PLAN_LIST_SQL = f"SELECT {_PLAN_COLUMNS} FROM gen_plans ORDER BY plan_amount ASC, plan_month ASC"
 
 
 def expire_due_subscriptions(today_ist: date, org_id: Optional[str] = None, cursor=None) -> int:
@@ -61,7 +67,7 @@ async def get_plans():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        cursor.execute("SELECT plan_id, plan_name, plan_amount, plan_month FROM gen_plans ORDER BY plan_amount ASC")
+        cursor.execute(_PLAN_LIST_SQL)
         plans = cursor.fetchall()
         return {'success': True, 'data': [dict(p) for p in plans]}
     except Exception as e:
@@ -88,7 +94,8 @@ async def get_org_subscription(org_id: str):
                 COALESCE(ps.staff_limit, 10) AS staff_limit,
                 gp.plan_name,
                 gp.plan_amount,
-                gp.plan_month
+                gp.plan_month,
+                gp.free_months AS plan_free_months
             FROM subscription ps
             JOIN gen_plans gp ON ps.plan_id = gp.plan_id
             WHERE ps.org_id = %s AND ps.status IN ('ACTIVE', 'EXPIRED')
@@ -123,6 +130,7 @@ async def get_org_subscription(org_id: str):
                     # additive, schema-stable placeholder (the app derives the same state itself)
                     'plan_id': None,
                     'plan_month': None,
+                    'plan_free_months': None,
                     'billing_state': 'trial' if is_free_trial else 'none',
                     'trial_staff_limit': TRIAL_STAFF_LIMIT,
                 }
@@ -195,17 +203,21 @@ async def get_org_plan_status(org_id: str) -> dict:
 
         # Free trial not active — check paid subscription (EXPIRED rows are written by expire_due_subscriptions)
         cursor.execute("""
-            SELECT ps.plan_id, ps.end_date, ps.status
+            SELECT ps.plan_id, gp.plan_name, ps.end_date, ps.status
             FROM subscription ps
+            LEFT JOIN gen_plans gp ON gp.plan_id = ps.plan_id
             WHERE ps.org_id = %s AND ps.status IN ('ACTIVE', 'EXPIRED')
             ORDER BY ps.created_at DESC LIMIT 1
         """, (org_id,))
         sub = cursor.fetchone()
 
         if sub:
+            # Every duration of a plan (Core 1 / 6 / 12 months ...) reports its TIER id (1 Core, 2 Prime, 3 Elite): the
+            # feature matrix here and in the app is keyed on the tier, not on the duration row.
+            tier_id = plan_family_id(sub.get('plan_name'), sub['plan_id'])
             if sub['status'] == 'ACTIVE' and sub['end_date'] >= today:
-                return {'plan_id': sub['plan_id'], 'is_free_trial': False, 'is_expired': False}
-            return {'plan_id': sub['plan_id'], 'is_free_trial': False, 'is_expired': True}
+                return {'plan_id': tier_id, 'is_free_trial': False, 'is_expired': False}
+            return {'plan_id': tier_id, 'is_free_trial': False, 'is_expired': True}
 
         return {'plan_id': None, 'is_free_trial': False, 'is_expired': True}
     except Exception as e:
@@ -481,7 +493,7 @@ async def list_plans():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        cursor.execute("SELECT plan_id, plan_name, plan_amount, plan_month FROM gen_plans ORDER BY plan_amount ASC")
+        cursor.execute(_PLAN_LIST_SQL)
         plans = cursor.fetchall()
         return {'success': True, 'data': [dict(p) for p in plans]}
     except Exception as e:
@@ -491,7 +503,20 @@ async def list_plans():
         if conn: return_connection(conn)
 
 
-async def create_plan(plan_name: str, plan_amount: float, plan_month: int):
+def _check_plan_terms(plan_month: int, free_months: int, offer_text: Optional[str]) -> Optional[str]:
+    """Normalised offer text (None when blank); raises 400 for a duration or free-month count that cannot be priced."""
+    if plan_month < 1:
+        raise HTTPException(status_code=400, detail='plan_month must be at least 1')
+    if free_months < 0 or free_months >= plan_month:
+        raise HTTPException(status_code=400, detail='free_months must be from 0 to one less than plan_month')
+    text = (offer_text or '').strip()
+    if len(text) > 80:
+        raise HTTPException(status_code=400, detail='offer_text can be at most 80 characters')
+    return text or None
+
+
+async def create_plan(plan_name: str, plan_amount: float, plan_month: int, free_months: int = 0, offer_text: Optional[str] = None):
+    offer_text = _check_plan_terms(plan_month, free_months, offer_text)
     conn = None
     cursor = None
     try:
@@ -499,11 +524,11 @@ async def create_plan(plan_name: str, plan_amount: float, plan_month: int):
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         cursor.execute(
             """
-            INSERT INTO gen_plans (plan_id, plan_name, plan_amount, plan_month)
-            VALUES ((SELECT COALESCE(MAX(plan_id), 0) + 1 FROM gen_plans), %s, %s, %s)
-            RETURNING plan_id, plan_name, plan_amount, plan_month
+            INSERT INTO gen_plans (plan_id, plan_name, plan_amount, plan_month, free_months, offer_text)
+            VALUES ((SELECT COALESCE(MAX(plan_id), 0) + 1 FROM gen_plans), %s, %s, %s, %s, %s)
+            RETURNING plan_id, plan_name, plan_amount, plan_month, free_months AS plan_free_months, offer_text AS plan_offer_text
             """,
-            (plan_name, plan_amount, plan_month)
+            (plan_name, plan_amount, plan_month, free_months, offer_text)
         )
         conn.commit()
         plan = cursor.fetchone()
@@ -516,15 +541,26 @@ async def create_plan(plan_name: str, plan_amount: float, plan_month: int):
         if conn: return_connection(conn)
 
 
-async def update_plan(plan_id: int, plan_name: str, plan_amount: float, plan_month: int):
+async def update_plan(plan_id: int, plan_name: str, plan_amount: float, plan_month: int,
+                      free_months: Optional[int] = None, offer_text: Optional[str] = None):
+    """``free_months`` / ``offer_text`` left out (None) keep the stored value, so an older console that only knows name, amount
+    and months cannot wipe a free-month offer; an empty ``offer_text`` clears the wording."""
+    if free_months is not None:
+        _check_plan_terms(plan_month, free_months, None)
+    elif plan_month < 1:
+        raise HTTPException(status_code=400, detail='plan_month must be at least 1')
+    if offer_text is not None:
+        offer_text = _check_plan_terms(plan_month, free_months or 0, offer_text) or ''
     conn = None
     cursor = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         cursor.execute(
-            "UPDATE gen_plans SET plan_name=%s, plan_amount=%s, plan_month=%s, updated_at=NOW() WHERE plan_id=%s RETURNING plan_id, plan_name, plan_amount, plan_month",
-            (plan_name, plan_amount, plan_month, plan_id)
+            "UPDATE gen_plans SET plan_name=%s, plan_amount=%s, plan_month=%s, free_months=COALESCE(%s, free_months), "
+            "offer_text=CASE WHEN %s IS NULL THEN offer_text ELSE NULLIF(%s, '') END, updated_at=NOW() "
+            "WHERE plan_id=%s RETURNING plan_id, plan_name, plan_amount, plan_month, free_months AS plan_free_months, offer_text AS plan_offer_text",
+            (plan_name, plan_amount, plan_month, free_months, offer_text, offer_text, plan_id)
         )
         conn.commit()
         plan = cursor.fetchone()
