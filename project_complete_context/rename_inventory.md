@@ -578,3 +578,6 @@ Rename the git repository and update CI/clone URLs; accept the legacy names and 
 | 6 | `gen_` prefix removal is a large mechanical change with little value | decide explicitly in Phase 0; default is to keep |
 | 7 | Documentation drift: README and runbook still show old names | update `README.md` and `migrations/README.md` in Phase 1 and after Phase 4 |
 
+## Update 2026-11-14: table prefix removed
+
+The three tables `punchapp_subscription`, `punchapp_settings` and `punchapp_manager_permissions` were renamed to `subscription`, `settings` and `manager_permissions`, together with their primary keys, the unique index of `subscription` and the identity sequences. Code, tests, `clockyn_ddl_latest.sql` and the README use the new names; `migrations/038_drop_legacy_table_prefix.sql` renames the objects in an existing database. Only migrations 031 and 038 may still spell the old names (the brand guard in `tests/test_branding.py` enforces it). The rows above that call these tables "Kept" describe the state before this change.

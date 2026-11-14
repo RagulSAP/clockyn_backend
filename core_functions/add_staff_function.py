@@ -59,7 +59,7 @@ def assert_staff_capacity(cursor, org_id: str, lock: bool = False) -> None:
     if lock:
         cursor.execute("SELECT org_id FROM org_info WHERE org_id = %s FOR UPDATE", (org_id,))
     cursor.execute("""
-        SELECT staff_limit FROM punchapp_subscription
+        SELECT staff_limit FROM subscription
         WHERE org_id = %s AND status = 'ACTIVE' AND end_date >= %s
         ORDER BY created_at DESC LIMIT 1
     """, (org_id, ist_today()))

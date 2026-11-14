@@ -528,7 +528,7 @@ def _business(cur, days: int, start: datetime, prev_start: datetime) -> Dict[str
     # Trials, paying customers and revenue.
     row = _safe(cur, "SELECT COUNT(DISTINCT org_id) AS n FROM free_trial WHERE is_active = true AND end_date >= now()", many=False)
     out["trials_active"] = _i(row["n"]) if row else 0
-    row = _safe(cur, "SELECT COUNT(DISTINCT org_id) AS n FROM punchapp_subscription WHERE status = 'ACTIVE'", many=False)
+    row = _safe(cur, "SELECT COUNT(DISTINCT org_id) AS n FROM subscription WHERE status = 'ACTIVE'", many=False)
     out["paid_active"] = _i(row["n"]) if row else 0
     row = _safe(
         cur,
@@ -558,7 +558,7 @@ def _business(cur, days: int, start: datetime, prev_start: datetime) -> Dict[str
             cur,
             """
             SELECT p.plan_name, COUNT(DISTINCT s.org_id) AS n
-            FROM punchapp_subscription s LEFT JOIN gen_plans p ON p.plan_id = s.plan_id
+            FROM subscription s LEFT JOIN gen_plans p ON p.plan_id = s.plan_id
             WHERE s.status = 'ACTIVE' GROUP BY p.plan_name ORDER BY n DESC LIMIT 8
             """,
         )

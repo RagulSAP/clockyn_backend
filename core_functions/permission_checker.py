@@ -29,8 +29,8 @@ async def check_manager_permission_middleware(user_id: str, setting_name: str) -
         
         # Check if manager has the specific permission
         cursor.execute(
-            """SELECT mp.status FROM punchapp_manager_permissions mp
-               JOIN punchapp_settings ps ON mp.setting_id = ps.setting_id
+            """SELECT mp.status FROM manager_permissions mp
+               JOIN settings ps ON mp.setting_id = ps.setting_id
                WHERE mp.user_id = %s AND mp.org_id = %s AND ps.setting_name = %s AND mp.status = 1""",
             (user_id, org_id, setting_name)
         )
@@ -128,7 +128,7 @@ async def get_user_permissions(user_id: str):
         
         # If user is admin (role_id = 1), return all permissions
         if user['role_id'] == 1:
-            cursor.execute("SELECT setting_name FROM punchapp_settings ORDER BY setting_id")
+            cursor.execute("SELECT setting_name FROM settings ORDER BY setting_id")
             all_settings = cursor.fetchall()
             return [setting['setting_name'] for setting in all_settings]
         
@@ -140,8 +140,8 @@ async def get_user_permissions(user_id: str):
         
         # Get manager's permissions
         cursor.execute(
-            """SELECT ps.setting_name FROM punchapp_manager_permissions mp
-               JOIN punchapp_settings ps ON mp.setting_id = ps.setting_id
+            """SELECT ps.setting_name FROM manager_permissions mp
+               JOIN settings ps ON mp.setting_id = ps.setting_id
                WHERE mp.user_id = %s AND mp.org_id = %s AND mp.status = 1
                ORDER BY ps.setting_id""",
             (user_id, org_id)

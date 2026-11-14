@@ -110,8 +110,8 @@ class UserState:
 
 # ============================================================================================ database loaders
 # Column / table names checked against clockyn_ddl_latest.sql: users(user_id, org_id, parent_id, role_id, status,
-# auth_epoch), org_info(id, org_id, parent_id), punchapp_manager_permissions(user_id, org_id, setting_id, status),
-# punchapp_settings(setting_id, setting_name).
+# auth_epoch), org_info(id, org_id, parent_id), manager_permissions(user_id, org_id, setting_id, status),
+# settings(setting_id, setting_name).
 _USER_STATE_SQL = (
     "SELECT COALESCE(u.auth_epoch, 0) AS auth_epoch, u.status AS status, u.role_id AS role_id, "
     "CASE WHEN u.role_id = 1 THEN COALESCE(u.org_id, "
@@ -132,8 +132,8 @@ _ENTITY_USER_SQL = (
 )
 _ENTITY_ORG_SQL = "SELECT org_id FROM org_info WHERE org_id = %s"
 _PERMISSIONS_SQL = (
-    "SELECT ps.setting_name AS setting_name FROM punchapp_manager_permissions mp "
-    "JOIN punchapp_settings ps ON mp.setting_id = ps.setting_id "
+    "SELECT ps.setting_name AS setting_name FROM manager_permissions mp "
+    "JOIN settings ps ON mp.setting_id = ps.setting_id "
     "WHERE mp.user_id = %s AND mp.org_id = %s AND mp.status = 1"
 )
 

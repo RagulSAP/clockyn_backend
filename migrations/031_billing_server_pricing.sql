@@ -51,4 +51,13 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_gen_invoices_payment_id ON gen_invoices USI
 CREATE UNIQUE INDEX IF NOT EXISTS uq_gen_invoices_invoice_number ON gen_invoices USING btree (invoice_number);
 --
 -- 6) Subscription lookups and the expiry sweep are per organisation.
-CREATE INDEX IF NOT EXISTS idx_sub_org_status ON punchapp_subscription USING btree (org_id, status);
+-- Migration 038 renames this table to `subscription`. A database that already has the new name (loaded straight from
+-- clockyn_ddl_latest.sql, or renamed by hand) must not stop the run here, so the index is created under whichever name exists.
+DO $$
+BEGIN
+    IF to_regclass('punchapp_subscription') IS NOT NULL THEN
+        CREATE INDEX IF NOT EXISTS idx_sub_org_status ON punchapp_subscription USING btree (org_id, status);
+    ELSIF to_regclass('subscription') IS NOT NULL THEN
+        CREATE INDEX IF NOT EXISTS idx_sub_org_status ON subscription USING btree (org_id, status);
+    END IF;
+END $$;

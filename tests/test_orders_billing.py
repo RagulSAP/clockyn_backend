@@ -126,7 +126,7 @@ class FakeCursor:
             return self._set({"ok": 1} if ok else None)
         if s == "SELECT 1 AS ok FROM org_info WHERE org_id = %s LIMIT 1":
             return self._set({"ok": 1} if p[0] in db.orgs else None)
-        if "FROM punchapp_subscription ps JOIN gen_plans gp" in s:
+        if "FROM subscription ps JOIN gen_plans gp" in s:
             rows = [x for x in db.subs if x["org_id"] == p[0] and x["status"] in ("ACTIVE", "EXPIRED")]
             if not rows:
                 return self._set(None)
@@ -162,7 +162,7 @@ class FakeCursor:
         if s.startswith("SELECT id, user_id, org_id, plan_id, razorpay_order_id") and "FOR UPDATE" in s:
             rows = [o for o in db.orders if o["razorpay_order_id"] == p[0] and (len(p) == 1 or o["user_id"] == p[1])]
             return self._set(dict(rows[0]) if rows else None)
-        if s.startswith("SELECT plan_id, end_date, staff_limit FROM punchapp_subscription WHERE subscription_id = %s"):
+        if s.startswith("SELECT plan_id, end_date, staff_limit FROM subscription WHERE subscription_id = %s"):
             rows = [x for x in db.subs if x["subscription_id"] == p[0]]
             return self._set(dict(rows[0]) if rows else None)
         if s.startswith("INSERT INTO gen_payments"):
@@ -170,13 +170,13 @@ class FakeCursor:
                 return self._set(None, rowcount=0)
             db.payments.append({"user_id": p[0], "org_id": p[1], "razorpay_payment_id": p[2], "razorpay_order_id": p[3], "amount": p[4]})
             return self._set(None, rowcount=1)
-        if s.startswith("INSERT INTO punchapp_subscription"):
+        if s.startswith("INSERT INTO subscription"):
             if any(x["subscription_id"] == p[3] for x in db.subs):
                 return self._set(None, rowcount=0)
             db.subs.append({"id": len(db.subs) + 1, "org_id": p[0], "user_id": p[1], "plan_id": p[2], "subscription_id": p[3],
                             "status": "ACTIVE", "start_date": p[4], "end_date": p[5], "staff_limit": p[6]})
             return self._set(None, rowcount=1)
-        if s.startswith("UPDATE punchapp_subscription SET status = 'INACTIVE'"):
+        if s.startswith("UPDATE subscription SET status = 'INACTIVE'"):
             n = 0
             for x in db.subs:
                 if x["org_id"] == p[0] and x["subscription_id"] != p[1] and x["status"] != "INACTIVE":
@@ -426,7 +426,7 @@ class TestQuote:
     def test_org_scoping_of_the_subscription_lookup(self, env):
         env.db.add_sub(1, date(2027, 3, 1), 12)
         env.client.post("/orders/quote", json={"user_id": ADMIN, "org_id": ORG, "plan_id": 2, "staff_limit": 15, "mode": "new"})
-        sql, params = [x for x in env.db.log if "FROM punchapp_subscription ps JOIN gen_plans gp" in x[0]][-1]
+        sql, params = [x for x in env.db.log if "FROM subscription ps JOIN gen_plans gp" in x[0]][-1]
         assert "ps.org_id = %s" in sql and params == (ORG,)
 
 

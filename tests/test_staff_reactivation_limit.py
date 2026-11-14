@@ -90,7 +90,7 @@ def staff_row(status=0, role=3, parent="org1", manager=None, user_id="u1"):
 def routes(row, sub=None, count=0, update=True):
     return [
         ("SELECT user_id, role_id, parent_id, manager_id, status FROM users", [row] if row else []),
-        ("FROM punchapp_subscription", [sub] if sub else []),
+        ("FROM subscription", [sub] if sub else []),
         ("SELECT COUNT(*) AS cnt FROM users", [{"cnt": count}]),
         ("UPDATE users SET status", [{"user_id": "u1"}] if update else []),
     ]
@@ -209,7 +209,7 @@ def test_manager_owned_legacy_row_checks_the_managers_organisation(monkeypatch):
         run(af.set_staff_status("u1", 1))
     assert e.value.status_code == 403
     assert cur.find("FOR UPDATE")[0][1] == ("org7",)
-    assert cur.find("FROM punchapp_subscription")[0][1][0] == "org7"
+    assert cur.find("FROM subscription")[0][1][0] == "org7"
 
 
 def test_unknown_user_is_404_and_bad_status_is_400(monkeypatch):
@@ -269,7 +269,7 @@ def _req(**kw):
 
 def add_routes(manager_ok=True):
     return [
-        ("FROM punchapp_subscription", []),
+        ("FROM subscription", []),
         ("SELECT COUNT(*) AS cnt FROM users", [{"cnt": 0}]),
         ("SELECT * FROM users WHERE", []),
         ("SELECT dept_id FROM dept_info WHERE dept_name = 'General'", [{"dept_id": "d0"}]),

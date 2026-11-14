@@ -97,7 +97,7 @@ def _no_s3(monkeypatch):
 
 @pytest.fixture(autouse=True)
 def _plan_gate_open(monkeypatch):
-    """The wages routers are behind plan_gate('salary_structure'), which reads free_trial / punchapp_subscription
+    """The wages routers are behind plan_gate('salary_structure'), which reads free_trial / subscription
     (tables this mini database does not create). The gate itself is covered by test_plan_gating.py; open it here."""
     from core_functions import gen_plans_functions
 

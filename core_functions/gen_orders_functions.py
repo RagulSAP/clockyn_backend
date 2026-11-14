@@ -77,7 +77,7 @@ def load_current_subscription(cursor, org_id: str):
         SELECT ps.plan_id, ps.status, ps.start_date, ps.end_date,
                COALESCE(ps.staff_limit, 10) AS staff_limit,
                gp.plan_name, gp.plan_amount, gp.plan_month
-        FROM punchapp_subscription ps
+        FROM subscription ps
         JOIN gen_plans gp ON gp.plan_id = ps.plan_id
         WHERE ps.org_id = %s AND ps.status IN ('ACTIVE', 'EXPIRED')
         ORDER BY ps.created_at DESC, ps.id DESC

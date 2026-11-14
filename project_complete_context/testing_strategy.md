@@ -248,7 +248,7 @@ Fix in the mock repository in the same pull request as the matching backend chan
 
 1. converts psycopg2 placeholders (`%s`, `%(name)s`, `%%`, `IN %s`) to `$N` and compares the count with a literal params tuple/list/dict (`PARAM_COUNT_MISMATCH`; a lone `%` in SQL run with params is `BAD_PERCENT`);
 2. parses the statement with the real PostgreSQL parser, pglast (`SYNTAX_ERROR`, with file:line and a snippet);
-3. resolves aliases against `punchapp_ddl_latest.sql` and flags `UNKNOWN_COLUMN` / `UNKNOWN_ALIAS` for qualified and unqualified column references and for `INSERT` / `UPDATE` / `ON CONFLICT` target columns of known tables, and `UNKNOWN_TABLE` (warn, once per file) for tables that are not in the DDL. CTEs, subquery aliases, set-returning functions and `EXCLUDED` are understood.
+3. resolves aliases against `clockyn_ddl_latest.sql` and flags `UNKNOWN_COLUMN` / `UNKNOWN_ALIAS` for qualified and unqualified column references and for `INSERT` / `UPDATE` / `ON CONFLICT` target columns of known tables, and `UNKNOWN_TABLE` (warn, once per file) for tables that are not in the DDL. CTEs, subquery aliases, set-returning functions and `EXCLUDED` are understood.
 
 f-strings whose `{...}` parts cannot be resolved are checked as "approximate": each part is replaced with a harmless identifier or predicate (`x_placeholder`, `1 = 1`, several candidates are tried until the statement parses), the parameter count is only compared when every placeholder is an identifier, and unqualified columns are not checked.
 

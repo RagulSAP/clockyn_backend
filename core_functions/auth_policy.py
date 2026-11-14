@@ -127,7 +127,7 @@ class RoleRule:
     note: str = ""
 
 
-# Manager permission names are the exact strings of punchapp_settings (see managerShortcuts.ts in the app).
+# Manager permission names are the exact strings of settings (see managerShortcuts.ts in the app).
 P_STAFF, P_BRANCH, P_REPORTS = "Staff Management", "Branch Management", "Attendance Reports"
 P_SALARY, P_HOLIDAY, P_SHIFT = "Salary Management", "Holiday Management", "Shift Management"
 P_LEADS, P_INCENTIVE, P_COMPANY = "Leads Management", "Incentive Management", "Company Settings"

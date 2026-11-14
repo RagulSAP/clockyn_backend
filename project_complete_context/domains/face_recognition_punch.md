@@ -237,7 +237,7 @@ GROUP BY 1, 2 ORDER BY 1, 2;
 SELECT outcome, count(*), round(avg(brightness)::numeric,1) AS avg_brightness, round(avg(blur)::numeric,1) AS avg_blur, round(avg(ms_total)) AS avg_ms
 FROM face_attempt_log GROUP BY outcome ORDER BY count(*) DESC;
 ```
-The table is created by `punchapp_ddl_latest.sql` (`face_attempt_log`, index `(org_id, created_at)`); apply that `CREATE TABLE` on existing databases before enabling `FACE_ATTEMPT_LOG` (until then inserts are skipped with a warning).
+The table is created by `clockyn_ddl_latest.sql` (`face_attempt_log`, index `(org_id, created_at)`); apply that `CREATE TABLE` on existing databases before enabling `FACE_ATTEMPT_LOG` (until then inserts are skipped with a warning).
 
 ## 9. Rekognition design and setup (current)
 
@@ -250,7 +250,7 @@ The table is created by `punchapp_ddl_latest.sql` (`face_attempt_log`, index `(o
 | `core_functions/face_recognition.py` | glue `prepare_face` / `verify_face` run on the face thread pool |
 | `core_functions/face_attendance_functions.py` | register / punch / check / warm-up flows (unchanged contract) |
 | `core_functions/data_lifecycle.py` (`remove_face_data`) | face deletion on staff delete, retention purge and account deletion |
-| `migrations/035_user_face_index.sql`, `punchapp_ddl_latest.sql` | table `user_face_index(id, user_id, face_id UNIQUE, photo_no, created_at)`, index on `user_id`; no FK to `users` on purpose |
+| `migrations/035_user_face_index.sql`, `clockyn_ddl_latest.sql` | table `user_face_index(id, user_id, face_id UNIQUE, photo_no, created_at)`, index on `user_id`; no FK to `users` on purpose |
 | `scripts/rekognition_setup.py` | `check`, `create`, `policy [--admin]` |
 
 ### 9.2 Flow
@@ -320,7 +320,7 @@ Region: the same as the app (`REKOGNITION_REGION`, default `ap-south-1` = Asia P
    Create it as a policy (e.g. `ClockynRekognitionApp`) and attach it to the service's IAM role (App Runner / ECS task role / EC2 instance profile) or, for a local run with keys, to the IAM user whose keys are in `.env`. Do NOT give the app role `CreateCollection` / `DeleteCollection` (`REKOGNITION_AUTO_CREATE=1` needs `CreateCollection`: use it only in development).
 4. **Credentials.** On AWS prefer the role attached to the service (leave `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` empty: boto3's default chain is used). Locally the keys in `.env` are used.
 5. **Configure** `.env` (all lines are in `.env`, commented): `REKOGNITION_REGION`, `REKOGNITION_COLLECTION_ID`, `REKOGNITION_THRESHOLD` (start with the default 90.0 and tune with `face_attempt_log`), `FACE_BACKEND=rekognition` (the default).
-6. **Apply the database migration** `migrations/035_user_face_index.sql` (`python migrate.py --all`; a new database gets the table from `punchapp_ddl_latest.sql`).
+6. **Apply the database migration** `migrations/035_user_face_index.sql` (`python migrate.py --all`; a new database gets the table from `clockyn_ddl_latest.sql`).
 7. **Verify**: `python scripts/rekognition_setup.py check` prints the region, collection id, face count, which IAM actions work (each missing one is named) and ends with `READY` (exit code 0) or `NOT READY` (exit code 1). The `ListCollections` line is informational (operator only).
 8. **Optional live test** with a real photo of one face: `REKOGNITION_LIVE=1 REKOGNITION_TEST_IMAGE=C:\path\face.jpg python -m pytest tests/test_rekognition_live.py -q -s`. It creates and deletes its own collection `clockyn-test-<hex>`, enrols a throw-away user, verifies, and cleans up in `finally` (needs the operator policy of step 1).
 9. **Tune and monitor**: Rekognition quotas (transactions per second per region, adjustable by AWS Support) are not documented here; a burst of punches at shift start can be throttled: botocore retries (`REKOGNITION_MAX_RETRIES`), then the app answers "try again". Watch the `face.metrics` lines (`outcome`, `score`, `total_ms`) and the warnings of logger `face.rekognition` / `face.service`.

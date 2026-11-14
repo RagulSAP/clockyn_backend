@@ -19,7 +19,7 @@ def expire_due_subscriptions(today_ist: date, org_id: Optional[str] = None, curs
     to one organisation (the read paths); ``None`` sweeps all (for a future scheduler). With a ``cursor`` only the
     UPDATE runs and the caller commits; without one a connection is taken and committed. Returns the rows changed.
     """
-    sql = "UPDATE punchapp_subscription SET status = 'EXPIRED', updated_at = NOW() WHERE status = 'ACTIVE' AND end_date < %s"
+    sql = "UPDATE subscription SET status = 'EXPIRED', updated_at = NOW() WHERE status = 'ACTIVE' AND end_date < %s"
     params = [today_ist]
     if org_id is not None:
         sql += " AND org_id = %s"
@@ -89,7 +89,7 @@ async def get_org_subscription(org_id: str):
                 gp.plan_name,
                 gp.plan_amount,
                 gp.plan_month
-            FROM punchapp_subscription ps
+            FROM subscription ps
             JOIN gen_plans gp ON ps.plan_id = gp.plan_id
             WHERE ps.org_id = %s AND ps.status IN ('ACTIVE', 'EXPIRED')
             ORDER BY ps.created_at DESC
@@ -157,7 +157,7 @@ async def check_org_access(org_id: str):
         if bool(trial and trial['is_active'] and trial['end_date'] >= today):
             return
         cursor.execute("""
-            SELECT 1 FROM punchapp_subscription
+            SELECT 1 FROM subscription
             WHERE org_id = %s AND status = 'ACTIVE' AND end_date >= %s
             LIMIT 1
         """, (org_id, today))
@@ -196,7 +196,7 @@ async def get_org_plan_status(org_id: str) -> dict:
         # Free trial not active — check paid subscription (EXPIRED rows are written by expire_due_subscriptions)
         cursor.execute("""
             SELECT ps.plan_id, ps.end_date, ps.status
-            FROM punchapp_subscription ps
+            FROM subscription ps
             WHERE ps.org_id = %s AND ps.status IN ('ACTIVE', 'EXPIRED')
             ORDER BY ps.created_at DESC LIMIT 1
         """, (org_id,))
@@ -549,7 +549,7 @@ async def delete_plan(plan_id: int):
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         # Check if any subscriptions or orders reference this plan
         cursor.execute(
-            "SELECT COUNT(*) AS cnt FROM punchapp_subscription WHERE plan_id = %s", (plan_id,)
+            "SELECT COUNT(*) AS cnt FROM subscription WHERE plan_id = %s", (plan_id,)
         )
         sub_count = cursor.fetchone()['cnt']
         cursor.execute(

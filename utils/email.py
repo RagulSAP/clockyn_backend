@@ -195,7 +195,7 @@ def _generate_invoice_pdf(invoice_data: dict) -> bytes:
       • Address : Bill To (left)  |  Ship To (right)
       • Items   : # | Item & Description | Qty | Rate | Amount
       • Bottom  : Total In Words + Terms & Conditions (left)
-                  Summary totals + Authorized Signature (right)
+                  Summary totals + system-generated note (right)
  
     invoice_data keys
     -----------------
@@ -454,7 +454,7 @@ def _generate_invoice_pdf(invoice_data: dict) -> bytes:
     # ═════════════════════════════════════════════════════════════
     # 5.  BOTTOM SECTION
     #     Left : Total In Words  +  Terms & Conditions / New Plan / Previous Plan
-    #     Right: Summary totals  +  Authorized Signature
+    #     Right: Summary totals  +  system-generated note
     # ═════════════════════════════════════════════════════════════
     base_amount  = float(invoice_data.get('base_amount',  0))
     discount     = float(invoice_data.get('discount',     0))
@@ -548,25 +548,17 @@ def _generate_invoice_pdf(invoice_data: dict) -> bytes:
     sum_tbl = Table(srows, colWidths=[45 * mm, 36 * mm])
     sum_tbl.setStyle(TableStyle(sum_style))
 
-        # ── Authorized Signature ──────────────────────────────────────
-    SIGN_PATH = branding.signature_path()   # static/<BRAND_SIGNATURE_FILE>; blank space when absent
-    if os.path.exists(SIGN_PATH):
-        _img = RLImage(SIGN_PATH, width=40 * mm, height=15 * mm, kind='proportional')
-        _img.hAlign = 'CENTER'
-        sign_cell = _img
-    else:
-        sign_cell = Spacer(1, 15 * mm)
+        # ── System-generated note ──────────────────────────────────────
+    # No signature image: the invoice is system generated.
     sig_tbl = Table(
-        [[sign_cell],
-         [Spacer(1, 2 * mm)],
-         [HRFlowable(width='100%', thickness=0.5, color=BORDER)],
-         [Paragraph('Authorized Signature', ps('sl', 8, color=LGRAY, align=TA_CENTER))]],
+        [[Paragraph('This is system generated invoice, no sign required',
+                    ps('sl', 8, color=MGRAY, align=TA_CENTER, leading=11))]],
         colWidths=[81 * mm],
     )
     sig_tbl.setStyle(TableStyle([
         ('BOX',          (0, 0), (-1, -1), 0.5, BORDER),
         ('TOPPADDING',   (0, 0), (-1, -1), 8),
-        ('BOTTOMPADDING',(0, 0), (-1, -1), 4),
+        ('BOTTOMPADDING',(0, 0), (-1, -1), 8),
         ('LEFTPADDING',  (0, 0), (-1, -1), 0),
         ('RIGHTPADDING', (0, 0), (-1, -1), 0),
         ('ALIGN',        (0, 0), (-1, -1), 'CENTER'),
@@ -839,7 +831,7 @@ async def get_invoice_details(user_id: str, org_id: Optional[str] = None):
                 gi.created_at
             FROM users u
             LEFT JOIN org_info             o   ON u.org_id   = o.org_id
-            LEFT JOIN punchapp_subscription ps  ON u.org_id   = ps.org_id
+            LEFT JOIN subscription ps  ON u.org_id   = ps.org_id
                                                AND ps.status  = 'ACTIVE'
             LEFT JOIN gen_plans             gp  ON ps.plan_id  = gp.plan_id
             LEFT JOIN gen_invoices          gi  ON gi.user_id  = u.user_id

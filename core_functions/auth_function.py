@@ -1060,8 +1060,8 @@ async def verify_device_token(data: DeviceTokenVerifyRequest):
             # Add manager permissions if role is manager
             if user['role_id'] == 2:
                 cursor.execute(
-                    """SELECT ps.setting_name FROM punchapp_manager_permissions mp
-                       JOIN punchapp_settings ps ON mp.setting_id = ps.setting_id
+                    """SELECT ps.setting_name FROM manager_permissions mp
+                       JOIN settings ps ON mp.setting_id = ps.setting_id
                        WHERE mp.user_id = %s AND mp.org_id = %s AND mp.status = 1
                        ORDER BY ps.setting_id""",
                     (user['user_id'], user['org_id'])
@@ -1205,7 +1205,7 @@ async def admin_login(data: AdminLoginRequest):
 
             # Get active plan_id for this org
             cursor.execute("""
-                SELECT plan_id FROM punchapp_subscription
+                SELECT plan_id FROM subscription
                 WHERE org_id = %s AND status = 'ACTIVE'
                 ORDER BY created_at DESC LIMIT 1
             """, (user['current_org_id'],))
@@ -1307,8 +1307,8 @@ async def employee_login(data: EmployeeLoginRequest):
             # If user is a manager (role_id = 2), get their permissions
             if user['role_id'] == 2:
                 cursor.execute(
-                    """SELECT ps.setting_name FROM punchapp_manager_permissions mp
-                       JOIN punchapp_settings ps ON mp.setting_id = ps.setting_id
+                    """SELECT ps.setting_name FROM manager_permissions mp
+                       JOIN settings ps ON mp.setting_id = ps.setting_id
                        WHERE mp.user_id = %s AND mp.org_id = %s AND mp.status = 1
                        ORDER BY ps.setting_id""",
                     (user['user_id'], user['org_id'])

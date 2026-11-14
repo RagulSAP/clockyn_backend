@@ -652,8 +652,8 @@ def _check_actor(cursor, action_by: str, request_org_id: str, requester_branch_i
             elif role_id == 2 and parent_id == request_org_id:
                 actor["in_request_org"] = True
                 cursor.execute("""
-                    SELECT 1 FROM punchapp_manager_permissions mp
-                    JOIN punchapp_settings ps ON ps.setting_id = mp.setting_id
+                    SELECT 1 FROM manager_permissions mp
+                    JOIN settings ps ON ps.setting_id = mp.setting_id
                     WHERE mp.user_id = %s AND mp.org_id = %s AND mp.status = 1 AND ps.setting_name = %s
                     LIMIT 1
                 """, (actor_id, request_org_id, _ACTOR_PERMISSION))

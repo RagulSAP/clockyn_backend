@@ -84,7 +84,7 @@ one-employee wrapper; the PDF uses the engine counters), `incentive_functions.py
 `salary.py`, `salary_payments.py`, `incentive.py`, `report.py`, `attendance_rule.py`, `emp_expenses.py` (rate type).
 Tests: `tests/test_payroll_snapshot.py` (golden hand-computed numbers), `test_payroll_engine.py`, `test_payroll_validation.py`,
 `test_payroll_endpoints.py` (fake cursor, contract shapes, statement count); DB-only `tests/test_attendance_rule_overtime_salary.py`
-(extended, not run). Schema: `migrations/032_payroll_engine.sql` + `punchapp_ddl_latest.sql`: `salary_payments.snapshot jsonb`,
+(extended, not run). Schema: `migrations/032_payroll_engine.sql` + `clockyn_ddl_latest.sql`: `salary_payments.snapshot jsonb`,
 table `org_allowance_rate`, `odometer_readings.allowance_rate numeric(8,2)`.
 
 **Engine rules.** Attendance comes from `attendance_rules` (IST business date, one row per session): present days = distinct

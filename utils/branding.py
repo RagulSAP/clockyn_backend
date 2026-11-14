@@ -16,7 +16,6 @@ environment (see the Environment Variables table in README.md).
     SELLER_PLACE_OF_SUPPLY   text shown as Place of Supply                  (default empty)
     ANDROID_STORE_URL / IOS_STORE_URL   store listings (also used by the version check)
     BRAND_LOGO_FILE          logo file name inside static/                  (default brand_logo.png)
-    BRAND_SIGNATURE_FILE     signature image file name inside static/       (default signature.png)
     MSG91_WHATSAPP_TEMPLATE  approved WhatsApp template name (no default)
     CORS_ALLOWED_ORIGINS     comma list of allowed web origins              (default * = any origin)
 """
@@ -153,10 +152,6 @@ def _static_file(env_name: str, default_file: str) -> str:
 
 def logo_path() -> str:
     return _static_file("BRAND_LOGO_FILE", "brand_logo.png")
-
-
-def signature_path() -> str:
-    return _static_file("BRAND_SIGNATURE_FILE", "signature.png")
 
 
 # ── CORS ────────────────────────────────────────────────────────────────────

@@ -20,13 +20,13 @@
 --   2. Load this file as-is. It creates the schema, the enum types, all tables,
 --      indexes, foreign keys, the invoice sequence and a small idempotent seed
 --      block, and stops at the first error:
---          psql -h <host> -p <port> -U <user> -d <dbname> -v ON_ERROR_STOP=1 -f punchapp_ddl_latest.sql
+--          psql -h <host> -p <port> -U <user> -d <dbname> -v ON_ERROR_STOP=1 -f clockyn_ddl_latest.sql
 --      Python / psycopg2 equivalent (the file has no psql meta-commands, so a
 --      single execute() works):
 --          import psycopg2
 --          conn = psycopg2.connect(host=..., port=..., user=..., password=..., dbname=...)
 --          with conn, conn.cursor() as cur:
---              cur.execute(open("punchapp_ddl_latest.sql", encoding="utf-8").read())
+--              cur.execute(open("clockyn_ddl_latest.sql", encoding="utf-8").read())
 --
 --   3. Point the backend at it with these environment variables:
 --          DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME=<dbname>
@@ -52,7 +52,7 @@ CREATE SCHEMA IF NOT EXISTS clockyn_dev;
 -- ----------------------------------------------------------------------------
 -- 2. Enum types (referenced by columns below; they were missing from the dump)
 -- Label sets: union of every literal the code writes/compares plus the labels
--- of the original design DDL (git history, punchapp_ddl_postgresql_New.sql).
+-- of the original design DDL (see the git history of this file).
 -- Enum labels are case sensitive.
 -- ----------------------------------------------------------------------------
 -- gen_orders.status / gen_payments.status. Code writes CREATED (new order),
@@ -1072,7 +1072,7 @@ CREATE TABLE clockyn_dev.payslip_add_earnings (
 -----------
 
 
-CREATE TABLE clockyn_dev.punchapp_manager_permissions (
+CREATE TABLE clockyn_dev.manager_permissions (
 	id int4 GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE) NOT NULL,
 	org_id varchar(36) NULL,
 	user_id varchar(36) NULL,
@@ -1080,28 +1080,28 @@ CREATE TABLE clockyn_dev.punchapp_manager_permissions (
 	status int4 DEFAULT 1 NULL,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
 	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
-	CONSTRAINT punchapp_manager_permissions_pkey PRIMARY KEY (id)
+	CONSTRAINT manager_permissions_pkey PRIMARY KEY (id)
 );
-CREATE INDEX idx_manager_permissions_org_id ON clockyn_dev.punchapp_manager_permissions USING btree (org_id);
-CREATE INDEX idx_manager_permissions_setting_id ON clockyn_dev.punchapp_manager_permissions USING btree (setting_id);
-CREATE INDEX idx_manager_permissions_user_id ON clockyn_dev.punchapp_manager_permissions USING btree (user_id);
+CREATE INDEX idx_manager_permissions_org_id ON clockyn_dev.manager_permissions USING btree (org_id);
+CREATE INDEX idx_manager_permissions_setting_id ON clockyn_dev.manager_permissions USING btree (setting_id);
+CREATE INDEX idx_manager_permissions_user_id ON clockyn_dev.manager_permissions USING btree (user_id);
 
 ----------
 
 
-CREATE TABLE clockyn_dev.punchapp_settings (
+CREATE TABLE clockyn_dev.settings (
 	id int4 GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE) NOT NULL,
 	setting_id int4 NULL,
 	setting_name varchar(255) NOT NULL,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
 	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
-	CONSTRAINT punchapp_settings_pkey PRIMARY KEY (id)
+	CONSTRAINT settings_pkey PRIMARY KEY (id)
 );
 
 ----------
 
 
-CREATE TABLE clockyn_dev.punchapp_subscription (
+CREATE TABLE clockyn_dev.subscription (
 	id int4 GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE) NOT NULL,
 	org_id varchar(36) NOT NULL,
 	user_id varchar(36) NOT NULL,
@@ -1113,11 +1113,11 @@ CREATE TABLE clockyn_dev.punchapp_subscription (
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
 	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
 	staff_limit int4 DEFAULT 10 NOT NULL,
-	CONSTRAINT punchapp_subscription_pkey PRIMARY KEY (id)
+	CONSTRAINT subscription_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX punchapp_subscription_subscription_id_key ON clockyn_dev.punchapp_subscription USING btree (subscription_id);
+CREATE UNIQUE INDEX subscription_subscription_id_key ON clockyn_dev.subscription USING btree (subscription_id);
 -- migration 031: expiry sweep and latest-subscription lookups are per organisation
-CREATE INDEX idx_sub_org_status ON clockyn_dev.punchapp_subscription USING btree (org_id, status);
+CREATE INDEX idx_sub_org_status ON clockyn_dev.subscription USING btree (org_id, status);
 
 ---------
 
@@ -1428,16 +1428,16 @@ VALUES
 	(3, 'Elite', 1, 149.00)   -- OWNER: set real prices
 ON CONFLICT (plan_id) DO NOTHING;
 
--- punchapp_settings: the ten manager permission names, exact strings from the app
+-- settings: the ten manager permission names, exact strings from the app
 -- (src/features/team-rules/utils/permissions.ts, same order). The session list at login
--- (auth_function.py:868, 1097) joins punchapp_manager_permissions to this table on setting_id
+-- (auth_function.py:868, 1097) joins manager_permissions to this table on setting_id
 -- and returns setting_name, so these names must equal the app's strings exactly.
 -- MISMATCH TO KNOW ABOUT: core_functions/permission_checker.py uses 'Department Management' and
 -- 'Payroll Management' (not in the app's catalogue), while the app uses 'Salary Management' and
 -- 'Requests Management'. The seed follows the app. permission_checker is only used by
 -- /managers/permissions/{id} and the legacy decorators, which the app does not call; fix the
 -- checker's names (or rename here) in a later step.
-INSERT INTO clockyn_dev.punchapp_settings (setting_id, setting_name)
+INSERT INTO clockyn_dev.settings (setting_id, setting_name)
 SELECT v.setting_id, v.setting_name
 FROM (VALUES
 	(1,  'Staff Management'),
@@ -1452,7 +1452,7 @@ FROM (VALUES
 	(10, 'Requests Management')
 ) AS v(setting_id, setting_name)
 WHERE NOT EXISTS (
-	SELECT 1 FROM clockyn_dev.punchapp_settings s
+	SELECT 1 FROM clockyn_dev.settings s
 	WHERE s.setting_id = v.setting_id OR s.setting_name = v.setting_name
 );
 
@@ -1652,3 +1652,36 @@ CREATE INDEX IF NOT EXISTS idx_referral_reward_org_status ON clockyn_dev.referra
 -- columns for a fresh install). Safe to re-run: IF NOT EXISTS, nullable, no default, no data touched.
 ALTER TABLE clockyn_dev.gen_orders   ADD COLUMN IF NOT EXISTS referral_reward_id int4 NULL;  -- the reward priced into the order
 ALTER TABLE clockyn_dev.gen_invoices ADD COLUMN IF NOT EXISTS referral_reward_id int4 NULL;  -- the reward this invoice consumed
+
+-- ─── RENAME: drop the old product prefix from three tables (migration 038; run once on existing databases) ───────────────────
+--   punchapp_settings -> settings      punchapp_manager_permissions -> manager_permissions      punchapp_subscription -> subscription
+-- The CREATE TABLE statements above already use the new names, so on a fresh install this block finds nothing and does nothing.
+-- On an existing database it renames the tables, their primary keys / unique index and their identity sequences. Data is not touched.
+-- Safe to re-run: an object is renamed only when the old name exists and the new name is free.
+-- Run it right before the backend version that reads the new names starts (the old code fails after it, the new code before it).
+DO $$
+DECLARE
+    sch text := 'clockyn_dev';
+    r   record;
+BEGIN
+    FOR r IN
+        SELECT * FROM (VALUES
+            (1,  'TABLE',    'punchapp_settings',                         'settings'),
+            (2,  'TABLE',    'punchapp_manager_permissions',              'manager_permissions'),
+            (3,  'TABLE',    'punchapp_subscription',                     'subscription'),
+            (4,  'INDEX',    'punchapp_settings_pkey',                    'settings_pkey'),
+            (5,  'INDEX',    'punchapp_manager_permissions_pkey',         'manager_permissions_pkey'),
+            (6,  'INDEX',    'punchapp_subscription_pkey',                'subscription_pkey'),
+            (7,  'INDEX',    'punchapp_subscription_subscription_id_key', 'subscription_subscription_id_key'),
+            (8,  'SEQUENCE', 'punchapp_settings_id_seq',                  'settings_id_seq'),
+            (9,  'SEQUENCE', 'punchapp_manager_permissions_id_seq',       'manager_permissions_id_seq'),
+            (10, 'SEQUENCE', 'punchapp_subscription_id_seq',              'subscription_id_seq')
+        ) AS t(step, kind, old_name, new_name)
+        ORDER BY step
+    LOOP
+        IF to_regclass(format('%I.%I', sch, r.old_name)) IS NOT NULL
+           AND to_regclass(format('%I.%I', sch, r.new_name)) IS NULL THEN
+            EXECUTE format('ALTER %s %I.%I RENAME TO %I', r.kind, sch, r.old_name, r.new_name);
+        END IF;
+    END LOOP;
+END $$;

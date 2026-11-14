@@ -45,7 +45,7 @@ def _lock_order(cursor, razorpay_order_id: str, user_id: str = None):
 
 def _existing_activation(cursor, razorpay_order_id: str):
     cursor.execute(
-        "SELECT plan_id, end_date, staff_limit FROM punchapp_subscription WHERE subscription_id = %s",
+        "SELECT plan_id, end_date, staff_limit FROM subscription WHERE subscription_id = %s",
         (subscription_id_for_order(razorpay_order_id),),
     )
     return cursor.fetchone()
@@ -276,7 +276,7 @@ def activate_paid_order(
     # The new subscription row; a conflict on the order-derived id means another call already activated it
     sub_id = subscription_id_for_order(razorpay_order_id)
     cursor.execute("""
-        INSERT INTO punchapp_subscription (org_id, user_id, plan_id, subscription_id, status, start_date, end_date, staff_limit)
+        INSERT INTO subscription (org_id, user_id, plan_id, subscription_id, status, start_date, end_date, staff_limit)
         VALUES (%s, %s, %s, %s, 'ACTIVE', %s, %s, %s)
         ON CONFLICT (subscription_id) DO NOTHING
     """, (order["org_id"], order["user_id"], order["plan_id"], sub_id, start_date, end_date, new_staff_limit))
@@ -285,7 +285,7 @@ def activate_paid_order(
     if created:
         # Deactivate previous subscriptions
         cursor.execute("""
-            UPDATE punchapp_subscription SET status = 'INACTIVE', updated_at = NOW()
+            UPDATE subscription SET status = 'INACTIVE', updated_at = NOW()
             WHERE org_id = %s AND subscription_id != %s AND status <> 'INACTIVE'
         """, (order["org_id"], sub_id))
         # Deactivate free trial; if still active and not yet expired, stamp end_date to payment date

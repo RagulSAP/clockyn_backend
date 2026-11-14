@@ -40,7 +40,7 @@ class DecisionCursor(RouteCursor):
             self.add("SELECT user_id, role_id, status, parent_id FROM users WHERE user_id", one=actor)
         self.add("FROM org_info WHERE org_id = %s AND parent_id = %s",
                  one=lambda p: (1,) if p[0] in owner_of else None)
-        self.add("FROM punchapp_manager_permissions", one=(1,) if permitted else None)
+        self.add("FROM manager_permissions", one=(1,) if permitted else None)
         self.add("FROM manager_assignments", many=list(assignments))
 
     def execute(self, sql, params=None):
@@ -137,7 +137,7 @@ def test_request_lookup_and_permission_sql_are_scoped(monkeypatch, enforced):
     decide(monkeypatch, cur, by="mgr-1")
     sql, params = cur.find("FROM requests r LEFT JOIN users u")[0]
     assert "r.request_id = %s" in sql and params == ("req-1",)
-    sql, params = cur.find("FROM punchapp_manager_permissions")[0]
+    sql, params = cur.find("FROM manager_permissions")[0]
     assert params == ("mgr-1", ORG, "Requests Management") and placeholders_match(sql, params)
     assert "mp.status = 1" in sql and "ps.setting_name = %s" in sql and "mp.org_id = %s" in sql
     sql, params = cur.find("FROM manager_assignments")[0]

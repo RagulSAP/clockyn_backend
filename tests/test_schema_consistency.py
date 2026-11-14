@@ -67,7 +67,7 @@ def test_the_real_migrations_are_actually_analysed():
     by = {i.number: i for i in infos}
     assert by[28].analysable_do >= 1 and by[29].analysable_do >= 2 and by[32].analysable_do >= 1
     kinds = [type(s).__name__ for s, _ in by[31].stmts]
-    assert kinds.count("AlterTableStmt") >= 18 and kinds.count("IndexStmt") == 3
+    assert kinds.count("AlterTableStmt") >= 18 and kinds.count("IndexStmt") == 4      # 3 indexes; idx_sub_org_status is written twice: the guarded DO block has an old-name and a new-name branch
     assert by[27].created_tables == {"user_push_tokens"}
 
 

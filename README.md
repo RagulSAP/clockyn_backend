@@ -171,7 +171,7 @@ graph TD
 | 3 | Staff |
 
 - Admins have all permissions.
-- Managers have granular permissions stored in `punchapp_manager_permissions`.
+- Managers have granular permissions stored in `manager_permissions`.
 - Staff have no admin access.
 
 ---
@@ -257,15 +257,15 @@ sequenceDiagram
 | `gen_plans` | Subscription plan catalogue (Core/Prime/Elite). |
 | `gen_orders` | Razorpay orders. |
 | `gen_payments` | Verified payments. |
-| `punchapp_subscription` | Active/expired subscriptions per org. |
+| `subscription` | Active/expired subscriptions per org. |
 | `free_trial` | 1-month free trial per org on registration. |
 | `gen_invoices` | Tax invoices generated after payment. |
 | `gen_razorpay_key` | Razorpay key/secret stored in DB (not .env). |
 | `moblie_otp_verification` | Mobile OTPs (TTL 5 min). |
 | `email_otp_verification` | Email OTPs (TTL 5 min). |
 | `otp_send_log` | One row per OTP code sent; drives the send throttle (rows older than 24 h are pruned on insert). |
-| `punchapp_settings` | Master list of permission settings. |
-| `punchapp_manager_permissions` | Per-manager permission assignments. |
+| `settings` | Master list of permission settings. |
+| `manager_permissions` | Per-manager permission assignments. |
 | `staff_location_logs` | GPS logs on every punch. |
 | `leave_requests` | Staff leave requests. |
 | `device_change_requests` | Device change requests (auto-submitted on token mismatch). |
@@ -282,7 +282,7 @@ erDiagram
     users ||--o{ attendance : "records"
     users ||--o{ payroll : "assigned"
     pay_slip ||--o{ payroll : "template"
-    org_info ||--o| punchapp_subscription : "has"
+    org_info ||--o| subscription : "has"
     org_info ||--o| free_trial : "has"
     users ||--o{ chat : "sends"
     chat_groups ||--o{ group_members : "has"
@@ -322,7 +322,7 @@ sequenceDiagram
     App->>Razorpay: Complete payment (SDK)
     App->>API: POST /payments/verify {razorpay_order_id, payment_id, signature}
     API->>Razorpay: HMAC signature verify
-    API->>DB: INSERT gen_payments, UPDATE gen_orders, UPSERT punchapp_subscription
+    API->>DB: INSERT gen_payments, UPDATE gen_orders, UPSERT subscription
     API->>DB: Deactivate free_trial, INSERT gen_invoices
     API->>SES: Send invoice email (PDF attachment)
     API-->>App: {success, valid_till}
@@ -441,7 +441,7 @@ sequenceDiagram
 | `SELLER_NAME`, `SELLER_ADDRESS`, `SELLER_GSTIN`, `SELLER_CIN`, `SELLER_EMAIL`, `SELLER_PHONE` | Legal entity printed on invoice PDFs and invoice e-mails. `SELLER_NAME` defaults to `APP_NAME`; the rest default to empty (line left out). `SELLER_ADDRESS` separates lines with `;` or a literal `\n`. Owner/finance decision: legal text on a tax invoice. |
 | `SELLER_SAC`, `SELLER_PLACE_OF_SUPPLY` | SAC code on invoice items (default `998314`) and the Place of Supply text (default empty, shown as `N/A`). |
 | `ANDROID_STORE_URL`, `IOS_STORE_URL` | Store listings: `GET /version/check` returns them as `store_url` when the `app_version_control` row has a NULL or empty `store_url` (read on every call; unset gives `null`), and the link in the WhatsApp staff invitation (Android first, then iOS, then `WEBSITE_URL`). The older names `APP_PLAY_STORE_LINK` / `APP_APP_STORE_LINK` are still read as fallbacks. |
-| `BRAND_LOGO_FILE`, `BRAND_SIGNATURE_FILE` | File names inside `static/` for the invoice logo (default `brand_logo.png`) and authorised-signature image (default `signature.png`). When a file is missing the PDF shows the product initials / blank space. |
+| `BRAND_LOGO_FILE` | File name inside `static/` for the invoice logo (default `brand_logo.png`). When the file is missing the PDF shows the product initials. Invoices carry no signature image: they print "This is system generated invoice, no sign required". |
 | `CORS_ALLOWED_ORIGINS` | Comma list of web origins allowed by CORS, e.g. `https://app.example.com,https://admin.example.com`. Unset or `*` (default) answers `*` as before. With a list only listed origins (and the file:// `null` origin) get CORS headers. The mobile app sends no Origin and is not affected. |
 | `AUTH_TOKEN_SECRET` | Signing key (>= 32 random characters) of the Bearer access tokens issued by `POST /auth/validate-otp`, `POST /auth/verify-device-token` and `POST /auth/register` (additive fields `access_token`, `expires_in`). Unset or shorter than 32 characters: no token is issued or accepted and nothing changes. Changing it signs every user out. `utils/auth_token.py`, `core_functions/auth_dependency.py`; needs `migrations/033_user_auth_epoch.sql` (`users.auth_epoch`). |
 | `AUTH_TOKEN_TTL_DAYS` | Token lifetime in days (default 90 = the device-token lifetime; values outside 1..3650 fall back to 90). |

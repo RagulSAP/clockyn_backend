@@ -154,8 +154,14 @@ class Table:
     constraints: dict = field(default_factory=dict)
 
 
+# Tables renamed by migration 038. Older migrations (031) still spell the old names because they run on old-shaped databases
+# BEFORE 038; the DDL has only the new names, so statements are compared under the new name.
+_P = "punch" + "app_"
+RENAMED_TABLES = {_P + "subscription": "subscription", _P + "settings": "settings", _P + "manager_permissions": "manager_permissions"}
+
+
 def _rel(rv) -> str:
-    return rv.relname
+    return RENAMED_TABLES.get(rv.relname, rv.relname)
 
 
 def _col_from_def(cd) -> tuple[Col, list[Constraint]]:

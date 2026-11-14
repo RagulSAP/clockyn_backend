@@ -302,7 +302,7 @@ def test_anonymise_account_statements(s3):
     assert mobiles == {"deleted-s-orgA", "deleted-s-orgB", "deleted-owner"}      # non-colliding
     # nothing is hard-deleted in the users / billing / attendance / payroll tables
     assert not cur.find("DELETE FROM users ") and not cur.find("DELETE FROM attendance")
-    assert not cur.find("DELETE FROM payroll") and not cur.find("gen_") and not cur.find("punchapp_subscription")
+    assert not cur.find("DELETE FROM payroll") and not cur.find("gen_") and not cur.find("subscription")
     # org + leads + company rows are blanked in place
     org_update = cur.find("UPDATE org_info SET org_name")
     assert [p[-1] for _s, p in org_update] == ["orgA", "orgB"] and all(p[0] == dl.ANON_ORG_NAME for _s, p in org_update)

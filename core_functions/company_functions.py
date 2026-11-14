@@ -495,7 +495,7 @@ async def delete_user_account(user_id: str):
             cursor.execute("DELETE FROM incentive_bonus_details WHERE incentive_id IN (SELECT incentive_id FROM incentive_templates WHERE org_id = %s)", (org_id,))
             cursor.execute("DELETE FROM incentive_templates WHERE org_id = %s", (org_id,))
             cursor.execute("DELETE FROM shift WHERE org_id = %s", (org_id,))
-            cursor.execute("DELETE FROM punchapp_manager_permissions WHERE org_id = %s", (org_id,))
+            cursor.execute("DELETE FROM manager_permissions WHERE org_id = %s", (org_id,))
             cursor.execute("DELETE FROM company_additional_info WHERE org_id = %s", (org_id,))
             cursor.execute("DELETE FROM firm_holidays WHERE org_id = %s", (org_id,))
             cursor.execute("DELETE FROM daily_hourly_wages WHERE org_id = %s", (org_id,))

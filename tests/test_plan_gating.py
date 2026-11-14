@@ -87,7 +87,7 @@ class TestExpireDueSubscriptions:
         cur = Cur(rowcount=2)
         assert gp.expire_due_subscriptions(TODAY, org_id="org-1", cursor=cur) == 2
         sql, params = cur.sql[0]
-        assert sql == ("UPDATE punchapp_subscription SET status = 'EXPIRED', updated_at = NOW() "
+        assert sql == ("UPDATE subscription SET status = 'EXPIRED', updated_at = NOW() "
                        "WHERE status = 'ACTIVE' AND end_date < %s AND org_id = %s")
         assert params == (TODAY, "org-1")           # '<': the end date itself is still a valid day
 
@@ -105,12 +105,12 @@ class TestExpireDueSubscriptions:
 # ── plan status ─────────────────────────────────────────────────────────────
 class TestPlanStatus:
     def status(self, db, trial=None, sub=None, rowcount=0):
-        cur, conn = db({"FROM free_trial": trial, "FROM punchapp_subscription ps": sub}, rowcount)
+        cur, conn = db({"FROM free_trial": trial, "FROM subscription ps": sub}, rowcount)
         return run(gp.get_org_plan_status("org-1")), cur, conn
 
     def test_expiry_is_written_before_the_read_and_committed(self, db):
         st, cur, conn = self.status(db, rowcount=1)
-        assert cur.sql[0][0].startswith("UPDATE punchapp_subscription SET status = 'EXPIRED'") and cur.sql[0][1] == (TODAY, "org-1")
+        assert cur.sql[0][0].startswith("UPDATE subscription SET status = 'EXPIRED'") and cur.sql[0][1] == (TODAY, "org-1")
         assert conn.commits == 1
 
     def test_no_commit_when_nothing_expired(self, db):
@@ -118,7 +118,7 @@ class TestPlanStatus:
         assert conn.commits == 0
 
     def test_sweep_failure_never_breaks_the_read(self, db, monkeypatch):
-        cur, conn = db({"FROM free_trial": None, "FROM punchapp_subscription ps": None})
+        cur, conn = db({"FROM free_trial": None, "FROM subscription ps": None})
         monkeypatch.setattr(gp, "expire_due_subscriptions", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("boom")))
         assert run(gp.get_org_plan_status("org-1")) == {"plan_id": None, "is_free_trial": False, "is_expired": True}
         assert conn.rollbacks == 1
@@ -141,7 +141,7 @@ class TestPlanStatus:
     def test_paid_plan_boundaries(self, db, end, status, expired):
         st, cur, _ = self.status(db, sub={"plan_id": 2, "end_date": end, "status": status})
         assert st == {"plan_id": 2, "is_free_trial": False, "is_expired": expired}
-        sql, params = cur.find("FROM punchapp_subscription ps")[0]
+        sql, params = cur.find("FROM subscription ps")[0]
         assert "status IN ('ACTIVE', 'EXPIRED')" in sql and params == ("org-1",)
 
     def test_expired_plan_keeps_its_plan_id_in_the_response(self, db):
@@ -155,12 +155,12 @@ class TestPlanStatus:
 
 class TestSubscriptionRead:
     def sub(self, db, trial=None, row=None, rowcount=0):
-        cur, conn = db({"FROM punchapp_subscription ps": row, "FROM free_trial": trial}, rowcount)
+        cur, conn = db({"FROM subscription ps": row, "FROM free_trial": trial}, rowcount)
         return run(gp.get_org_subscription("org-1")), cur
 
     def test_expiry_sweep_runs_first(self, db):
         _, cur = self.sub(db)
-        assert cur.sql[0][0].startswith("UPDATE punchapp_subscription SET status = 'EXPIRED'")
+        assert cur.sql[0][0].startswith("UPDATE subscription SET status = 'EXPIRED'")
 
     def test_placeholder_is_schema_stable_and_keeps_the_old_keys(self, db):
         out, _ = self.sub(db, trial={"end_date": date(2026, 12, 1), "is_active": True})
@@ -416,7 +416,7 @@ class StaffCur:
     def execute(self, sql, params=None):
         s = " ".join(sql.split())
         self.sql.append((s, params))
-        if "FROM punchapp_subscription" in s:
+        if "FROM subscription" in s:
             self._last = self.sub
         elif "COUNT(*)" in s:
             self._last = {"cnt": self.count}

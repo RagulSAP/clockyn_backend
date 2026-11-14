@@ -266,12 +266,12 @@ async def get_manager_permissions(user_id: str):
         org_id = user['parent_id']
         
         # Get all settings
-        cursor.execute("SELECT setting_id, setting_name FROM punchapp_settings ORDER BY setting_id")
+        cursor.execute("SELECT setting_id, setting_name FROM settings ORDER BY setting_id")
         settings = cursor.fetchall()
         
         # Get manager's permissions
         cursor.execute(
-            "SELECT setting_id FROM punchapp_manager_permissions WHERE user_id = %s AND org_id = %s AND status = 1",
+            "SELECT setting_id FROM manager_permissions WHERE user_id = %s AND org_id = %s AND status = 1",
             (user_id, org_id)
         )
         enabled_settings = {row['setting_id'] for row in cursor.fetchall()}
@@ -303,12 +303,12 @@ async def save_manager_permissions(user_id: str, data: ManagerPermissionsRequest
         org_id = user['parent_id']
         
         # Get all settings with their IDs
-        cursor.execute("SELECT setting_id, setting_name FROM punchapp_settings")
+        cursor.execute("SELECT setting_id, setting_name FROM settings")
         settings = {row['setting_name']: row['setting_id'] for row in cursor.fetchall()}
         
         # Delete existing permissions
         cursor.execute(
-            "DELETE FROM punchapp_manager_permissions WHERE user_id = %s AND org_id = %s",
+            "DELETE FROM manager_permissions WHERE user_id = %s AND org_id = %s",
             (user_id, org_id)
         )
         
@@ -316,7 +316,7 @@ async def save_manager_permissions(user_id: str, data: ManagerPermissionsRequest
         for setting_name, enabled in data.permissions.items():
             if setting_name in settings and enabled:
                 cursor.execute(
-                    """INSERT INTO punchapp_manager_permissions (org_id, user_id, setting_id, status, created_at, updated_at)
+                    """INSERT INTO manager_permissions (org_id, user_id, setting_id, status, created_at, updated_at)
                        VALUES (%s, %s, %s, 1, %s, %s)""",
                     (org_id, user_id, settings[setting_name], get_utc_now(), get_utc_now())
                 )
@@ -349,8 +349,8 @@ async def check_manager_permission(user_id: str, setting_name: str):
         
         # Check if manager has the specific permission
         cursor.execute(
-            """SELECT mp.status FROM punchapp_manager_permissions mp
-               JOIN punchapp_settings ps ON mp.setting_id = ps.setting_id
+            """SELECT mp.status FROM manager_permissions mp
+               JOIN settings ps ON mp.setting_id = ps.setting_id
                WHERE mp.user_id = %s AND mp.org_id = %s AND ps.setting_name = %s AND mp.status = 1""",
             (user_id, org_id, setting_name)
         )
@@ -378,8 +378,8 @@ async def get_manager_enabled_settings(user_id: str):
         
         # Get enabled settings for the manager
         cursor.execute(
-            """SELECT ps.setting_name FROM punchapp_manager_permissions mp
-               JOIN punchapp_settings ps ON mp.setting_id = ps.setting_id
+            """SELECT ps.setting_name FROM manager_permissions mp
+               JOIN settings ps ON mp.setting_id = ps.setting_id
                WHERE mp.user_id = %s AND mp.org_id = %s AND mp.status = 1
                ORDER BY ps.setting_id""",
             (user_id, org_id)

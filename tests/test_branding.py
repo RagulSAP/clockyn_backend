@@ -40,17 +40,16 @@ ALLOWED_IDENTIFIERS = {
     _P + "_prod",                       # schema qualifier used by the root DDL file and by tests
     _P + "_dev",                        # dev schema name quoted in the runbook-style comments
     _P + "_qa",
-    _P + "_subscription",               # existing tables (renaming = migration + same-release code change)
-    _P + "_settings",
-    _P + "_manager_permissions",
-    _P + "_subscription_pkey",          # constraint / index names derived from the tables
-    _P + "_subscription_subscription_id_key",
-    _P + "_settings_pkey",
-    _P + "_manager_permissions_pkey",
-    _P + "_ddl_latest",                 # file name of the root DDL file (not read by code, cited by tests)
-    _P + "_ddl_postgresql_new",         # old design-DDL file name quoted in a comment of the root DDL file
     _P + "_prod_x",                     # deliberately-similar schema name in tests/test_migrate.py
 }
+
+# The only files that may spell the old table names: migration 031 (runs on old-shaped databases, before the rename),
+# migration 038 and the closing RENAME block of the DDL file (both do the rename). Anywhere else the three old table names are a failure.
+LEGACY_TABLE_FILES = {"migrations/031_billing_server_pricing.sql", "migrations/038_drop_legacy_table_prefix.sql",
+                      "clockyn_ddl_latest.sql"}
+LEGACY_TABLE_NAMES = {_P + "_subscription", _P + "_settings", _P + "_manager_permissions", _P + "_subscription_pkey",
+                      _P + "_subscription_subscription_id_key", _P + "_settings_pkey", _P + "_manager_permissions_pkey",
+                      _P + "_subscription_id_seq", _P + "_settings_id_seq", _P + "_manager_permissions_id_seq"}
 
 SCAN_SUFFIXES = {".py", ".sql", ".html", ".htm", ".jinja", ".jinja2", ".j2", ".txt"}
 SKIP_DIRS = {".git", "__pycache__", ".pytest_cache", "venv", ".venv", "node_modules",
@@ -77,7 +76,10 @@ def _violations():
         text = path.read_text(encoding="utf-8", errors="ignore")
         for lineno, line in enumerate(text.splitlines(), 1):
             for m in _IDENT.finditer(line):
-                if m.group(0).lower() not in ALLOWED_IDENTIFIERS:
+                ident = m.group(0).lower()
+                if ident in LEGACY_TABLE_NAMES and rel.as_posix() in LEGACY_TABLE_FILES:
+                    continue
+                if ident not in ALLOWED_IDENTIFIERS:
                     found.append(f"{rel}:{lineno}: {m.group(0)}")
             for m in _SPACED.finditer(line):
                 found.append(f"{rel}:{lineno}: {m.group(0)}")
@@ -94,7 +96,8 @@ def test_guard_detects_a_planted_token():
     assert _IDENT.search("x = '" + _V.capitalize() + "_logo.png'")
     assert _SPACED.search("Welcome to " + "Punch" + " App")
     assert _IDENT.search("FROM " + _P + "_newtable").group(0).lower() not in ALLOWED_IDENTIFIERS
-    assert _IDENT.search("FROM " + _P + "_subscription").group(0).lower() in ALLOWED_IDENTIFIERS
+    assert _IDENT.search("FROM " + _P + "_subscription").group(0).lower() in LEGACY_TABLE_NAMES
+    assert _IDENT.search("FROM " + _P + "_subscription").group(0).lower() not in ALLOWED_IDENTIFIERS
 
 
 def test_scanner_covers_the_main_code_folders():
@@ -110,7 +113,7 @@ def test_scanner_covers_the_main_code_folders():
 BRAND_VARS = ["APP_NAME", "SUPPORT_EMAIL", "SUPPORT_URL", "WEBSITE_URL", "SELLER_NAME", "SELLER_ADDRESS",
               "SELLER_GSTIN", "SELLER_CIN", "SELLER_EMAIL", "SELLER_PHONE", "SELLER_SAC",
               "SELLER_PLACE_OF_SUPPLY", "ANDROID_STORE_URL", "IOS_STORE_URL", "APP_PLAY_STORE_LINK",
-              "APP_APP_STORE_LINK", "BRAND_LOGO_FILE", "BRAND_SIGNATURE_FILE", "MSG91_WHATSAPP_TEMPLATE",
+              "APP_APP_STORE_LINK", "BRAND_LOGO_FILE", "MSG91_WHATSAPP_TEMPLATE",
               "CORS_ALLOWED_ORIGINS"]
 
 
@@ -164,8 +167,6 @@ def test_logo_file_names_stay_inside_static(monkeypatch):
     assert Path(branding.logo_path()).parent == ROOT / "static"
     monkeypatch.setenv("BRAND_LOGO_FILE", "../../etc/evil.png")
     assert Path(branding.logo_path()) == ROOT / "static" / "evil.png"
-    monkeypatch.setenv("BRAND_SIGNATURE_FILE", "sig.png")
-    assert Path(branding.signature_path()) == ROOT / "static" / "sig.png"
 
 
 def test_legacy_assets_are_no_longer_referenced_by_code():
@@ -252,10 +253,17 @@ def test_invoice_pdf_defaults_leave_unset_seller_lines_out(monkeypatch):
     assert ": N/A" in text                                      # place of supply placeholder when unset
 
 
+def test_invoice_pdf_has_no_signature_box_but_the_system_generated_note(monkeypatch):
+    text, _ = _render_pdf_text(monkeypatch, dict(INVOICE))
+    assert "This is system generated invoice, no sign required" in text
+    assert "Authorized Signature" not in text
+
+
 def test_invoice_pdf_text_mark_replaces_missing_logo(monkeypatch):
     monkeypatch.setenv("APP_NAME", "Zeta Clock")
+    monkeypatch.setenv("BRAND_LOGO_FILE", "no_such_logo.png")
     text, _ = _render_pdf_text(monkeypatch, dict(INVOICE))
-    assert "<b>ZC</b>" in text            # no brand_logo.png in static/: initials are printed instead
+    assert "<b>ZC</b>" in text            # the logo file is missing from static/: initials are printed instead
 
 
 def test_invoice_pdf_prints_customer_gstin_under_bill_to_not_under_seller(monkeypatch, seller_env):

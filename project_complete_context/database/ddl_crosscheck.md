@@ -1,4 +1,4 @@
-# DDL cross-check: code versus `punchapp_ddl_latest.sql`
+# DDL cross-check: code versus `clockyn_ddl_latest.sql`
 
 Method (static, no database was available; the "executed on an empty database" run is NOT RUN, see the "DDL status" note in `schema.md`). Two scripts, kept in the build scratchpad (not in the repository):
 

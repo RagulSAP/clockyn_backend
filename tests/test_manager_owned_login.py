@@ -71,8 +71,8 @@ SCHEMA = """
 CREATE TABLE users (user_id TEXT, org_id TEXT, name TEXT, role_id INT, parent_id TEXT, manager_id TEXT,
     mobile_number TEXT, email TEXT, status INT, device_token TEXT, device_token_expires_at TEXT);
 CREATE TABLE org_info (org_id TEXT, org_name TEXT, parent_id TEXT);
-CREATE TABLE punchapp_settings (setting_id INT, setting_name TEXT);
-CREATE TABLE punchapp_manager_permissions (user_id TEXT, org_id TEXT, setting_id INT, status INT);
+CREATE TABLE settings (setting_id INT, setting_name TEXT);
+CREATE TABLE manager_permissions (user_id TEXT, org_id TEXT, setting_id INT, status INT);
 """
 
 
@@ -80,8 +80,8 @@ def build_db():
     db = sqlite3.connect(":memory:")
     db.executescript(SCHEMA)
     db.executemany("INSERT INTO org_info VALUES (?,?,?)", [("orgA", "Alpha", "adminA"), ("orgB", "Beta", "adminB")])
-    db.execute("INSERT INTO punchapp_settings VALUES (1, 'Staff Management')")
-    db.execute("INSERT INTO punchapp_manager_permissions VALUES ('mgrA', 'orgA', 1, 1)")
+    db.execute("INSERT INTO settings VALUES (1, 'Staff Management')")
+    db.execute("INSERT INTO manager_permissions VALUES ('mgrA', 'orgA', 1, 1)")
     rows = [
         # user_id, org_id, name, role, parent_id, manager_id, mobile
         ("adminA", "orgA", "Admin A", 1, None, None, "9000000000"),

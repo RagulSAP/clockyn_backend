@@ -160,13 +160,13 @@ async def get_super_admin_stats():
         cursor.execute("SELECT COUNT(*) AS cnt FROM users WHERE status = 1")
         total_users = cursor.fetchone()["cnt"]
 
-        cursor.execute("SELECT COUNT(*) AS cnt FROM punchapp_subscription WHERE status = 'ACTIVE'")
+        cursor.execute("SELECT COUNT(*) AS cnt FROM subscription WHERE status = 'ACTIVE'")
         active_subs = cursor.fetchone()["cnt"]
 
         cursor.execute("""
             SELECT COUNT(*) AS cnt FROM org_info o
             WHERE NOT EXISTS (
-                SELECT 1 FROM punchapp_subscription s
+                SELECT 1 FROM subscription s
                 WHERE s.org_id = o.org_id AND s.status = 'ACTIVE'
             )
         """)
@@ -320,7 +320,7 @@ async def get_all_organizations():
                 SELECT plan_id,
                        CASE WHEN status = 'ACTIVE' AND end_date < %s THEN 'EXPIRED' ELSE status END AS status,
                        start_date, end_date
-                FROM punchapp_subscription
+                FROM subscription
                 WHERE org_id = o.org_id
                 ORDER BY created_at DESC
                 LIMIT 1
@@ -401,7 +401,7 @@ async def get_recent_orgs():
                 SELECT plan_id,
                        CASE WHEN status = 'ACTIVE' AND end_date < %s THEN 'EXPIRED' ELSE status END AS status,
                        end_date
-                FROM punchapp_subscription
+                FROM subscription
                 WHERE org_id = o.org_id
                 ORDER BY created_at DESC
                 LIMIT 1
@@ -502,7 +502,7 @@ async def get_plan_breakdown():
             SELECT gp.plan_id, gp.plan_name, gp.plan_amount, gp.plan_month,
                    COUNT(ps.subscription_id) AS active_count
             FROM gen_plans gp
-            LEFT JOIN punchapp_subscription ps
+            LEFT JOIN subscription ps
                 ON ps.plan_id = gp.plan_id AND ps.status = 'ACTIVE'
             GROUP BY gp.plan_id, gp.plan_name, gp.plan_amount, gp.plan_month
             ORDER BY gp.plan_amount ASC
@@ -709,7 +709,7 @@ async def get_org_info(org_id: str):
                    p.plan_name, ps.status AS sub_status, ps.start_date, ps.end_date, ps.staff_limit
             FROM org_info o
             LEFT JOIN users u ON u.user_id = o.parent_id
-            LEFT JOIN punchapp_subscription ps ON ps.org_id = o.org_id AND ps.status = 'ACTIVE'
+            LEFT JOIN subscription ps ON ps.org_id = o.org_id AND ps.status = 'ACTIVE'
             LEFT JOIN gen_plans p ON p.plan_id = ps.plan_id
             WHERE o.org_id = %s
             LIMIT 1
@@ -927,7 +927,7 @@ async def get_org_subscriptions_list():
                    rrw.used_discount_amount AS referral_discount,
                    rrw.role AS referral_role,
                    rpo.org_name AS referral_with_org_name
-            FROM punchapp_subscription ps
+            FROM subscription ps
             LEFT JOIN org_info o ON o.org_id = ps.org_id
             LEFT JOIN users u ON u.user_id = o.parent_id
             LEFT JOIN gen_plans p ON p.plan_id = ps.plan_id

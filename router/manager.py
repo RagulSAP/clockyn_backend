@@ -79,7 +79,7 @@ async def get_all_settings_route():
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     
     try:
-        cursor.execute("SELECT setting_id, setting_name FROM punchapp_settings ORDER BY setting_id")
+        cursor.execute("SELECT setting_id, setting_name FROM settings ORDER BY setting_id")
         settings = cursor.fetchall()
         return {"settings": [dict(setting) for setting in settings]}
     finally:
