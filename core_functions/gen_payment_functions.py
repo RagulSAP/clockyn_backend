@@ -191,7 +191,12 @@ def _qualify_referral(cursor, order):
     for the call that created the subscription and is a no-op when already qualified, so a re-delivered webhook adds nothing."""
     cursor.execute("SAVEPOINT referral_qual_sp")
     try:
-        referral_id = referral_fn.qualify_referral_on_first_payment(cursor, order["org_id"])
+        # the amount excluding GST (the promoter's commission base); an order from before migration 031 has no stored base
+        base = order.get("base_amount")
+        if base is None and order.get("amount") is not None:
+            base = pricing.money(pricing.to_decimal(order["amount"]) / pricing.D("1.18"))
+        referral_id = referral_fn.qualify_referral_on_first_payment(
+            cursor, order["org_id"], base_amount=base, order_id=order.get("id"))
         cursor.execute("RELEASE SAVEPOINT referral_qual_sp")
         if referral_id is not None:
             logger.info("Referral %s qualified by the first paid plan of org %s", referral_id, order["org_id"])

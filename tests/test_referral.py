@@ -68,8 +68,8 @@ class RefCursor(FakeCursor):
         if s == "SELECT code FROM org_referral_code WHERE org_id = %s":
             self._set({"code": db.codes[p[0]]} if p[0] in db.codes else None)
             return True
-        if s.startswith("INSERT INTO org_referral_code (org_id, code) VALUES (%s, %s) ON CONFLICT DO NOTHING RETURNING code"):
-            if p[0] in db.codes or p[1] in db.codes.values():
+        if s.startswith("INSERT INTO org_referral_code (org_id, code) SELECT %s, %s WHERE NOT EXISTS (SELECT 1 FROM b2c_partner WHERE code = %s)"):
+            if p[0] in db.codes or p[1] in db.codes.values() or any(x["code"] == p[1] for x in db.partners):
                 self._set(None, rowcount=0)
             else:
                 db.codes[p[0]] = p[1]
@@ -92,6 +92,42 @@ class RefCursor(FakeCursor):
             db.referrals.append(row)
             self._set({"referral_id": row["referral_id"]}, rowcount=1)
             return True
+        if s.startswith("SELECT c2c_percent FROM referral_config WHERE id = 1"):
+            self._set({"c2c_percent": db.c2c_percent})
+            return True
+        if s.startswith("SELECT c2c_percent, updated_at, updated_by FROM referral_config WHERE id = 1"):
+            self._set({"c2c_percent": db.c2c_percent, "updated_at": getattr(db, "config_at", None),
+                       "updated_by": getattr(db, "config_by", None)})
+            return True
+        if s.startswith("INSERT INTO referral_config (id, c2c_percent, updated_at, updated_by) VALUES (1, %s, NOW(), %s)"):
+            db.c2c_percent, db.config_by, db.config_at = p[0], p[1], datetime(2026, 11, 2, 10, 0, 0)
+            self._set(None, rowcount=1)
+            return True
+        if s.startswith("SELECT partner_id, channel_name AS org_name, discount_percent, reward_valid_days FROM b2c_partner WHERE code = %s AND status = 1"):
+            partner = next((x for x in db.partners if x["code"] == p[0] and x.get("status", 1) == 1), None)
+            self._set(None if partner is None else {"partner_id": partner["partner_id"], "org_name": partner["channel_name"],
+                                                    "discount_percent": partner["discount_percent"],
+                                                    "reward_valid_days": partner["reward_valid_days"]})
+            return True
+        if s.startswith("INSERT INTO referral (partner_id, referred_org_id, code)"):
+            if any(r["referred_org_id"] == p[1] for r in db.referrals):
+                self._set(None, rowcount=0)
+                return True
+            row = {"referral_id": len(db.referrals) + 1, "referrer_org_id": None, "partner_id": p[0], "referred_org_id": p[1],
+                   "code": p[2], "created_at": db.tick(), "qualified_at": None, "commission_amount": None}
+            db.referrals.append(row)
+            self._set({"referral_id": row["referral_id"]}, rowcount=1)
+            return True
+        if s.startswith("INSERT INTO referral_reward (referral_id, org_id, role, status, percent, available_at, expires_at)"):
+            now = db.tick()
+            days = p[5]
+            db.rewards.append({"reward_id": len(db.rewards) + 1, "referral_id": p[0], "org_id": p[1], "role": p[2], "status": p[3],
+                               "percent": p[4], "created_at": now, "available_at": now,
+                               "expires_at": None if days is None else now + timedelta(days=days),
+                               "used_at": None, "used_order_id": None, "used_invoice_number": None, "used_plan_name": None,
+                               "used_discount_amount": None})
+            self._set(None, rowcount=1)
+            return True
         if s.startswith("INSERT INTO referral_reward (referral_id, org_id, role, status, percent, available_at)"):
             now = db.tick()
             db.rewards.append({"reward_id": len(db.rewards) + 1, "referral_id": p[0], "org_id": p[1], "role": p[2], "status": p[3],
@@ -111,18 +147,23 @@ class RefCursor(FakeCursor):
                              "used_discount_amount": rw.get("used_discount_amount")})
             self._rows(rows)
             return True
-        if s.startswith("SELECT status, COUNT(*) AS cnt FROM referral_reward WHERE org_id = %s GROUP BY status"):
+        if s.startswith("SELECT CASE WHEN status = 'AVAILABLE' AND expires_at IS NOT NULL AND expires_at <= NOW() THEN 'EXPIRED' ELSE status END AS status, COUNT(*) AS cnt"):
             counts = {}
             for r in db.rewards:
                 if r["org_id"] == p[0]:
-                    counts[r["status"]] = counts.get(r["status"], 0) + 1
+                    st = "EXPIRED" if r["status"] == "AVAILABLE" and r.get("expires_at") and r["expires_at"] <= db._clock else r["status"]
+                    counts[st] = counts.get(st, 0) + 1
             self._rows([{"status": k, "cnt": v} for k, v in counts.items()])
             return True
-        if s.startswith("SELECT rw.reward_id, rw.status, rw.percent, rw.used_at, rw.used_plan_name, rw.used_discount_amount, ro.org_name AS referred_by_org_name"):
+        if s.startswith("SELECT rw.reward_id, rw.status, rw.percent, rw.used_at, rw.used_plan_name, rw.used_discount_amount, rw.expires_at, COALESCE(ro.org_name, bp.channel_name) AS referred_by_org_name"):
             for r in db.referrals:
                 if r["referred_org_id"] == p[0]:
                     rw = next(x for x in db.rewards if x["referral_id"] == r["referral_id"] and x["role"] == "referred")
-                    self._set({**rw, "referred_by_org_name": db.orgs[r["referrer_org_id"]]["org_name"]})
+                    if r.get("partner_id") is not None:
+                        by = next(x for x in db.partners if x["partner_id"] == r["partner_id"])["channel_name"]
+                    else:
+                        by = db.orgs[r["referrer_org_id"]]["org_name"]
+                    self._set({**rw, "referred_by_org_name": by, "is_b2c": r.get("partner_id") is not None})
                     return True
             self._set(None)
             return True
@@ -131,17 +172,22 @@ class RefCursor(FakeCursor):
             return True
         # operator
         if s.startswith("SELECT COUNT(*) AS total_referrals, COUNT(qualified_at) AS converted FROM referral"):
-            self._set({"total_referrals": len(db.referrals), "converted": len([r for r in db.referrals if r["qualified_at"]])})
+            c2c = [r for r in db.referrals if r.get("partner_id") is None]
+            self._set({"total_referrals": len(c2c), "converted": len([r for r in c2c if r["qualified_at"]])})
             return True
         if s.startswith("SELECT COUNT(*) AS issued,"):
-            used = [r for r in db.rewards if r["status"] == "USED"]
-            self._set({"issued": len(db.rewards), "available": len([r for r in db.rewards if r["status"] == "AVAILABLE"]),
-                       "pending": len([r for r in db.rewards if r["status"] == "PENDING"]), "used": len(used),
+            b2c_ids = {r["referral_id"] for r in db.referrals if r.get("partner_id") is not None}
+            rws = [r for r in db.rewards if r["referral_id"] not in b2c_ids]
+            used = [r for r in rws if r["status"] == "USED"]
+            self._set({"issued": len(rws), "available": len([r for r in rws if r["status"] == "AVAILABLE"]),
+                       "pending": len([r for r in rws if r["status"] == "PENDING"]), "used": len(used),
                        "discount_given": sum((r["used_discount_amount"] or D(0) for r in used), D(0))})
             return True
         if s.startswith("SELECT r.referrer_org_id AS org_id, o.org_name, c.code, COUNT(*) AS referrals"):
             agg = {}
             for r in db.referrals:
+                if r.get("partner_id") is not None:
+                    continue
                 a = agg.setdefault(r["referrer_org_id"], [0, 0])
                 a[0] += 1
                 a[1] += 1 if r["qualified_at"] else 0
@@ -158,7 +204,7 @@ class RefCursor(FakeCursor):
                 pattern = p[0].strip("%").replace("\\%", "%").replace("\\_", "_").replace("\\\\", "\\").lower()
             rows = []
             for r in sorted(db.referrals, key=lambda x: (x["created_at"], x["referral_id"]), reverse=True):
-                if (paid and not r["qualified_at"]) or (unpaid and r["qualified_at"]):
+                if r.get("partner_id") is not None or (paid and not r["qualified_at"]) or (unpaid and r["qualified_at"]):
                     continue
                 ro, rd = db.orgs[r["referrer_org_id"]], db.orgs[r["referred_org_id"]]
                 if pattern is not None:
@@ -818,7 +864,7 @@ class TestRoutes:
     def test_validate_a_known_code_reveals_only_the_referrer_name(self, env):
         code = ref_fn.get_or_create_code(RefCursor(env.db), REF_ORG)
         r = env.client.get("/referral/validate", params={"code": code.lower()})
-        assert r.status_code == 200 and r.json() == {"valid": True, "referrer_org_name": "Zed Corp"}
+        assert r.status_code == 200 and r.json() == {"valid": True, "referrer_org_name": "Zed Corp", "kind": "c2c", "percent": 10}
 
     @pytest.mark.parametrize("code", ["ZZZZ99", "abc", "0O1IL0", "ABCDEF", ""])
     def test_validate_an_unknown_or_malformed_code(self, env, code):
@@ -858,7 +904,7 @@ class TestRoutes:
         add_reward(env.db, ORG, role="referrer", referral_id=1)
         r = env.client.get(f"/referral/{ORG}").json()
         assert r["my_reward"] == {"reward_id": 1, "status": "available", "percent": 10, "referred_by_org_name": "Zed Corp",
-                                  "used_at": None, "plan_name": None, "discount_amount": None}
+                                  "used_at": None, "plan_name": None, "discount_amount": None, "kind": "c2c", "expires_at": None}
         assert len(r["referrals"]) == 1
         item = r["referrals"][0]
         assert (item["org_name"], item["status"]) == ("Third Ltd", "signed_up") and item["joined_at"].endswith("Z")

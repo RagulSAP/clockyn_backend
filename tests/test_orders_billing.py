@@ -63,6 +63,8 @@ class FakeDB:
         self.codes = {}         # org_id -> code
         self.referrals = []     # {referral_id, referrer_org_id, referred_org_id, code, created_at, qualified_at}
         self.rewards = []       # {reward_id, referral_id, org_id, role, status, percent, created_at, available_at, used_*}
+        self.partners = []      # B2C promoters {partner_id, code, channel_name, discount_percent, reward_valid_days, status, commission_*}
+        self.c2c_percent = 10   # referral_config.c2c_percent
         self.seq = 0
         self.fail_invoice_insert = False
         self.log = []           # (sql, params)
@@ -243,7 +245,9 @@ class FakeCursor:
 
         # ── Refer & Earn ──────────────────────────────────────────────────
         if s.startswith("SELECT reward_id, percent, COUNT(*) OVER () AS available_count FROM referral_reward"):
-            rows = sorted((r for r in db.rewards if r["org_id"] == p[0] and r["status"] == "AVAILABLE"),
+            now = datetime(2026, 11, 2)
+            rows = sorted((r for r in db.rewards if r["org_id"] == p[0] and r["status"] == "AVAILABLE"
+                           and (r.get("expires_at") is None or r["expires_at"] > now)),
                           key=lambda r: (r["available_at"] or r["created_at"], r["reward_id"]))
             if not rows:
                 return self._set(None)
@@ -263,12 +267,20 @@ class FakeCursor:
                     r["used_invoice_number"] = p[0]
                     n += 1
             return self._set(None, rowcount=n)
-        if s.startswith("UPDATE referral SET qualified_at = NOW() WHERE referred_org_id = %s AND qualified_at IS NULL"):
+        if s.startswith("UPDATE referral SET qualified_at = NOW(), qualified_order_id = %s WHERE referred_org_id = %s AND qualified_at IS NULL"):
             for ref in db.referrals:
-                if ref["referred_org_id"] == p[0] and ref["qualified_at"] is None:
+                if ref["referred_org_id"] == p[1] and ref["qualified_at"] is None:
                     ref["qualified_at"] = datetime(2026, 11, 2)
-                    return self._set({"referral_id": ref["referral_id"]}, rowcount=1)
+                    ref["qualified_order_id"] = p[0]
+                    return self._set({"referral_id": ref["referral_id"], "partner_id": ref.get("partner_id")}, rowcount=1)
             return self._set(None, rowcount=0)
+        if s.startswith("SELECT commission_type, commission_value FROM b2c_partner WHERE partner_id = %s"):
+            return self._set(next((x for x in db.partners if x["partner_id"] == p[0]), None))
+        if s.startswith("UPDATE referral SET commission_amount = %s WHERE referral_id = %s"):
+            for ref in db.referrals:
+                if ref["referral_id"] == p[1]:
+                    ref["commission_amount"] = p[0]
+            return self._set(None, rowcount=1)
         if s.startswith("UPDATE referral_reward SET status = 'AVAILABLE', available_at = NOW() WHERE referral_id = %s AND role = 'referrer'"):
             n = 0
             for r in db.rewards:

@@ -926,7 +926,8 @@ async def get_org_subscriptions_list():
                    (rrw.reward_id IS NOT NULL) AS referral_applied,
                    rrw.used_discount_amount AS referral_discount,
                    rrw.role AS referral_role,
-                   rpo.org_name AS referral_with_org_name
+                   COALESCE(rpo.org_name, bp.channel_name) AS referral_with_org_name,
+                   (rf.partner_id IS NOT NULL) AS referral_is_b2c
             FROM subscription ps
             LEFT JOIN org_info o ON o.org_id = ps.org_id
             LEFT JOIN users u ON u.user_id = o.parent_id
@@ -944,6 +945,7 @@ async def get_org_subscriptions_list():
             LEFT JOIN referral_reward rrw ON rrw.reward_id = gi.referral_reward_id
             LEFT JOIN referral rf ON rf.referral_id = rrw.referral_id
             LEFT JOIN org_info rpo ON rpo.org_id = (CASE WHEN rrw.role = 'referrer' THEN rf.referred_org_id ELSE rf.referrer_org_id END)
+            LEFT JOIN b2c_partner bp ON bp.partner_id = rf.partner_id          -- a promoter's code: the channel name stands in for the organisation
             WHERE ps.status = 'ACTIVE'
             ORDER BY ps.end_date ASC
         """)
@@ -960,6 +962,7 @@ async def get_org_subscriptions_list():
             item['cgst']          = float(item['cgst'])          if item.get('cgst')          else None
             item['sgst']          = float(item['sgst'])          if item.get('sgst')          else None
             item['referral_applied']  = bool(item.get('referral_applied'))
+            item['referral_is_b2c']   = bool(item.get('referral_is_b2c'))
             item['referral_discount'] = float(item['referral_discount']) if item.get('referral_discount') is not None else None
             result.append(item)
         return {"success": True, "data": result}

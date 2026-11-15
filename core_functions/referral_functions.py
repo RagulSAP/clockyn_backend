@@ -17,9 +17,11 @@ Every function that writes takes the CALLER's cursor and never commits: the regi
 Only the ``async`` route helpers at the bottom open their own connection.
 """
 import logging
+import math
 import re
 import secrets
 from datetime import datetime, timezone
+from decimal import ROUND_HALF_UP, Decimal
 from typing import Any, Dict, List, Optional
 
 from fastapi import HTTPException
@@ -42,6 +44,13 @@ CODE_DIGITS = "23456789"                               # no 0, 1
 CODE_ALPHABET = CODE_LETTERS + CODE_DIGITS
 CODE_ATTEMPTS = 12                                     # fresh codes tried before giving up (a collision is ~1 in 10^8 at launch)
 _CODE_RE = re.compile(r"^[A-Z0-9]{%d}$" % CODE_LENGTH)
+# A B2C (promoter) code is typed by an operator, so any 6 letters / digits are allowed (even 0 O 1 I L); a typed code is
+# looked up with this wider format, the generated C2C codes keep the stricter alphabet above.
+LOOKUP_CODE_RE = _CODE_RE
+
+# The C2C discount percent lives in the database (referral_config, edited in the operator console); REFERRAL_PERCENT is only the
+# default used when that row is missing. The console accepts MIN_PERCENT..MAX_PERCENT (the table itself allows 1..100).
+MIN_PERCENT, MAX_PERCENT = 1, 50
 
 STATUS_PENDING, STATUS_AVAILABLE, STATUS_USED, STATUS_VOID = "PENDING", "AVAILABLE", "USED", "VOID"
 ROLE_REFERRER, ROLE_REFERRED = "referrer", "referred"
@@ -81,6 +90,11 @@ def normalise_code(code: Optional[str]) -> str:
     return (code or "").strip().upper()
 
 
+def is_valid_lookup_format(code: Optional[str]) -> bool:
+    """6 letters / digits: the format any code (C2C or B2C) a user can type must have."""
+    return bool(LOOKUP_CODE_RE.match(normalise_code(code)))
+
+
 def is_valid_code_format(code: Optional[str]) -> bool:
     """6 characters of the code alphabet with at least one letter and one digit (a typed code that cannot exist is refused early)."""
     text = normalise_code(code)
@@ -109,9 +123,11 @@ def get_or_create_code(cursor, org_id: str) -> str:
         return row["code"]
     for _ in range(CODE_ATTEMPTS):
         candidate = generate_code()
+        # never a code that a promoter (b2c_partner) already owns: one code means one thing at registration
         cursor.execute(
-            "INSERT INTO org_referral_code (org_id, code) VALUES (%s, %s) ON CONFLICT DO NOTHING RETURNING code",
-            (org_id, candidate),
+            "INSERT INTO org_referral_code (org_id, code) SELECT %s, %s "
+            "WHERE NOT EXISTS (SELECT 1 FROM b2c_partner WHERE code = %s) ON CONFLICT DO NOTHING RETURNING code",
+            (org_id, candidate, candidate),
         )
         row = cursor.fetchone()
         if row:
@@ -124,7 +140,82 @@ def get_or_create_code(cursor, org_id: str) -> str:
     raise HTTPException(status_code=503, detail="Could not create your referral code right now. Please try again.")
 
 
+# ──────────────────────────────────────────────────────────────────────────── the C2C percent (referral_config)
+def get_c2c_percent(cursor) -> int:
+    """The current C2C discount percent from the database (one row, id = 1); REFERRAL_PERCENT when the row is missing."""
+    cursor.execute("SELECT c2c_percent FROM referral_config WHERE id = 1")
+    row = cursor.fetchone()
+    try:
+        value = int(row["c2c_percent"]) if row and row.get("c2c_percent") is not None else REFERRAL_PERCENT
+    except (TypeError, ValueError):
+        value = REFERRAL_PERCENT
+    return value if 1 <= value <= 100 else REFERRAL_PERCENT
+
+
+def get_config(cursor) -> Dict[str, Any]:
+    """The payload of GET /gen-dashboard/referrals/config."""
+    cursor.execute("SELECT c2c_percent, updated_at, updated_by FROM referral_config WHERE id = 1")
+    row = cursor.fetchone() or {}
+    percent = get_c2c_percent(cursor) if not row else int(row.get("c2c_percent") or REFERRAL_PERCENT)
+    return {
+        "c2c_percent": percent,
+        "min_percent": MIN_PERCENT,
+        "max_percent": MAX_PERCENT,
+        "updated_at": _iso_z(row.get("updated_at")),
+        "updated_by": row.get("updated_by"),
+    }
+
+
+def validate_percent(value: Any, what: str = "Percent") -> int:
+    """A whole number from MIN_PERCENT to MAX_PERCENT, else HTTP 400 (a bool or a fraction is refused)."""
+    if isinstance(value, bool) or (isinstance(value, float) and (not math.isfinite(value) or value != int(value))):
+        raise HTTPException(status_code=400, detail=f"{what} must be a whole number between {MIN_PERCENT} and {MAX_PERCENT}")
+    try:
+        number = int(value)
+    except (TypeError, ValueError, OverflowError):
+        raise HTTPException(status_code=400, detail=f"{what} must be a whole number between {MIN_PERCENT} and {MAX_PERCENT}")
+    if not MIN_PERCENT <= number <= MAX_PERCENT:
+        raise HTTPException(status_code=400, detail=f"{what} must be a whole number between {MIN_PERCENT} and {MAX_PERCENT}")
+    return number
+
+
+def set_c2c_percent(cursor, percent: Any, admin: Optional[str] = None) -> Dict[str, Any]:
+    """Save the C2C percent (upsert of the single row). Rewards already issued keep the percent they were issued with."""
+    number = validate_percent(percent, "The referral discount")
+    cursor.execute(
+        """
+        INSERT INTO referral_config (id, c2c_percent, updated_at, updated_by) VALUES (1, %s, NOW(), %s)
+        ON CONFLICT (id) DO UPDATE SET c2c_percent = EXCLUDED.c2c_percent, updated_at = NOW(), updated_by = EXCLUDED.updated_by
+        """,
+        (number, (admin or None)),
+    )
+    return get_config(cursor)
+
+
 # ──────────────────────────────────────────────────────────────────────────── registration
+def find_partner_by_code(cursor, code: Optional[str]) -> Optional[Dict[str, Any]]:
+    """The ACTIVE promoter (b2c_partner) that owns ``code``: partner_id, channel name (as ``org_name``, the name the new customer
+    sees), discount percent and the days the reward stays valid; None when there is none or the code is inactive."""
+    text = normalise_code(code)
+    if not is_valid_lookup_format(text):
+        return None
+    cursor.execute(
+        """
+        SELECT partner_id, channel_name AS org_name, discount_percent, reward_valid_days
+        FROM b2c_partner
+        WHERE code = %s AND status = 1
+        LIMIT 1
+        """,
+        (text,),
+    )
+    row = cursor.fetchone()
+    if not row:
+        return None
+    out = dict(row)
+    out["kind"] = "b2c"
+    return out
+
+
 def find_referrer_by_code(cursor, code: Optional[str]) -> Optional[Dict[str, Any]]:
     """{'org_id', 'org_name'} of the organisation that owns ``code`` (an existing, not deleted one), else None."""
     text = normalise_code(code)
@@ -149,10 +240,13 @@ def resolve_code_for_registration(cursor, code: Optional[str]) -> Optional[Dict[
     HTTP 400 ("This referral code is not valid") otherwise, so a typo never creates an organisation."""
     if not (code or "").strip():
         return None
-    referrer = find_referrer_by_code(cursor, code)
-    if not referrer:
+    referrer = find_referrer_by_code(cursor, code)          # a customer's code (C2C) first ...
+    if referrer:
+        return referrer
+    partner = find_partner_by_code(cursor, code)            # ... then a promoter's code (B2C; the dict has ``partner_id``)
+    if not partner:
         raise HTTPException(status_code=400, detail=MSG_INVALID_CODE)
-    return referrer
+    return partner
 
 
 def attach_referral_at_registration(cursor, new_org_id: str, code: Optional[str]) -> Optional[int]:
@@ -163,9 +257,12 @@ def attach_referral_at_registration(cursor, new_org_id: str, code: Optional[str]
     referrer = resolve_code_for_registration(cursor, code)
     if referrer is None:
         return None
+    if referrer.get("partner_id") is not None:
+        return _attach_partner_referral(cursor, new_org_id, referrer, normalise_code(code))
     referrer_org_id = referrer["org_id"]
     if referrer_org_id == new_org_id:
         raise HTTPException(status_code=400, detail=MSG_OWN_CODE)
+    percent = get_c2c_percent(cursor)                       # the percent of TODAY: both rewards keep it, a later change does not touch them
     text = normalise_code(code)
     cursor.execute(
         """
@@ -185,14 +282,42 @@ def attach_referral_at_registration(cursor, new_org_id: str, code: Optional[str]
         INSERT INTO referral_reward (referral_id, org_id, role, status, percent, available_at)
         VALUES (%s, %s, %s, %s, %s, NOW())
         """,
-        (referral_id, new_org_id, ROLE_REFERRED, STATUS_AVAILABLE, REFERRAL_PERCENT),
+        (referral_id, new_org_id, ROLE_REFERRED, STATUS_AVAILABLE, percent),
     )
     cursor.execute(
         """
         INSERT INTO referral_reward (referral_id, org_id, role, status, percent, available_at)
         VALUES (%s, %s, %s, %s, %s, NULL)
         """,
-        (referral_id, referrer_org_id, ROLE_REFERRER, STATUS_PENDING, REFERRAL_PERCENT),
+        (referral_id, referrer_org_id, ROLE_REFERRER, STATUS_PENDING, percent),
+    )
+    return referral_id
+
+
+def _attach_partner_referral(cursor, new_org_id: str, partner: Dict[str, Any], text: str) -> int:
+    """B2C: the new organisation used a promoter's code. One ``referral`` row (no referrer organisation) and ONE reward for the new
+    organisation: AVAILABLE at once with the partner's percent, expiring ``reward_valid_days`` after signup (never when NULL).
+    The promoter has no reward; its commission is booked when the organisation's first paid plan is activated."""
+    cursor.execute(
+        """
+        INSERT INTO referral (partner_id, referred_org_id, code)
+        VALUES (%s, %s, %s)
+        ON CONFLICT (referred_org_id) DO NOTHING
+        RETURNING referral_id
+        """,
+        (partner["partner_id"], new_org_id, text),
+    )
+    row = cursor.fetchone()
+    if not row:
+        raise HTTPException(status_code=400, detail=MSG_ALREADY_REFERRED)
+    referral_id = row["referral_id"]
+    days = partner.get("reward_valid_days")
+    cursor.execute(
+        """
+        INSERT INTO referral_reward (referral_id, org_id, role, status, percent, available_at, expires_at)
+        VALUES (%s, %s, %s, %s, %s, NOW(), CASE WHEN %s::int IS NULL THEN NULL ELSE NOW() + make_interval(days => %s::int) END)
+        """,
+        (referral_id, new_org_id, ROLE_REFERRED, STATUS_AVAILABLE, int(partner["discount_percent"]), days, days),
     )
     return referral_id
 
@@ -205,7 +330,7 @@ def load_available_reward(cursor, org_id: str) -> pricing.ReferralOffer:
         """
         SELECT reward_id, percent, COUNT(*) OVER () AS available_count
         FROM referral_reward
-        WHERE org_id = %s AND status = 'AVAILABLE'
+        WHERE org_id = %s AND status = 'AVAILABLE' AND (expires_at IS NULL OR expires_at > NOW())
         ORDER BY COALESCE(available_at, created_at) ASC, reward_id ASC
         LIMIT 1
         """,
@@ -225,7 +350,9 @@ def consume_reward_on_activation(cursor, *, reward_id: int, org_id: str, order_i
                                  discount_amount, invoice_number: Optional[str] = None) -> bool:
     """Mark the order's reward USED. ``UPDATE ... WHERE status = 'AVAILABLE'`` is the guard: True when this call consumed it,
     False when it was not available any more (consumed by a concurrent order, voided, or not this organisation's).
-    Runs in the payment transaction; never commits."""
+    Expiry is NOT checked here: it is checked when the order is priced (``load_available_reward``). An order that was priced
+    while the reward was valid and is paid a little later keeps its discount, so the reward is marked USED and the numbers
+    reconcile instead of the payment being flagged. Runs in the payment transaction; never commits."""
     cursor.execute(
         """
         UPDATE referral_reward
@@ -246,19 +373,44 @@ def set_reward_invoice_number(cursor, reward_id: int, order_id: int, invoice_num
     )
 
 
-def qualify_referral_on_first_payment(cursor, org_id: str) -> Optional[int]:
-    """The referred organisation's first paid activation: stamp ``referral.qualified_at`` and make the REFERRER's PENDING reward
-    AVAILABLE. Returns the referral id when this call qualified it, None otherwise (organisation not referred, or already
+def commission_for(commission_type: Optional[str], commission_value: Any, base_amount: Any) -> Decimal:
+    """The promoter's commission for ONE paid customer: ``percent`` = that share of ``base_amount`` (the first plan's amount
+    after discounts, excluding GST), ``fixed`` = the fixed amount, anything else 0. Two places, half up."""
+    kind = (commission_type or "none").strip().lower()
+    value = pricing.to_decimal(commission_value, Decimal("0"))
+    if value <= 0:
+        return Decimal("0.00")
+    if kind == "fixed":
+        return value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    if kind == "percent":
+        base = pricing.to_decimal(base_amount, Decimal("0"))
+        return (base * value / Decimal("100")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP) if base > 0 else Decimal("0.00")
+    return Decimal("0.00")
+
+
+def qualify_referral_on_first_payment(cursor, org_id: str, base_amount: Any = None, order_id: Optional[int] = None) -> Optional[int]:
+    """The referred organisation's first paid activation: stamp ``referral.qualified_at`` (and the order) and
+      * C2C: make the REFERRER's PENDING reward AVAILABLE;
+      * B2C: book the promoter's commission on the referral (``commission_amount``, from the partner's current commission
+        settings and ``base_amount``, the order's amount excluding GST).
+    Returns the referral id when this call qualified it, None otherwise (organisation not referred, or already
     qualified: a re-delivered webhook changes nothing). The conditional UPDATE locks the row, so two concurrent activations
     cannot both qualify. Runs in the payment transaction; never commits."""
     cursor.execute(
-        "UPDATE referral SET qualified_at = NOW() WHERE referred_org_id = %s AND qualified_at IS NULL RETURNING referral_id",
-        (org_id,),
+        "UPDATE referral SET qualified_at = NOW(), qualified_order_id = %s "
+        "WHERE referred_org_id = %s AND qualified_at IS NULL RETURNING referral_id, partner_id",
+        (order_id, org_id),
     )
     row = cursor.fetchone()
     if not row:
         return None
     referral_id = row["referral_id"]
+    if row.get("partner_id") is not None:
+        cursor.execute("SELECT commission_type, commission_value FROM b2c_partner WHERE partner_id = %s", (row["partner_id"],))
+        partner = cursor.fetchone() or {}
+        amount = commission_for(partner.get("commission_type"), partner.get("commission_value"), base_amount)
+        cursor.execute("UPDATE referral SET commission_amount = %s WHERE referral_id = %s", (amount, referral_id))
+        return referral_id
     cursor.execute(
         """
         UPDATE referral_reward SET status = 'AVAILABLE', available_at = NOW()
@@ -284,9 +436,25 @@ def _eligible_plan_names(cursor) -> List[str]:
     return names or list(DEFAULT_ELIGIBLE_PLAN_NAMES)
 
 
-def share_message(code: str) -> str:
+def share_message(code: str, percent: Optional[int] = None) -> str:
+    percent = REFERRAL_PERCENT if percent is None else percent
     return (f"Join me on {branding.app_name()} - the easy way to manage staff attendance and payroll. "
-            f"Use my referral code {code} when you create your account and we both get {REFERRAL_PERCENT}% off our plan.")
+            f"Use my referral code {code} when you create your account and we both get {percent}% off our plan.")
+
+
+def _is_past(value) -> bool:
+    """True when ``value`` is a moment that has already passed (a naive datetime is taken as UTC)."""
+    if not isinstance(value, datetime):
+        return False
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=timezone.utc)
+    return value <= datetime.now(timezone.utc)
+
+
+def _reward_state(status: Any, expires_at: Any) -> str:
+    """Lower-case status of a reward; an AVAILABLE one whose ``expires_at`` has passed is ``expired``."""
+    state = str(status or "").lower()
+    return "expired" if state == "available" and _is_past(expires_at) else state
 
 
 def _reward_view(row, prefix: str = "") -> Optional[Dict[str, Any]]:
@@ -295,7 +463,7 @@ def _reward_view(row, prefix: str = "") -> Optional[Dict[str, Any]]:
         return None
     return {
         "reward_id": rid,
-        "status": str(row.get(prefix + "status") or "").lower(),
+        "status": _reward_state(row.get(prefix + "status"), row.get(prefix + "expires_at")),
         "percent": int(row.get(prefix + "percent") or REFERRAL_PERCENT),
         "used_at": _iso_z(row.get(prefix + "used_at")),
         "plan_name": row.get(prefix + "used_plan_name"),
@@ -332,19 +500,25 @@ def get_referral_summary(cursor, org_id: str) -> Dict[str, Any]:
             "reward": _reward_view(r),
         })
 
+    # an AVAILABLE reward past its expiry (B2C only) is counted as EXPIRED, not as available
     cursor.execute(
-        "SELECT status, COUNT(*) AS cnt FROM referral_reward WHERE org_id = %s GROUP BY status",
+        """
+        SELECT CASE WHEN status = 'AVAILABLE' AND expires_at IS NOT NULL AND expires_at <= NOW() THEN 'EXPIRED' ELSE status END AS status,
+               COUNT(*) AS cnt
+        FROM referral_reward WHERE org_id = %s GROUP BY 1
+        """,
         (org_id,),
     )
     counts = {str(r["status"]).upper(): int(r["cnt"]) for r in cursor.fetchall()}
 
     cursor.execute(
         """
-        SELECT rw.reward_id, rw.status, rw.percent, rw.used_at, rw.used_plan_name, rw.used_discount_amount,
-               ro.org_name AS referred_by_org_name
+        SELECT rw.reward_id, rw.status, rw.percent, rw.used_at, rw.used_plan_name, rw.used_discount_amount, rw.expires_at,
+               COALESCE(ro.org_name, bp.channel_name) AS referred_by_org_name, (r.partner_id IS NOT NULL) AS is_b2c
         FROM referral r
         JOIN referral_reward rw ON rw.referral_id = r.referral_id AND rw.role = 'referred' AND rw.org_id = r.referred_org_id
         LEFT JOIN org_info ro ON ro.org_id = r.referrer_org_id
+        LEFT JOIN b2c_partner bp ON bp.partner_id = r.partner_id
         WHERE r.referred_org_id = %s
         LIMIT 1
         """,
@@ -355,12 +529,15 @@ def get_referral_summary(cursor, org_id: str) -> Dict[str, Any]:
     if mine:
         my_reward = _reward_view(mine)
         my_reward["referred_by_org_name"] = mine.get("referred_by_org_name") or ""
+        my_reward["kind"] = "b2c" if mine.get("is_b2c") else "c2c"
+        my_reward["expires_at"] = _iso_z(mine.get("expires_at"))
 
+    percent = get_c2c_percent(cursor)
     return {
         "code": code,
-        "percent": REFERRAL_PERCENT,
+        "percent": percent,
         "eligible_plans": _eligible_plan_names(cursor),
-        "share_message": share_message(code),
+        "share_message": share_message(code, percent),
         "summary": {
             "referred_count": len(referrals),
             "converted_count": converted,
@@ -400,16 +577,19 @@ def operator_overview(cursor, status: str = "all", q: str = "") -> Dict[str, Any
         raise HTTPException(status_code=400, detail="status must be one of all, signed_up, paid")
     q = (q or "").strip()[:100]
 
-    cursor.execute("SELECT COUNT(*) AS total_referrals, COUNT(qualified_at) AS converted FROM referral")
+    # customer-to-customer referrals only: the promoter (B2C) referrals have their own tab and numbers (partner_id IS NOT NULL)
+    cursor.execute("SELECT COUNT(*) AS total_referrals, COUNT(qualified_at) AS converted FROM referral WHERE partner_id IS NULL")
     ref = cursor.fetchone() or {}
     cursor.execute(
         """
         SELECT COUNT(*) AS issued,
-               COUNT(*) FILTER (WHERE status = 'AVAILABLE') AS available,
-               COUNT(*) FILTER (WHERE status = 'PENDING') AS pending,
-               COUNT(*) FILTER (WHERE status = 'USED') AS used,
-               COALESCE(SUM(used_discount_amount) FILTER (WHERE status = 'USED'), 0) AS discount_given
-        FROM referral_reward
+               COUNT(*) FILTER (WHERE rw.status = 'AVAILABLE') AS available,
+               COUNT(*) FILTER (WHERE rw.status = 'PENDING') AS pending,
+               COUNT(*) FILTER (WHERE rw.status = 'USED') AS used,
+               COALESCE(SUM(rw.used_discount_amount) FILTER (WHERE rw.status = 'USED'), 0) AS discount_given
+        FROM referral_reward rw
+        JOIN referral rf ON rf.referral_id = rw.referral_id
+        WHERE rf.partner_id IS NULL
         """
     )
     rw = cursor.fetchone() or {}
@@ -430,6 +610,7 @@ def operator_overview(cursor, status: str = "all", q: str = "") -> Dict[str, Any
         FROM referral r
         LEFT JOIN org_info o ON o.org_id = r.referrer_org_id
         LEFT JOIN org_referral_code c ON c.org_id = r.referrer_org_id
+        WHERE r.partner_id IS NULL
         GROUP BY r.referrer_org_id, o.org_name, c.code
         ORDER BY converted DESC, referrals DESC, o.org_name ASC
         LIMIT 10
@@ -438,7 +619,7 @@ def operator_overview(cursor, status: str = "all", q: str = "") -> Dict[str, Any
     top = [{"org_id": r["org_id"], "org_name": r.get("org_name") or "", "code": r.get("code"),
             "referrals": int(r["referrals"]), "converted": int(r["converted"])} for r in cursor.fetchall()]
 
-    where, params = [], []
+    where, params = ["r.partner_id IS NULL"], []
     if status == "paid":
         where.append("r.qualified_at IS NOT NULL")
     elif status == "signed_up":
@@ -481,7 +662,7 @@ def operator_overview(cursor, status: str = "all", q: str = "") -> Dict[str, Any
             "referrer_reward": _operator_reward(r, "ra_"),
             "referred_reward": _operator_reward(r, "rb_"),
         })
-    return {"summary": summary, "top_referrers": top, "referrals": rows}
+    return {"percent": get_c2c_percent(cursor), "summary": summary, "top_referrers": top, "referrals": rows}
 
 
 def void_reward(cursor, reward_id: int) -> Dict[str, Any]:
@@ -516,15 +697,20 @@ async def validate_code_public(code: Optional[str]) -> Dict[str, Any]:
     """GET /referral/validate: the signup screen checks a typed code. Reveals ONLY the referrer's organisation name."""
     text = normalise_code(code)
     invalid = {"valid": False, "message": MSG_INVALID_CODE}
-    if not is_valid_code_format(text):
+    if not is_valid_lookup_format(text):
         return invalid
     conn = cursor = None
     try:
         conn, cursor = _connect()
         referrer = find_referrer_by_code(cursor, text)
-        if not referrer:
-            return invalid
-        return {"valid": True, "referrer_org_name": referrer.get("org_name") or ""}
+        if referrer:
+            return {"valid": True, "referrer_org_name": referrer.get("org_name") or "", "kind": "c2c",
+                    "percent": get_c2c_percent(cursor)}
+        partner = find_partner_by_code(cursor, text)
+        if partner:                                  # a promoter's code: the channel name and the code's own percent
+            return {"valid": True, "referrer_org_name": partner.get("org_name") or "", "kind": "b2c",
+                    "percent": int(partner["discount_percent"])}
+        return invalid
     except HTTPException:
         raise
     except Exception:
@@ -594,5 +780,42 @@ async def operator_void_reward(reward_id: int) -> Dict[str, Any]:
             conn.rollback()
         logger.exception("Voiding referral reward %s failed", reward_id)
         raise HTTPException(status_code=500, detail="Could not void the reward")
+    finally:
+        _release(conn, cursor)
+
+
+async def operator_get_config() -> Dict[str, Any]:
+    """GET /gen-dashboard/referrals/config: the C2C discount percent and the range the console accepts."""
+    conn = cursor = None
+    try:
+        conn, cursor = _connect()
+        return get_config(cursor)
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Referral config read failed")
+        raise HTTPException(status_code=500, detail="Could not load the referral settings")
+    finally:
+        _release(conn, cursor)
+
+
+async def operator_set_config(c2c_percent: Any, admin: Optional[str] = None) -> Dict[str, Any]:
+    """PUT /gen-dashboard/referrals/config (super admin): save the C2C percent for NEW referrals."""
+    conn = cursor = None
+    try:
+        conn, cursor = _connect()
+        result = set_c2c_percent(cursor, c2c_percent, admin)
+        conn.commit()
+        logger.info("C2C referral percent set to %s by %s", result["c2c_percent"], admin)
+        return result
+    except HTTPException:
+        if conn:
+            conn.rollback()
+        raise
+    except Exception:
+        if conn:
+            conn.rollback()
+        logger.exception("Referral config save failed")
+        raise HTTPException(status_code=500, detail="Could not save the referral settings")
     finally:
         _release(conn, cursor)

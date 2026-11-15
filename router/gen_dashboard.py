@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Any, Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel
-from core_functions.operator_auth import require_operator, require_operator_super
+from core_functions.operator_auth import operator_id, require_operator, require_operator_super
 from core_functions.support_video_functions import (
     VideoCreateRequest,
     VideoUpdateRequest,
@@ -46,7 +46,10 @@ from core_functions.gen_dashboard_functions import (
     OrgStatusRequest,
 )
 from core_functions.analytics_functions import clickstream_events, clickstream_summary, purge_clickstream
-from core_functions.referral_functions import operator_referrals, operator_void_reward
+from core_functions.referral_functions import (
+    operator_get_config, operator_referrals, operator_set_config, operator_void_reward,
+)
+from core_functions import b2c_referral_functions as b2c
 
 # Platform-operator routes: every route of this router goes through the ONE operator guard (core_functions/operator_auth.py).
 router = APIRouter(prefix="/gen-dashboard", tags=["gen-dashboard"], dependencies=[Depends(require_operator)])
@@ -168,6 +171,77 @@ async def referral_reward_void_route(reward_id: int):
     return await operator_void_reward(reward_id)
 
 
+# ── Refer & Earn settings: the C2C discount percent (read = any operator, change = super admin) ───────────────────────────
+class ReferralConfigRequest(BaseModel):
+    c2c_percent: Any = None
+
+
+@router.get("/referrals/config")
+async def referral_config_route():
+    return await operator_get_config()
+
+
+@router.put("/referrals/config")
+async def referral_config_save_route(body: ReferralConfigRequest, request: Request, _guard: str = Depends(require_operator_super)):
+    return await operator_set_config(body.c2c_percent, operator_id(request))
+
+
+# ── B2C referral: promoter codes, the customers they brought in, commission payouts (read = any operator, write = super admin) ──
+class B2CPartnerRequest(BaseModel):
+    # Loose types on purpose: the validator in core_functions/b2c_referral_functions.py answers 400 with the field's name.
+    code: Optional[str] = None
+    platform: Any = None
+    channel_name: Any = None
+    channel_url: Any = None
+    contact_name: Any = None
+    phone: Any = None
+    email: Any = None
+    address: Any = None
+    notes: Any = None
+    discount_percent: Any = None
+    reward_valid_days: Any = None
+    commission_type: Any = None
+    commission_value: Any = None
+    status: Optional[str] = None
+
+
+class B2CPayoutRequest(BaseModel):
+    amount: Any = None
+    paid_on: Any = None
+    reference: Any = None
+    note: Any = None
+
+
+class B2CPayoutVoidRequest(BaseModel):
+    reason: Any = None
+
+
+@router.get("/referrals/b2c")
+async def b2c_partners_route(q: str = Query("", max_length=100), status: str = Query("all")):
+    return await b2c.operator_list_partners(q, status)
+
+
+@router.post("/referrals/b2c")
+async def b2c_partner_create_route(body: B2CPartnerRequest, request: Request, _guard: str = Depends(require_operator_super)):
+    return await b2c.operator_create_partner(body.dict(), operator_id(request))
+
+
+@router.get("/referrals/b2c/{partner_id}")
+async def b2c_partner_detail_route(partner_id: int):
+    return await b2c.operator_partner_detail(partner_id)
+
+
+@router.put("/referrals/b2c/{partner_id}", dependencies=[Depends(require_operator_super)])
+async def b2c_partner_update_route(partner_id: int, body: B2CPartnerRequest):
+    return await b2c.operator_update_partner(partner_id, body.dict())
+
+
+@router.post("/referrals/b2c/{partner_id}/payouts")
+async def b2c_partner_payout_route(partner_id: int, body: B2CPayoutRequest, request: Request,
+                                   _guard: str = Depends(require_operator_super)):
+    return await b2c.operator_record_payout(partner_id, body.dict(), operator_id(request))
+
+
 @router.get("/org/{org_id}/attendance/{date}")
 async def get_org_attendance_by_date_route(org_id: str, date: str):
     return await get_org_attendance_by_date(org_id, date)
@@ -245,3 +319,9 @@ async def support_faq_update_route(faq_id: int, data: FaqUpdateRequest):
 @router.delete("/faqs/{faq_id}", dependencies=[Depends(require_operator_super)])
 async def support_faq_delete_route(faq_id: int):
     return await delete_faq(faq_id)
+
+
+@router.post("/referrals/b2c/{partner_id}/payouts/{payout_id}/void")
+async def b2c_payout_void_route(partner_id: int, payout_id: int, request: Request, body: B2CPayoutVoidRequest = None,
+                                _guard: str = Depends(require_operator_super)):
+    return await b2c.operator_void_payout(partner_id, payout_id, (body.dict() if body else {}), operator_id(request))

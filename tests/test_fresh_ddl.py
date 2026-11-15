@@ -32,7 +32,7 @@ def test_the_fresh_file_is_up_to_date():
 def test_same_schema_as_the_latest_file():
     a, b = C.load_catalog(LATEST), C.load_catalog(FRESH, "clockyn_ddl_fresh.sql")
     assert not a.errors and not b.errors, (a.errors, b.errors)
-    assert sorted(a.tables) == sorted(b.tables) and len(a.tables) == 81
+    assert sorted(a.tables) == sorted(b.tables) and len(a.tables) == 84
     for name, table in a.tables.items():
         assert repr(table) == repr(b.tables[name]), f"table {name} differs"
     assert {k: repr(v) for k, v in a.indexes.items()} == {k: repr(v) for k, v in b.indexes.items()}
@@ -41,11 +41,12 @@ def test_same_schema_as_the_latest_file():
 
 def test_same_default_rows_as_the_latest_file():
     fresh, latest = inserts(FRESH), inserts(LATEST)
-    assert fresh and fresh == [i for i in latest if i in fresh]
+    # the order differs on purpose (the fresh file seeds after every table exists); the rows are the same
+    assert fresh and sorted(fresh) == sorted(i for i in latest if i in fresh)
     # the only INSERT of the latest file that the fresh file leaves out is the "existing database" copy of the plan rows
     assert [i for i in latest if i not in fresh] == [i for i in latest if "row_number() OVER" in i]
     tables = [re.match(r"INSERT INTO clockyn_dev\.(\w+)", i).group(1) for i in fresh]
-    assert tables == ["role_info", "gen_plans", "settings", "app_version_control"]
+    assert sorted(tables) == sorted(["role_info", "gen_plans", "settings", "app_version_control", "referral_config"])
 
 
 def test_the_default_plans_are_three_durations_of_each_plan():

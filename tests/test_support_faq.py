@@ -454,3 +454,184 @@ def test_the_ddl_has_the_table_the_code_expects():
     assert "support_faq_status_check CHECK (status IN (0, 1))" in m.group(1)
     assert re.search(r"CREATE UNIQUE INDEX IF NOT EXISTS support_faq_question_key ON clockyn_dev\.support_faq .*lower\(question\)", ddl)
     assert "idx_support_faq_status_order" in ddl
+
+
+
+# ───────────────────────────────────────────────────────────────────────────── the starter FAQ files
+# FAQ.sql loads the whole starter set into a new database; FAQ_referral_update.sql brings an existing database up to the same
+# wording (referral percent from the database, partner promo codes, plan durations with free months). Both are generated from
+# one data structure, so their texts must stay identical.
+_INSERT = re.compile(
+    r"INSERT INTO clockyn_dev\.support_faq \(faq_bucket, category, question, answer, sort_order, status\)\n"
+    r"SELECT '((?:[^']|'')*)', '((?:[^']|'')*)', '((?:[^']|'')*)', '((?:[^']|'')*)', (\d+), 1\n"
+    r"WHERE NOT EXISTS \(SELECT 1 FROM clockyn_dev\.support_faq WHERE lower\(question\) = lower\('((?:[^']|'')*)'\)\);\n")
+_UPDATE = re.compile(
+    r"UPDATE clockyn_dev\.support_faq SET answer = '((?:[^']|'')*)', updated_at = now\(\)\n"
+    r"WHERE lower\(question\) = lower\('((?:[^']|'')*)'\);\n")
+
+NEW_REFER = [
+    "What is a partner promo code and where do I enter it?",
+    "How much discount does a partner promo code give, and how long is it valid?",
+    "Why does my referral or promo code say it is not valid?",
+    "Why was my promo code reward not applied, or why does it show Expired?",
+    "Can I use a friend's referral code and a partner promo code together?",
+    "How can my business or channel become a Clockyn partner?",
+]
+NEW_PLANS = [
+    "Which plan durations can I choose, and how do free months work?",
+    "What happens to my credit when I move to a longer plan?",
+    "Do extra staff get the free months?",
+]
+
+
+def _unq(text):
+    return text.replace("''", "'")
+
+
+def _faq_rows(path):
+    text = (ROOT / path).read_text(encoding="utf-8")
+    rows = [{"bucket": _unq(m[1]), "category": _unq(m[2]), "question": _unq(m[3]), "answer": _unq(m[4]),
+             "sort_order": int(m[5]), "guard": _unq(m[6])} for m in _INSERT.finditer(text)]
+    return text, rows
+
+
+@pytest.fixture(scope="module")
+def starter():
+    return _faq_rows("FAQ.sql")
+
+
+@pytest.fixture(scope="module")
+def update():
+    text, rows = _faq_rows("FAQ_referral_update.sql")
+    updates = [(_unq(m[2]), _unq(m[1])) for m in _UPDATE.finditer(text)]
+    return text, rows, updates
+
+
+class TestStarterFaqFiles:
+    def test_every_statement_is_recognised_and_guarded_by_its_own_question(self, starter):
+        text, rows = starter
+        assert text.count("INSERT INTO clockyn_dev.support_faq") == len(rows) == 397
+        assert all(r["guard"] == r["question"] for r in rows)
+
+    def test_the_header_counts_are_true(self, starter):
+        text, rows = starter
+        assert "-- 397 questions in 6 buckets." in text
+        counts = {}
+        for r in rows:
+            counts[r["category"]] = counts.get(r["category"], 0) + 1
+        block = text.split("BEGIN;")[0].split("--   Set up")[1]
+        header = {name.strip(" ,"): int(n) for name, n in re.findall(r"([A-Za-z&,' ]+?) \((\d+)\)", block)}
+        assert header == counts
+        assert counts["Refer & Earn"] == 15 and counts["Plans & Billing"] == 25
+
+    def test_questions_are_unique_ignoring_case_and_fit_the_column_rules(self, starter):
+        _, rows = starter
+        assert len({r["question"].lower() for r in rows}) == len(rows)
+        for r in rows:
+            assert faq.MIN_QUESTION <= len(r["question"]) <= faq.MAX_QUESTION, r["question"]
+            assert 1 <= len(r["answer"]) <= faq.MAX_ANSWER, r["question"]
+            assert 1 <= len(r["bucket"]) <= faq.MAX_BUCKET and 1 <= len(r["category"]) <= faq.MAX_CATEGORY
+            assert 0 <= r["sort_order"] <= faq.MAX_SORT_ORDER
+            assert r["answer"] == r["answer"].strip() and r["question"] == r["question"].strip()
+
+    def test_no_referral_percent_is_written_into_a_refer_and_earn_answer(self, starter):
+        _, rows = starter
+        refer = [r for r in rows if r["category"] == "Refer & Earn"]
+        assert len(refer) == 15
+        for r in refer:
+            assert not re.search(r"\b10\s?%", r["answer"]), r["question"]
+            assert "10 percent" not in r["answer"].lower(), r["question"]
+        for r in rows:                                   # and no other answer promises a fixed 10% referral / reward discount
+            assert not re.search(r"\b10\s?%\s*(off|reward|discount)", r["answer"], re.I), r["question"]
+
+    def test_the_new_questions_are_there_exactly_once(self, starter):
+        _, rows = starter
+        names = [r["question"] for r in rows]
+        for q in NEW_REFER + NEW_PLANS:
+            assert names.count(q) == 1, q
+        cat = {r["question"]: r["category"] for r in rows}
+        assert {cat[q] for q in NEW_REFER} == {"Refer & Earn"} and {cat[q] for q in NEW_PLANS} == {"Plans & Billing"}
+
+    def test_the_new_rows_follow_the_older_rows_of_their_category_in_the_app_order(self, starter):
+        _, rows = starter
+        ordered = sorted(enumerate(rows), key=lambda t: (t[1]["sort_order"], t[0]))      # the app: sort_order, then id (= load order)
+        by_cat = {}
+        for _, r in ordered:
+            by_cat.setdefault(r["category"], []).append(r["question"])
+        assert by_cat["Refer & Earn"][-6:] == NEW_REFER and len(by_cat["Refer & Earn"]) == 15
+        assert by_cat["Plans & Billing"][-3:] == NEW_PLANS
+        cats = list(dict.fromkeys(r["category"] for _, r in ordered))                    # category order = first FAQ of each
+        assert cats.index("Plans & Billing") < cats.index("Payments & Invoices") < cats.index("Refer & Earn") < cats.index("Notifications & Permissions")
+
+    def test_partner_codes_and_free_months_are_explained(self, starter):
+        _, rows = starter
+        text = " ".join(r["answer"] for r in rows if r["question"] in NEW_REFER).lower()
+        for phrase in ("only be entered while registering", "expired", "valid until", "support", "prime and elite"):
+            assert phrase in text, phrase
+        plans = " ".join(r["answer"] for r in rows if r["question"] in NEW_PLANS).lower()
+        assert "free month" in plans and "monthly price" in plans
+
+    def test_the_price_and_renewal_answers_mention_free_months(self, starter):
+        _, rows = starter
+        ans = {r["question"]: r["answer"] for r in rows}
+        assert "free months" in ans["How is the price of a plan calculated?"]
+        assert "free months" in ans["How do I renew my plan?"] and "12 months" in ans["How do I renew my plan?"]
+        assert "Free months do not apply to extra staff" in ans["How much will adding extra staff cost?"]
+
+
+class TestReferralUpdateFile:
+    def test_one_transaction_that_only_touches_support_faq(self, update):
+        text, *_ = update
+        body = "\n".join(l for l in text.splitlines() if not l.lstrip().startswith("--"))
+        assert body.strip().startswith("BEGIN;") and body.strip().endswith("COMMIT;")
+        code = re.sub(r"'(?:[^']|'')*'", "''", body)                    # the statements without their text literals
+        assert not re.search(r"\b(DELETE|DROP|TRUNCATE|ALTER|CREATE)\b", code, re.I)
+        assert set(re.findall(r"\b(?:UPDATE|INSERT INTO)\s+([\w.]+)", body)) == {"clockyn_dev.support_faq"}
+        assert "DELIBERATELY OVERWRITES" in text and "once" in text
+
+    def test_updates_match_existing_questions_of_the_starter_file_with_the_same_answer(self, starter, update):
+        _, rows = starter
+        _, _, updates = update
+        answers = {r["question"].lower(): r["answer"] for r in rows}
+        assert len(updates) == 12 and len({q.lower() for q, _ in updates}) == 12
+        for question, answer in updates:
+            assert answers[question.lower()] == answer, question
+
+    def test_inserted_rows_equal_the_starter_file_rows(self, starter, update):
+        _, rows = starter
+        _, new_rows, _ = update
+        assert [r["question"] for r in new_rows] == NEW_PLANS + NEW_REFER
+        full = {r["question"]: r for r in rows}
+        for r in new_rows:
+            assert r == full[r["question"]], r["question"]
+
+    def test_updated_questions_are_not_inserted_again(self, update):
+        _, new_rows, updates = update
+        assert not {q.lower() for q, _ in updates} & {r["question"].lower() for r in new_rows}
+
+    def test_the_new_sort_orders_do_not_collide_with_other_categories(self, update):
+        _, new_rows, _ = update
+        plans = sorted(r["sort_order"] for r in new_rows if r["category"] == "Plans & Billing")
+        assert plans == [3141, 3142, 3143]                                   # free numbers between 3140 and 3150
+        assert {r["sort_order"] for r in new_rows if r["category"] == "Refer & Earn"} == {3319}
+
+    def test_no_literal_referral_percent_in_the_update(self, update):
+        _, new_rows, updates = update
+        for answer in [a for q, a in updates if "refer" in q.lower() or "coupon" in q.lower()] + [r["answer"] for r in new_rows]:
+            assert not re.search(r"\b10\s?%", answer)
+
+    @pytest.mark.parametrize("path", ["FAQ.sql", "FAQ_referral_update.sql"])
+    def test_both_files_parse_with_the_postgresql_parser(self, path):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        try:
+            import check_schema_consistency  # noqa: F401  (puts pglast on the path when it lives in the fallback folder)
+            import pglast
+        except (ImportError, SystemExit):
+            pytest.skip("pglast is not installed")
+        stmts = pglast.parse_sql((ROOT / path).read_text(encoding="utf-8"))
+        kinds = [type(s.stmt).__name__ for s in stmts]
+        assert kinds[0] == "TransactionStmt" and kinds[-1] == "TransactionStmt"
+        if path == "FAQ.sql":
+            assert kinds.count("InsertStmt") == 397
+        else:
+            assert kinds.count("UpdateStmt") == 12 and kinds.count("InsertStmt") == 9

@@ -447,7 +447,7 @@ def check_constraint(where, tname, con: Constraint, explicit_name, cat: Catalog,
                                            f"{con.kind}{con.cols} {con.expr} vs DDL {hit.kind}{hit.cols} {hit.expr}"))
 
 
-def check_table(where, mt: Table, cat: Catalog, out: list) -> None:
+def check_table(where, mt: Table, cat: Catalog, out: list, relaxed: frozenset = frozenset()) -> None:
     dt = cat.tables.get(mt.name)
     if dt is None:
         out.append(Finding("DRIFT", where, f"table {mt.name} is not in the DDL"))
@@ -458,6 +458,9 @@ def check_table(where, mt: Table, cat: Catalog, out: list) -> None:
             out.append(Finding("DRIFT", where, f"column {mt.name}.{c.name} is not in the DDL"))
             continue
         for diff in _col_diff(c, d):
+            # a LATER migration relaxes the column (ALTER COLUMN ... DROP NOT NULL), so the final DDL is nullable on purpose
+            if diff.startswith("NOT NULL=True") and (mt.name, c.name) in relaxed and not d.notnull:
+                continue
             out.append(Finding("DRIFT", where, f"column {mt.name}.{c.name}: {diff}"))
     for con in mt.constraints.values():
         check_constraint(where, mt.name, con, True, cat, out)
@@ -498,6 +501,20 @@ def _drop_names(st) -> list[tuple[str, str]]:
     return out
 
 
+def _later_relaxed(info: MigrationInfo, all_infos: list) -> frozenset:
+    """(table, column) pairs that a migration NUMBERED AFTER ``info`` turns nullable with ALTER COLUMN ... DROP NOT NULL."""
+    out = set()
+    for other in all_infos:
+        if other.number <= info.number or other.parse_error:
+            continue
+        for st, _in_do in other.stmts:
+            if isinstance(st, A.AlterTableStmt):
+                for cmd in st.cmds:
+                    if cmd.subtype == E.AlterTableType.AT_DropNotNull:
+                        out.add((_rel(st.relation), cmd.name))
+    return frozenset(out)
+
+
 def analyse_migration(info: MigrationInfo, cat: Catalog, created_by: dict, all_infos: list) -> list[Finding]:
     out = list(info.findings)
     w = info.name
@@ -516,7 +533,7 @@ def analyse_migration(info: MigrationInfo, cat: Catalog, created_by: dict, all_i
         elif isinstance(st, A.CreateStmt):
             if not st.if_not_exists:
                 out.append(Finding("ERROR", w, f"CREATE TABLE {_rel(st.relation)} without IF NOT EXISTS (not re-runnable)"))
-            check_table(w, table_from_create(st), cat, out)
+            check_table(w, table_from_create(st), cat, out, _later_relaxed(info, all_infos))
         elif isinstance(st, A.IndexStmt):
             if not st.if_not_exists:
                 out.append(Finding("ERROR", w, f"CREATE INDEX {st.idxname} without IF NOT EXISTS (not re-runnable)"))
