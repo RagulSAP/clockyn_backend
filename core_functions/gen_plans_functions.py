@@ -5,6 +5,7 @@ from typing import Optional
 from fastapi import HTTPException, Request
 from core_functions.db_function import get_db_connection, return_connection
 from core_functions.pricing import TRIAL_STAFF_LIMIT, plan_family_id
+from psycopg2 import errors as pg_errors
 from psycopg2.extras import RealDictCursor
 from utils.timezone import get_utc_now, IST, ist_today
 
@@ -503,6 +504,17 @@ async def list_plans():
         if conn: return_connection(conn)
 
 
+def _plan_write_error(exc: Exception, plan_name: str, plan_month: int) -> Optional[HTTPException]:
+    """A clear answer for the two database rules a plan write can hit: one row per plan name and duration (409) and
+    free months below the duration (400). Anything else is None (the caller answers 500 as before)."""
+    constraint = getattr(getattr(exc, 'diag', None), 'constraint_name', None) or ''
+    if isinstance(exc, pg_errors.UniqueViolation) and constraint == 'gen_plans_name_month_key':
+        return HTTPException(status_code=409, detail=f'A {plan_name} plan for {plan_month} month(s) already exists. Edit that one instead.')
+    if isinstance(exc, pg_errors.CheckViolation) and constraint == 'gen_plans_free_months_check':
+        return HTTPException(status_code=400, detail='free_months must be from 0 to one less than plan_month')
+    return None
+
+
 def _check_plan_terms(plan_month: int, free_months: int, offer_text: Optional[str]) -> Optional[str]:
     """Normalised offer text (None when blank); raises 400 for a duration or free-month count that cannot be priced."""
     if plan_month < 1:
@@ -535,6 +547,9 @@ async def create_plan(plan_name: str, plan_amount: float, plan_month: int, free_
         return {'success': True, 'data': dict(plan)}
     except Exception as e:
         if conn: conn.rollback()
+        friendly = _plan_write_error(e, plan_name, plan_month)
+        if friendly:
+            raise friendly
         raise HTTPException(status_code=500, detail=f'Server error: {str(e)}')
     finally:
         if cursor: cursor.close()
@@ -571,6 +586,9 @@ async def update_plan(plan_id: int, plan_name: str, plan_amount: float, plan_mon
         raise
     except Exception as e:
         if conn: conn.rollback()
+        friendly = _plan_write_error(e, plan_name, plan_month)
+        if friendly:
+            raise friendly
         raise HTTPException(status_code=500, detail=f'Server error: {str(e)}')
     finally:
         if cursor: cursor.close()

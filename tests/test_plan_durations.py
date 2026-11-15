@@ -311,6 +311,86 @@ class TestPlanWrites:
         assert exc.value.status_code == 404
 
 
+class TestPlanWriteErrors:
+    """The two database rules a plan write can hit answer clearly instead of a raw 500."""
+
+    class Boom(Exception):
+        def __init__(self, constraint):
+            self.diag = type("Diag", (), {"constraint_name": constraint})()
+
+    def raising(self, db, monkeypatch, exc):
+        cur, conn = db(row={"plan_id": 4})
+
+        def execute(sql, params=None):
+            raise exc
+        cur.execute = execute
+        return conn
+
+    def unique(self, constraint):
+        from psycopg2 import errors
+        err = errors.UniqueViolation("duplicate key")
+        err_diag = type("Diag", (), {"constraint_name": constraint})()
+        return type("E", (errors.UniqueViolation,), {"diag": err_diag})("duplicate key")
+
+    def test_a_second_row_for_the_same_name_and_duration_is_a_409(self, db, monkeypatch):
+        conn = self.raising(db, monkeypatch, self.unique("gen_plans_name_month_key"))
+        with pytest.raises(HTTPException) as e:
+            run(gp.create_plan("Core", 49.0, 6, 1))
+        assert e.value.status_code == 409 and "Core plan for 6 month(s) already exists" in e.value.detail and conn.rollbacks == 1
+
+    def test_the_same_on_update(self, db, monkeypatch):
+        self.raising(db, monkeypatch, self.unique("gen_plans_name_month_key"))
+        with pytest.raises(HTTPException) as e:
+            run(gp.update_plan(4, "Core", 49.0, 6, 1))
+        assert e.value.status_code == 409
+
+    def test_free_months_above_the_new_duration_is_a_400_on_update(self, db, monkeypatch):
+        from psycopg2 import errors
+        err = type("E", (errors.CheckViolation,), {"diag": type("Diag", (), {"constraint_name": "gen_plans_free_months_check"})()})("x")
+        self.raising(db, monkeypatch, err)
+        with pytest.raises(HTTPException) as e:
+            run(gp.update_plan(4, "Core", 49.0, 1))             # the row keeps free_months 1, the duration shrinks to 1
+        assert e.value.status_code == 400 and "free_months" in e.value.detail
+
+    def test_any_other_database_error_stays_a_500(self, db, monkeypatch):
+        self.raising(db, monkeypatch, RuntimeError("boom"))
+        with pytest.raises(HTTPException) as e:
+            run(gp.create_plan("Core", 49.0, 6, 1))
+        assert e.value.status_code == 500
+
+    def test_a_unique_violation_of_another_constraint_is_not_called_a_duplicate_plan(self, db, monkeypatch):
+        self.raising(db, monkeypatch, self.unique("gen_plans_plan_id_key"))
+        with pytest.raises(HTTPException) as e:
+            run(gp.create_plan("Core", 49.0, 6, 1))
+        assert e.value.status_code == 500
+
+
+class TestPlanBreakdownForTheConsole:
+    def test_the_breakdown_carries_free_months_and_offer_text(self, monkeypatch):
+        from core_functions import gen_dashboard_functions as dash
+
+        class Cur:
+            sql = ""
+            def execute(self, sql, params=None): Cur.sql = " ".join(sql.split())
+            def fetchall(self):
+                return [{"plan_id": 4, "plan_name": "Core", "plan_amount": D("49"), "plan_month": 6, "plan_free_months": 1,
+                         "plan_offer_text": "Pay 5, get 1 free", "active_count": 3},
+                        {"plan_id": 1, "plan_name": "Core", "plan_amount": D("49"), "plan_month": 1, "plan_free_months": None,
+                         "plan_offer_text": None, "active_count": 9}]
+            def close(self): pass
+
+        class Conn:
+            def cursor(self, cursor_factory=None): return Cur()
+
+        monkeypatch.setattr(dash, "get_db_connection", lambda: Conn())
+        monkeypatch.setattr(dash, "return_connection", lambda c: None)
+        rows = run(dash.get_plan_breakdown())
+        assert "gp.free_months AS plan_free_months" in Cur.sql and "gp.offer_text AS plan_offer_text" in Cur.sql
+        assert "GROUP BY gp.plan_id, gp.plan_name, gp.plan_amount, gp.plan_month, gp.free_months, gp.offer_text" in Cur.sql
+        assert rows[0]["plan_free_months"] == 1 and rows[0]["plan_offer_text"] == "Pay 5, get 1 free" and rows[0]["active_count"] == 3
+        assert rows[1]["plan_free_months"] == 0 and rows[1]["plan_offer_text"] is None
+
+
 # ── the schema files ─────────────────────────────────────────────────────────────────────────────────────────────────
 DDL = (ROOT / "clockyn_ddl_latest.sql").read_text(encoding="utf-8")
 MIG = (ROOT / "migrations" / "039_plan_free_months.sql").read_text(encoding="utf-8")

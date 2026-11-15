@@ -500,12 +500,13 @@ async def get_plan_breakdown():
     try:
         cursor.execute("""
             SELECT gp.plan_id, gp.plan_name, gp.plan_amount, gp.plan_month,
+                   gp.free_months AS plan_free_months, gp.offer_text AS plan_offer_text,
                    COUNT(ps.subscription_id) AS active_count
             FROM gen_plans gp
             LEFT JOIN subscription ps
                 ON ps.plan_id = gp.plan_id AND ps.status = 'ACTIVE'
-            GROUP BY gp.plan_id, gp.plan_name, gp.plan_amount, gp.plan_month
-            ORDER BY gp.plan_amount ASC
+            GROUP BY gp.plan_id, gp.plan_name, gp.plan_amount, gp.plan_month, gp.free_months, gp.offer_text
+            ORDER BY gp.plan_amount ASC, gp.plan_month ASC
         """)
         rows = cursor.fetchall()
         return [
@@ -514,6 +515,8 @@ async def get_plan_breakdown():
                 "plan_name": r["plan_name"],
                 "plan_amount": float(r["plan_amount"]),
                 "plan_month": r["plan_month"],
+                "plan_free_months": int(r.get("plan_free_months") or 0),
+                "plan_offer_text": r.get("plan_offer_text"),
                 "active_count": r["active_count"],
             }
             for r in rows

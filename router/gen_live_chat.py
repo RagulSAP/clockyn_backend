@@ -1,4 +1,4 @@
-"""Live Chat, OPERATOR side: the Clockyn support team in the web console (UI_ADMIN_APP).
+"""Live Chat, OPERATOR side: the Clockyn support team in the web console (ClockynConsole).
 
 HTTP routes live under /gen-dashboard/live-chat (an OPERATOR route class: `auth_policy.OPERATOR_RULES`), each guarded by
 `operator_auth.require_operator` (operator session token, the operator key, or the legacy admin header while it is enabled).
