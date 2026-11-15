@@ -1,0 +1,6342 @@
+{
+  "generated": "2026-11-15",
+  "count": 54,
+  "counts": {
+    "faq": 18,
+    "guide": 29,
+    "playbook": 7
+  },
+  "faq_questions": 397,
+  "docs": [
+    {
+      "slug": "faq-attendance-and-face-punch",
+      "title": "Attendance & Face Punch",
+      "summary": "Answers to 45 common questions about Attendance & Face Punch.",
+      "category": "Attendance & Time",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "attendance",
+        "face",
+        "punch",
+        "employee",
+        "mean",
+        "app",
+        "day",
+        "see",
+        "location",
+        "punching",
+        "staff"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/attendance-and-time/attendance-and-face-punch.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How does an employee punch in?",
+          "id": "how-does-an-employee-punch-in"
+        },
+        {
+          "level": 2,
+          "text": "How does an employee punch out?",
+          "id": "how-does-an-employee-punch-out"
+        },
+        {
+          "level": 2,
+          "text": "What do the punch button labels PUNCH IN, PUNCH OUT, CHECKING, SETUP FACE and LIMIT REACHED mean?",
+          "id": "what-do-the-punch-button-labels-punch-in-punch-out-checking-setup-face-and-limit-reached-mean"
+        },
+        {
+          "level": 2,
+          "text": "What does LIMIT REACHED mean on the punch button?",
+          "id": "what-does-limit-reached-mean-on-the-punch-button"
+        },
+        {
+          "level": 2,
+          "text": "How many times can an employee punch in per day?",
+          "id": "how-many-times-can-an-employee-punch-in-per-day"
+        },
+        {
+          "level": 2,
+          "text": "How do I change the maximum daily punch sessions for my company?",
+          "id": "how-do-i-change-the-maximum-daily-punch-sessions-for-my-company"
+        },
+        {
+          "level": 2,
+          "text": "Why does the app ask me to set up my face before I can punch?",
+          "id": "why-does-the-app-ask-me-to-set-up-my-face-before-i-can-punch"
+        },
+        {
+          "level": 2,
+          "text": "How do I register my face?",
+          "id": "how-do-i-register-my-face"
+        },
+        {
+          "level": 2,
+          "text": "What are the tips for good face photos during registration?",
+          "id": "what-are-the-tips-for-good-face-photos-during-registration"
+        },
+        {
+          "level": 2,
+          "text": "Face registration failed with 'Face not visible in some photos'. What should I do?",
+          "id": "face-registration-failed-with-face-not-visible-in-some-photos-what-should-i-do"
+        },
+        {
+          "level": 2,
+          "text": "Can an employee register or change their face again?",
+          "id": "can-an-employee-register-or-change-their-face-again"
+        },
+        {
+          "level": 2,
+          "text": "Does the face I register also become my profile photo?",
+          "id": "does-the-face-i-register-also-become-my-profile-photo"
+        },
+        {
+          "level": 2,
+          "text": "The app says 'Photo is not matching - please try again'. What does it mean?",
+          "id": "the-app-says-photo-is-not-matching-please-try-again-what-does-it-mean"
+        },
+        {
+          "level": 2,
+          "text": "What does 'We couldn't see your face' mean while punching?",
+          "id": "what-does-we-couldn-t-see-your-face-mean-while-punching"
+        },
+        {
+          "level": 2,
+          "text": "The camera says it is too dark or too blurry. What should I do?",
+          "id": "the-camera-says-it-is-too-dark-or-too-blurry-what-should-i-do"
+        },
+        {
+          "level": 2,
+          "text": "I keep failing face punch. Is there any help in the app?",
+          "id": "i-keep-failing-face-punch-is-there-any-help-in-the-app"
+        },
+        {
+          "level": 2,
+          "text": "What happens when someone holds a photo or video in front of the camera?",
+          "id": "what-happens-when-someone-holds-a-photo-or-video-in-front-of-the-camera"
+        },
+        {
+          "level": 2,
+          "text": "I get 'More than one face detected' when I punch. What should I do?",
+          "id": "i-get-more-than-one-face-detected-when-i-punch-what-should-i-do"
+        },
+        {
+          "level": 2,
+          "text": "Why does the app say I am outside the branch area?",
+          "id": "why-does-the-app-say-i-am-outside-the-branch-area"
+        },
+        {
+          "level": 2,
+          "text": "What is the punch radius of a branch?",
+          "id": "what-is-the-punch-radius-of-a-branch"
+        },
+        {
+          "level": 2,
+          "text": "What does 'Location Required' or 'Location Error' mean when I punch?",
+          "id": "what-does-location-required-or-location-error-mean-when-i-punch"
+        },
+        {
+          "level": 2,
+          "text": "Why does the app ask for Camera and Location permission?",
+          "id": "why-does-the-app-ask-for-camera-and-location-permission"
+        },
+        {
+          "level": 2,
+          "text": "Can field staff punch from anywhere?",
+          "id": "can-field-staff-punch-from-anywhere"
+        },
+        {
+          "level": 2,
+          "text": "How does location tracking for field staff work?",
+          "id": "how-does-location-tracking-for-field-staff-work"
+        },
+        {
+          "level": 2,
+          "text": "Where can I see where my field staff are?",
+          "id": "where-can-i-see-where-my-field-staff-are"
+        },
+        {
+          "level": 2,
+          "text": "Why can't I see location for a staff member?",
+          "id": "why-can-t-i-see-location-for-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "Can someone punch in on a holiday?",
+          "id": "can-someone-punch-in-on-a-holiday"
+        },
+        {
+          "level": 2,
+          "text": "I punched in but forgot to punch out. What happens?",
+          "id": "i-punched-in-but-forgot-to-punch-out-what-happens"
+        },
+        {
+          "level": 2,
+          "text": "What does it mean when attendance shows an auto-closed day?",
+          "id": "what-does-it-mean-when-attendance-shows-an-auto-closed-day"
+        },
+        {
+          "level": 2,
+          "text": "Can an employee punch in twice without punching out?",
+          "id": "can-an-employee-punch-in-twice-without-punching-out"
+        },
+        {
+          "level": 2,
+          "text": "I can't punch out and it says 'No active punch in found'. Why?",
+          "id": "i-can-t-punch-out-and-it-says-no-active-punch-in-found-why"
+        },
+        {
+          "level": 2,
+          "text": "What do the Home status chips SETUP, WORKING, COMPLETE and NOT IN mean?",
+          "id": "what-do-the-home-status-chips-setup-working-complete-and-not-in-mean"
+        },
+        {
+          "level": 2,
+          "text": "I get 'Feature Unavailable' or 'Your plan has expired' when punching. Why?",
+          "id": "i-get-feature-unavailable-or-your-plan-has-expired-when-punching-why"
+        },
+        {
+          "level": 2,
+          "text": "The app shows 'Connection error' or 'Capture failed' while punching. What should I do?",
+          "id": "the-app-shows-connection-error-or-capture-failed-while-punching-what-should-i-do"
+        },
+        {
+          "level": 2,
+          "text": "What does 'The face service is busy' mean?",
+          "id": "what-does-the-face-service-is-busy-mean"
+        },
+        {
+          "level": 2,
+          "text": "Can an employee punch in from a different phone?",
+          "id": "can-an-employee-punch-in-from-a-different-phone"
+        },
+        {
+          "level": 2,
+          "text": "How can the admin fix a wrong or missing punch?",
+          "id": "how-can-the-admin-fix-a-wrong-or-missing-punch"
+        },
+        {
+          "level": 2,
+          "text": "How do I see an employee's punch photos and times for a day?",
+          "id": "how-do-i-see-an-employee-s-punch-photos-and-times-for-a-day"
+        },
+        {
+          "level": 2,
+          "text": "How does an employee see their own attendance?",
+          "id": "how-does-an-employee-see-their-own-attendance"
+        },
+        {
+          "level": 2,
+          "text": "What do the attendance day types Present, Late, Half Day, Absent, Leave, Holiday and Weekly Off mean?",
+          "id": "what-do-the-attendance-day-types-present-late-half-day-absent-leave-holiday-and-weekly-off-mean"
+        },
+        {
+          "level": 2,
+          "text": "When is an employee marked Late?",
+          "id": "when-is-an-employee-marked-late"
+        },
+        {
+          "level": 2,
+          "text": "When is a day counted as Half Day?",
+          "id": "when-is-a-day-counted-as-half-day"
+        },
+        {
+          "level": 2,
+          "text": "Which date does a night shift punch belong to?",
+          "id": "which-date-does-a-night-shift-punch-belong-to"
+        },
+        {
+          "level": 2,
+          "text": "Which time zone does Clockyn use for attendance?",
+          "id": "which-time-zone-does-clockyn-use-for-attendance"
+        },
+        {
+          "level": 2,
+          "text": "How do I mark someone present if they have no phone or could not punch?",
+          "id": "how-do-i-mark-someone-present-if-they-have-no-phone-or-could-not-punch"
+        }
+      ],
+      "words": 3014,
+      "faq_questions": 45
+    },
+    {
+      "slug": "faq-leave-and-requests",
+      "title": "Leave & Requests",
+      "summary": "Answers to 15 common questions about Leave & Requests.",
+      "category": "Attendance & Time",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "leave",
+        "requests",
+        "request",
+        "change",
+        "approve",
+        "approved",
+        "dates",
+        "employee",
+        "permission",
+        "see"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/attendance-and-time/leave-and-requests.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "What types of requests can employees raise?",
+          "id": "what-types-of-requests-can-employees-raise"
+        },
+        {
+          "level": 2,
+          "text": "How does an employee apply for leave?",
+          "id": "how-does-an-employee-apply-for-leave"
+        },
+        {
+          "level": 2,
+          "text": "What is a permission request?",
+          "id": "what-is-a-permission-request"
+        },
+        {
+          "level": 2,
+          "text": "How do I request a shift change?",
+          "id": "how-do-i-request-a-shift-change"
+        },
+        {
+          "level": 2,
+          "text": "What is a device change request and when do I need it?",
+          "id": "what-is-a-device-change-request-and-when-do-i-need-it"
+        },
+        {
+          "level": 2,
+          "text": "How does the admin approve or reject a request?",
+          "id": "how-does-the-admin-approve-or-reject-a-request"
+        },
+        {
+          "level": 2,
+          "text": "Can I approve only some dates of a leave request?",
+          "id": "can-i-approve-only-some-dates-of-a-leave-request"
+        },
+        {
+          "level": 2,
+          "text": "What are the request statuses Pending, Approved and Rejected?",
+          "id": "what-are-the-request-statuses-pending-approved-and-rejected"
+        },
+        {
+          "level": 2,
+          "text": "Does an approved leave change attendance?",
+          "id": "does-an-approved-leave-change-attendance"
+        },
+        {
+          "level": 2,
+          "text": "Who can approve requests?",
+          "id": "who-can-approve-requests"
+        },
+        {
+          "level": 2,
+          "text": "What is the number on the Requests tile or badge?",
+          "id": "what-is-the-number-on-the-requests-tile-or-badge"
+        },
+        {
+          "level": 2,
+          "text": "I see 'A leave request already exists for one of the selected dates'. Why?",
+          "id": "i-see-a-leave-request-already-exists-for-one-of-the-selected-dates-why"
+        },
+        {
+          "level": 2,
+          "text": "Why can't I choose a past date for leave, permission or shift change?",
+          "id": "why-can-t-i-choose-a-past-date-for-leave-permission-or-shift-change"
+        },
+        {
+          "level": 2,
+          "text": "How do I see the status of my requests as an employee?",
+          "id": "how-do-i-see-the-status-of-my-requests-as-an-employee"
+        },
+        {
+          "level": 2,
+          "text": "What is the 'Reason is required' or 'too long' error on requests?",
+          "id": "what-is-the-reason-is-required-or-too-long-error-on-requests"
+        }
+      ],
+      "words": 859,
+      "faq_questions": 15
+    },
+    {
+      "slug": "faq-reports-and-analytics",
+      "title": "Reports & Analytics",
+      "summary": "Answers to 16 common questions about Reports & Analytics.",
+      "category": "Attendance & Time",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "reports",
+        "analytics",
+        "report",
+        "attendance",
+        "staff",
+        "see",
+        "show",
+        "dashboard",
+        "download",
+        "late"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/attendance-and-time/reports-and-analytics.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Where do I find reports?",
+          "id": "where-do-i-find-reports"
+        },
+        {
+          "level": 2,
+          "text": "Which attendance reports are available?",
+          "id": "which-attendance-reports-are-available"
+        },
+        {
+          "level": 2,
+          "text": "How do I generate the monthly attendance report?",
+          "id": "how-do-i-generate-the-monthly-attendance-report"
+        },
+        {
+          "level": 2,
+          "text": "Can I download reports in Excel or CSV?",
+          "id": "can-i-download-reports-in-excel-or-csv"
+        },
+        {
+          "level": 2,
+          "text": "What does the Late Report show?",
+          "id": "what-does-the-late-report-show"
+        },
+        {
+          "level": 2,
+          "text": "What does the Overtime Report show?",
+          "id": "what-does-the-overtime-report-show"
+        },
+        {
+          "level": 2,
+          "text": "What is the Staff Detailed Report?",
+          "id": "what-is-the-staff-detailed-report"
+        },
+        {
+          "level": 2,
+          "text": "What is in the Employee Details report?",
+          "id": "what-is-in-the-employee-details-report"
+        },
+        {
+          "level": 2,
+          "text": "What does the Staff Overview on the Home dashboard show?",
+          "id": "what-does-the-staff-overview-on-the-home-dashboard-show"
+        },
+        {
+          "level": 2,
+          "text": "What is the difference between Punched-In, Working and Punched Out on the dashboard?",
+          "id": "what-is-the-difference-between-punched-in-working-and-punched-out-on-the-dashboard"
+        },
+        {
+          "level": 2,
+          "text": "How do I see the list of absent or late staff?",
+          "id": "how-do-i-see-the-list-of-absent-or-late-staff"
+        },
+        {
+          "level": 2,
+          "text": "How do I check attendance of an earlier date or one branch?",
+          "id": "how-do-i-check-attendance-of-an-earlier-date-or-one-branch"
+        },
+        {
+          "level": 2,
+          "text": "How can a manager see reports?",
+          "id": "how-can-a-manager-see-reports"
+        },
+        {
+          "level": 2,
+          "text": "Where are my downloaded reports saved?",
+          "id": "where-are-my-downloaded-reports-saved"
+        },
+        {
+          "level": 2,
+          "text": "Why is my report empty or failing to download?",
+          "id": "why-is-my-report-empty-or-failing-to-download"
+        },
+        {
+          "level": 2,
+          "text": "How do I see a staff member's monthly attendance calendar?",
+          "id": "how-do-i-see-a-staff-member-s-monthly-attendance-calendar"
+        }
+      ],
+      "words": 844,
+      "faq_questions": 16
+    },
+    {
+      "slug": "faq-shifts-holidays-and-rules",
+      "title": "Shifts, Holidays & Rules",
+      "summary": "Answers to 21 common questions about Shifts, Holidays & Rules.",
+      "category": "Attendance & Time",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "shifts",
+        "holidays",
+        "rules",
+        "shift",
+        "attendance",
+        "holiday",
+        "rule",
+        "create",
+        "day",
+        "delete",
+        "edit"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/attendance-and-time/shifts-holidays-and-rules.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How do I create a shift?",
+          "id": "how-do-i-create-a-shift"
+        },
+        {
+          "level": 2,
+          "text": "Can I create a night shift that ends the next day?",
+          "id": "can-i-create-a-night-shift-that-ends-the-next-day"
+        },
+        {
+          "level": 2,
+          "text": "Why does the app say my shift works out to too many hours?",
+          "id": "why-does-the-app-say-my-shift-works-out-to-too-many-hours"
+        },
+        {
+          "level": 2,
+          "text": "How do I assign staff to a shift?",
+          "id": "how-do-i-assign-staff-to-a-shift"
+        },
+        {
+          "level": 2,
+          "text": "How do I remove an employee from a shift?",
+          "id": "how-do-i-remove-an-employee-from-a-shift"
+        },
+        {
+          "level": 2,
+          "text": "What happens if I delete a shift?",
+          "id": "what-happens-if-i-delete-a-shift"
+        },
+        {
+          "level": 2,
+          "text": "Can I edit a shift's timing?",
+          "id": "can-i-edit-a-shift-s-timing"
+        },
+        {
+          "level": 2,
+          "text": "What happens if an employee has no shift?",
+          "id": "what-happens-if-an-employee-has-no-shift"
+        },
+        {
+          "level": 2,
+          "text": "How do I see which employees are on which shift?",
+          "id": "how-do-i-see-which-employees-are-on-which-shift"
+        },
+        {
+          "level": 2,
+          "text": "How do I add a holiday?",
+          "id": "how-do-i-add-a-holiday"
+        },
+        {
+          "level": 2,
+          "text": "What does Block Attendance mean on a holiday?",
+          "id": "what-does-block-attendance-mean-on-a-holiday"
+        },
+        {
+          "level": 2,
+          "text": "Can I set a holiday for only one branch or department?",
+          "id": "can-i-set-a-holiday-for-only-one-branch-or-department"
+        },
+        {
+          "level": 2,
+          "text": "How do I edit or delete a holiday?",
+          "id": "how-do-i-edit-or-delete-a-holiday"
+        },
+        {
+          "level": 2,
+          "text": "How do I set weekly offs like Sunday or Saturday?",
+          "id": "how-do-i-set-weekly-offs-like-sunday-or-saturday"
+        },
+        {
+          "level": 2,
+          "text": "What is the Attendance Rule and where do I find it?",
+          "id": "what-is-the-attendance-rule-and-where-do-i-find-it"
+        },
+        {
+          "level": 2,
+          "text": "How is the late penalty calculated from the Attendance Rule?",
+          "id": "how-is-the-late-penalty-calculated-from-the-attendance-rule"
+        },
+        {
+          "level": 2,
+          "text": "Is there a grace time for late punch in?",
+          "id": "is-there-a-grace-time-for-late-punch-in"
+        },
+        {
+          "level": 2,
+          "text": "How does overtime work in Clockyn?",
+          "id": "how-does-overtime-work-in-clockyn"
+        },
+        {
+          "level": 2,
+          "text": "Why do two branches have different holidays on the same day?",
+          "id": "why-do-two-branches-have-different-holidays-on-the-same-day"
+        },
+        {
+          "level": 2,
+          "text": "Which Settings menu has shifts, holidays and the attendance rule?",
+          "id": "which-settings-menu-has-shifts-holidays-and-the-attendance-rule"
+        },
+        {
+          "level": 2,
+          "text": "Which permissions can I give a manager for attendance rules and shifts?",
+          "id": "which-permissions-can-i-give-a-manager-for-attendance-rules-and-shifts"
+        }
+      ],
+      "words": 1220,
+      "faq_questions": 21
+    },
+    {
+      "slug": "faq-notifications-and-permissions",
+      "title": "Notifications & Permissions",
+      "summary": "Answers to 15 common questions about Notifications & Permissions.",
+      "category": "Help & Fixes",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "notifications",
+        "permissions",
+        "app",
+        "allow",
+        "location",
+        "notification",
+        "camera",
+        "happens",
+        "need",
+        "punch"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/help-and-fixes/notifications-and-permissions.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Which permissions does the app need and why?",
+          "id": "which-permissions-does-the-app-need-and-why"
+        },
+        {
+          "level": 2,
+          "text": "Where do I check or change app permissions?",
+          "id": "where-do-i-check-or-change-app-permissions"
+        },
+        {
+          "level": 2,
+          "text": "What happens when I tap a permission card?",
+          "id": "what-happens-when-i-tap-a-permission-card"
+        },
+        {
+          "level": 2,
+          "text": "Why does the app ask for location Allow all the time on Android?",
+          "id": "why-does-the-app-ask-for-location-allow-all-the-time-on-android"
+        },
+        {
+          "level": 2,
+          "text": "How do I allow camera, location or notifications in a web browser?",
+          "id": "how-do-i-allow-camera-location-or-notifications-in-a-web-browser"
+        },
+        {
+          "level": 2,
+          "text": "Why am I not getting notifications on my phone?",
+          "id": "why-am-i-not-getting-notifications-on-my-phone"
+        },
+        {
+          "level": 2,
+          "text": "What notifications will I receive as an admin?",
+          "id": "what-notifications-will-i-receive-as-an-admin"
+        },
+        {
+          "level": 2,
+          "text": "What notifications do my staff receive?",
+          "id": "what-notifications-do-my-staff-receive"
+        },
+        {
+          "level": 2,
+          "text": "What happens when I tap a notification?",
+          "id": "what-happens-when-i-tap-a-notification"
+        },
+        {
+          "level": 2,
+          "text": "Why did I not get a notification when staff punched in?",
+          "id": "why-did-i-not-get-a-notification-when-staff-punched-in"
+        },
+        {
+          "level": 2,
+          "text": "Do Live Chat replies from the support team send a notification?",
+          "id": "do-live-chat-replies-from-the-support-team-send-a-notification"
+        },
+        {
+          "level": 2,
+          "text": "How do I stop notifications or turn them off?",
+          "id": "how-do-i-stop-notifications-or-turn-them-off"
+        },
+        {
+          "level": 2,
+          "text": "Why does the app need access to my photos?",
+          "id": "why-does-the-app-need-access-to-my-photos"
+        },
+        {
+          "level": 2,
+          "text": "Why does the app say Allow location to punch in?",
+          "id": "why-does-the-app-say-allow-location-to-punch-in"
+        },
+        {
+          "level": 2,
+          "text": "Why does the camera not open when I punch?",
+          "id": "why-does-the-camera-not-open-when-i-punch"
+        }
+      ],
+      "words": 793,
+      "faq_questions": 15
+    },
+    {
+      "slug": "faq-support-and-feedback",
+      "title": "Support & Feedback",
+      "summary": "Answers to 13 common questions about Support & Feedback.",
+      "category": "Help & Fixes",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "support",
+        "feedback",
+        "see",
+        "ticket",
+        "feature",
+        "tab",
+        "account",
+        "another",
+        "between",
+        "chat"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/help-and-fixes/support-and-feedback.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How can I contact Clockyn support?",
+          "id": "how-can-i-contact-clockyn-support"
+        },
+        {
+          "level": 2,
+          "text": "What is Live Chat and who can use it?",
+          "id": "what-is-live-chat-and-who-can-use-it"
+        },
+        {
+          "level": 2,
+          "text": "What is the Video Hub?",
+          "id": "what-is-the-video-hub"
+        },
+        {
+          "level": 2,
+          "text": "Why can I not see the Support tab?",
+          "id": "why-can-i-not-see-the-support-tab"
+        },
+        {
+          "level": 2,
+          "text": "How do I raise a support ticket?",
+          "id": "how-do-i-raise-a-support-ticket"
+        },
+        {
+          "level": 2,
+          "text": "How do I see the status of my tickets?",
+          "id": "how-do-i-see-the-status-of-my-tickets"
+        },
+        {
+          "level": 2,
+          "text": "How do I reply to a ticket or reopen a resolved one?",
+          "id": "how-do-i-reply-to-a-ticket-or-reopen-a-resolved-one"
+        },
+        {
+          "level": 2,
+          "text": "What is the difference between Support in Settings and the Support tab?",
+          "id": "what-is-the-difference-between-support-in-settings-and-the-support-tab"
+        },
+        {
+          "level": 2,
+          "text": "How do I suggest a new feature?",
+          "id": "how-do-i-suggest-a-new-feature"
+        },
+        {
+          "level": 2,
+          "text": "How do I request deletion of my account?",
+          "id": "how-do-i-request-deletion-of-my-account"
+        },
+        {
+          "level": 2,
+          "text": "What should I tell support so they can help me faster?",
+          "id": "what-should-i-tell-support-so-they-can-help-me-faster"
+        },
+        {
+          "level": 2,
+          "text": "Why can I not submit another support ticket?",
+          "id": "why-can-i-not-submit-another-support-ticket"
+        },
+        {
+          "level": 2,
+          "text": "Where can I see the Fine / Deduction feature?",
+          "id": "where-can-i-see-the-fine-deduction-feature"
+        }
+      ],
+      "words": 666,
+      "faq_questions": 13
+    },
+    {
+      "slug": "faq-troubleshooting",
+      "title": "Troubleshooting",
+      "summary": "Answers to 20 common questions about Troubleshooting.",
+      "category": "Help & Fixes",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "troubleshooting",
+        "says",
+        "app",
+        "punch",
+        "account",
+        "admin",
+        "many",
+        "otp",
+        "please"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/help-and-fixes/troubleshooting.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "I did not receive the OTP. What should I do?",
+          "id": "i-did-not-receive-the-otp-what-should-i-do"
+        },
+        {
+          "level": 2,
+          "text": "The app says Invalid or expired OTP.",
+          "id": "the-app-says-invalid-or-expired-otp"
+        },
+        {
+          "level": 2,
+          "text": "Too many incorrect OTP attempts. What now?",
+          "id": "too-many-incorrect-otp-attempts-what-now"
+        },
+        {
+          "level": 2,
+          "text": "Too many codes requested. When can I try again?",
+          "id": "too-many-codes-requested-when-can-i-try-again"
+        },
+        {
+          "level": 2,
+          "text": "The app says Your account is inactive. Please contact your admin.",
+          "id": "the-app-says-your-account-is-inactive-please-contact-your-admin"
+        },
+        {
+          "level": 2,
+          "text": "The app says Your account has been deleted.",
+          "id": "the-app-says-your-account-has-been-deleted"
+        },
+        {
+          "level": 2,
+          "text": "The app says This is an admin account. Please use admin login portal.",
+          "id": "the-app-says-this-is-an-admin-account-please-use-admin-login-portal"
+        },
+        {
+          "level": 2,
+          "text": "Mobile number or email already registered. How can I sign up?",
+          "id": "mobile-number-or-email-already-registered-how-can-i-sign-up"
+        },
+        {
+          "level": 2,
+          "text": "My staff see You are logging in from a different device.",
+          "id": "my-staff-see-you-are-logging-in-from-a-different-device"
+        },
+        {
+          "level": 2,
+          "text": "Face punch says Photo is not matching.",
+          "id": "face-punch-says-photo-is-not-matching"
+        },
+        {
+          "level": 2,
+          "text": "Punch says It's too dark or We couldn't see your face.",
+          "id": "punch-says-it-s-too-dark-or-we-couldn-t-see-your-face"
+        },
+        {
+          "level": 2,
+          "text": "Punch says Unable to get your location. What can I do?",
+          "id": "punch-says-unable-to-get-your-location-what-can-i-do"
+        },
+        {
+          "level": 2,
+          "text": "Punch is refused because I am outside the branch area.",
+          "id": "punch-is-refused-because-i-am-outside-the-branch-area"
+        },
+        {
+          "level": 2,
+          "text": "The button says Max Sessions Reached.",
+          "id": "the-button-says-max-sessions-reached"
+        },
+        {
+          "level": 2,
+          "text": "The app says Access denied: your free trial and plan have expired.",
+          "id": "the-app-says-access-denied-your-free-trial-and-plan-have-expired"
+        },
+        {
+          "level": 2,
+          "text": "The app asks me to update and I cannot continue.",
+          "id": "the-app-asks-me-to-update-and-i-cannot-continue"
+        },
+        {
+          "level": 2,
+          "text": "The app says Too many requests. Please try again later.",
+          "id": "the-app-says-too-many-requests-please-try-again-later"
+        },
+        {
+          "level": 2,
+          "text": "A screen shows an error or stays empty. How do I fix it?",
+          "id": "a-screen-shows-an-error-or-stays-empty-how-do-i-fix-it"
+        },
+        {
+          "level": 2,
+          "text": "My photo could not be uploaded.",
+          "id": "my-photo-could-not-be-uploaded"
+        },
+        {
+          "level": 2,
+          "text": "The admin login says there is no user with this email address.",
+          "id": "the-admin-login-says-there-is-no-user-with-this-email-address"
+        }
+      ],
+      "words": 1058,
+      "faq_questions": 20
+    },
+    {
+      "slug": "faq-expenses-and-advances",
+      "title": "Expenses & Advances",
+      "summary": "Answers to 22 common questions about Expenses & Advances.",
+      "category": "Pay & Expenses",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "expenses",
+        "advances",
+        "advance",
+        "expense",
+        "member",
+        "odometer",
+        "staff",
+        "reading",
+        "salary",
+        "submit"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/pay-and-expenses/expenses-and-advances.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How do my employees submit expenses?",
+          "id": "how-do-my-employees-submit-expenses"
+        },
+        {
+          "level": 2,
+          "text": "How does a staff member record an odometer reading?",
+          "id": "how-does-a-staff-member-record-an-odometer-reading"
+        },
+        {
+          "level": 2,
+          "text": "Can a staff member record more than one odometer trip in a day?",
+          "id": "can-a-staff-member-record-more-than-one-odometer-trip-in-a-day"
+        },
+        {
+          "level": 2,
+          "text": "Why do I see 'Stop reading must be greater than start reading'?",
+          "id": "why-do-i-see-stop-reading-must-be-greater-than-start-reading"
+        },
+        {
+          "level": 2,
+          "text": "What does 'Please upload image and enter KM value' mean?",
+          "id": "what-does-please-upload-image-and-enter-km-value-mean"
+        },
+        {
+          "level": 2,
+          "text": "How do I submit a travel ticket?",
+          "id": "how-do-i-submit-a-travel-ticket"
+        },
+        {
+          "level": 2,
+          "text": "What is the difference between Travel Tickets and Other Bills?",
+          "id": "what-is-the-difference-between-travel-tickets-and-other-bills"
+        },
+        {
+          "level": 2,
+          "text": "How do I submit an Other Bill?",
+          "id": "how-do-i-submit-an-other-bill"
+        },
+        {
+          "level": 2,
+          "text": "The expense was saved but the photo failed to upload. What now?",
+          "id": "the-expense-was-saved-but-the-photo-failed-to-upload-what-now"
+        },
+        {
+          "level": 2,
+          "text": "The camera does not open when I try to add an expense photo.",
+          "id": "the-camera-does-not-open-when-i-try-to-add-an-expense-photo"
+        },
+        {
+          "level": 2,
+          "text": "Where do I approve or reject expense claims?",
+          "id": "where-do-i-approve-or-reject-expense-claims"
+        },
+        {
+          "level": 2,
+          "text": "Can I change my decision after approving or rejecting an expense?",
+          "id": "can-i-change-my-decision-after-approving-or-rejecting-an-expense"
+        },
+        {
+          "level": 2,
+          "text": "How do approved expenses reach the salary?",
+          "id": "how-do-approved-expenses-reach-the-salary"
+        },
+        {
+          "level": 2,
+          "text": "How is the odometer allowance calculated and how do I change the rate per km?",
+          "id": "how-is-the-odometer-allowance-calculated-and-how-do-i-change-the-rate-per-km"
+        },
+        {
+          "level": 2,
+          "text": "What should I do if an employee entered a wrong odometer reading?",
+          "id": "what-should-i-do-if-an-employee-entered-a-wrong-odometer-reading"
+        },
+        {
+          "level": 2,
+          "text": "How do I give a salary advance to a staff member?",
+          "id": "how-do-i-give-a-salary-advance-to-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "How is an advance deducted from salary?",
+          "id": "how-is-an-advance-deducted-from-salary"
+        },
+        {
+          "level": 2,
+          "text": "Who can give advances, and to whom?",
+          "id": "who-can-give-advances-and-to-whom"
+        },
+        {
+          "level": 2,
+          "text": "What do 'Advance date cannot be in the future' and 'Amount must be greater than 0' mean?",
+          "id": "what-do-advance-date-cannot-be-in-the-future-and-amount-must-be-greater-than-0-mean"
+        },
+        {
+          "level": 2,
+          "text": "Can I edit or delete an advance after saving it?",
+          "id": "can-i-edit-or-delete-an-advance-after-saving-it"
+        },
+        {
+          "level": 2,
+          "text": "Where can a staff member see the advances they received?",
+          "id": "where-can-a-staff-member-see-the-advances-they-received"
+        },
+        {
+          "level": 2,
+          "text": "What is the difference between an advance and an expense claim?",
+          "id": "what-is-the-difference-between-an-advance-and-an-expense-claim"
+        }
+      ],
+      "words": 1330,
+      "faq_questions": 22
+    },
+    {
+      "slug": "faq-payroll-and-salary",
+      "title": "Payroll & Salary",
+      "summary": "Answers to 39 common questions about Payroll & Salary.",
+      "category": "Pay & Expenses",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "payroll",
+        "salary",
+        "staff",
+        "member",
+        "payslip",
+        "paid",
+        "incentive",
+        "monthly",
+        "pay",
+        "already"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/pay-and-expenses/payroll-and-salary.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How is a staff member's monthly salary calculated?",
+          "id": "how-is-a-staff-member-s-monthly-salary-calculated"
+        },
+        {
+          "level": 2,
+          "text": "How do I create a salary structure (payslip) for monthly fixed staff?",
+          "id": "how-do-i-create-a-salary-structure-payslip-for-monthly-fixed-staff"
+        },
+        {
+          "level": 2,
+          "text": "How do I assign a payslip to my staff?",
+          "id": "how-do-i-assign-a-payslip-to-my-staff"
+        },
+        {
+          "level": 2,
+          "text": "Can one staff member be on two payslips at the same time?",
+          "id": "can-one-staff-member-be-on-two-payslips-at-the-same-time"
+        },
+        {
+          "level": 2,
+          "text": "Which payslip fields are compulsory?",
+          "id": "which-payslip-fields-are-compulsory"
+        },
+        {
+          "level": 2,
+          "text": "What is the maximum amount I can enter in salary fields?",
+          "id": "what-is-the-maximum-amount-i-can-enter-in-salary-fields"
+        },
+        {
+          "level": 2,
+          "text": "How do I edit a payslip I already created?",
+          "id": "how-do-i-edit-a-payslip-i-already-created"
+        },
+        {
+          "level": 2,
+          "text": "Why can't I delete an old payslip?",
+          "id": "why-can-t-i-delete-an-old-payslip"
+        },
+        {
+          "level": 2,
+          "text": "What does 'A template with this name already exists' mean?",
+          "id": "what-does-a-template-with-this-name-already-exists-mean"
+        },
+        {
+          "level": 2,
+          "text": "How do I set up daily wages?",
+          "id": "how-do-i-set-up-daily-wages"
+        },
+        {
+          "level": 2,
+          "text": "How are present days counted for daily wages?",
+          "id": "how-are-present-days-counted-for-daily-wages"
+        },
+        {
+          "level": 2,
+          "text": "How do I pay staff by the hour?",
+          "id": "how-do-i-pay-staff-by-the-hour"
+        },
+        {
+          "level": 2,
+          "text": "Why is a staff member's hourly pay lower than I expected?",
+          "id": "why-is-a-staff-member-s-hourly-pay-lower-than-i-expected"
+        },
+        {
+          "level": 2,
+          "text": "What types of incentives are available?",
+          "id": "what-types-of-incentives-are-available"
+        },
+        {
+          "level": 2,
+          "text": "How does the Count Basis incentive work?",
+          "id": "how-does-the-count-basis-incentive-work"
+        },
+        {
+          "level": 2,
+          "text": "How does the Turnover Basis incentive work?",
+          "id": "how-does-the-turnover-basis-incentive-work"
+        },
+        {
+          "level": 2,
+          "text": "Why do I get 'This value already exists' when saving an incentive?",
+          "id": "why-do-i-get-this-value-already-exists-when-saving-an-incentive"
+        },
+        {
+          "level": 2,
+          "text": "How do I set up overtime pay?",
+          "id": "how-do-i-set-up-overtime-pay"
+        },
+        {
+          "level": 2,
+          "text": "How is overtime calculated? Can you show an example?",
+          "id": "how-is-overtime-calculated-can-you-show-an-example"
+        },
+        {
+          "level": 2,
+          "text": "Why is overtime not showing for a staff member?",
+          "id": "why-is-overtime-not-showing-for-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "How do I give a bonus to my staff?",
+          "id": "how-do-i-give-a-bonus-to-my-staff"
+        },
+        {
+          "level": 2,
+          "text": "Why is the bonus not appearing in a staff member's salary?",
+          "id": "why-is-the-bonus-not-appearing-in-a-staff-member-s-salary"
+        },
+        {
+          "level": 2,
+          "text": "How can I charge a fine for late punch-ins? The Fine / Deduction menu says Coming soon.",
+          "id": "how-can-i-charge-a-fine-for-late-punch-ins-the-fine-deduction-menu-says-coming-soon"
+        },
+        {
+          "level": 2,
+          "text": "How is the late fine amount calculated?",
+          "id": "how-is-the-late-fine-amount-calculated"
+        },
+        {
+          "level": 2,
+          "text": "How do I add a travel allowance or any extra earning to a payslip?",
+          "id": "how-do-i-add-a-travel-allowance-or-any-extra-earning-to-a-payslip"
+        },
+        {
+          "level": 2,
+          "text": "Where can I see the salary of all my staff for a month?",
+          "id": "where-can-i-see-the-salary-of-all-my-staff-for-a-month"
+        },
+        {
+          "level": 2,
+          "text": "How do I mark salary as paid?",
+          "id": "how-do-i-mark-salary-as-paid"
+        },
+        {
+          "level": 2,
+          "text": "Does Mark as paid transfer money to my staff?",
+          "id": "does-mark-as-paid-transfer-money-to-my-staff"
+        },
+        {
+          "level": 2,
+          "text": "What happens to a salary after it is marked as paid?",
+          "id": "what-happens-to-a-salary-after-it-is-marked-as-paid"
+        },
+        {
+          "level": 2,
+          "text": "Can I undo a salary that was marked as paid by mistake?",
+          "id": "can-i-undo-a-salary-that-was-marked-as-paid-by-mistake"
+        },
+        {
+          "level": 2,
+          "text": "How many staff can I mark as paid at once?",
+          "id": "how-many-staff-can-i-mark-as-paid-at-once"
+        },
+        {
+          "level": 2,
+          "text": "What do Total Amt, Unpaid Amt and Payment Progress mean on the Monthly Salary screen?",
+          "id": "what-do-total-amt-unpaid-amt-and-payment-progress-mean-on-the-monthly-salary-screen"
+        },
+        {
+          "level": 2,
+          "text": "Who appears in the Monthly Salary list?",
+          "id": "who-appears-in-the-monthly-salary-list"
+        },
+        {
+          "level": 2,
+          "text": "Can I see or pay the salary of a previous month?",
+          "id": "can-i-see-or-pay-the-salary-of-a-previous-month"
+        },
+        {
+          "level": 2,
+          "text": "Does the salary change during the month?",
+          "id": "does-the-salary-change-during-the-month"
+        },
+        {
+          "level": 2,
+          "text": "How do I download the salary report?",
+          "id": "how-do-i-download-the-salary-report"
+        },
+        {
+          "level": 2,
+          "text": "How can a staff member see their own payslip?",
+          "id": "how-can-a-staff-member-see-their-own-payslip"
+        },
+        {
+          "level": 2,
+          "text": "Why is a staff member's net salary lower than their basic salary?",
+          "id": "why-is-a-staff-member-s-net-salary-lower-than-their-basic-salary"
+        },
+        {
+          "level": 2,
+          "text": "How do I remove a staff member from a wage, incentive or bonus template?",
+          "id": "how-do-i-remove-a-staff-member-from-a-wage-incentive-or-bonus-template"
+        }
+      ],
+      "words": 2638,
+      "faq_questions": 39
+    },
+    {
+      "slug": "faq-payments-and-invoices",
+      "title": "Payments & Invoices",
+      "summary": "Answers to 17 common questions about Payments & Invoices.",
+      "category": "Plans & Payments",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "payments",
+        "invoices",
+        "invoice",
+        "payment",
+        "coupon",
+        "charged",
+        "pay",
+        "plan",
+        "again",
+        "amount"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/plans-and-payments/payments-and-invoices.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How do I pay for my plan?",
+          "id": "how-do-i-pay-for-my-plan"
+        },
+        {
+          "level": 2,
+          "text": "How do I apply a coupon code?",
+          "id": "how-do-i-apply-a-coupon-code"
+        },
+        {
+          "level": 2,
+          "text": "Why is my coupon not working?",
+          "id": "why-is-my-coupon-not-working"
+        },
+        {
+          "level": 2,
+          "text": "Is the coupon discount percentage or a fixed amount?",
+          "id": "is-the-coupon-discount-percentage-or-a-fixed-amount"
+        },
+        {
+          "level": 2,
+          "text": "I closed the payment window. Was I charged?",
+          "id": "i-closed-the-payment-window-was-i-charged"
+        },
+        {
+          "level": 2,
+          "text": "What does Verification Failed or Payment not confirmed yet mean?",
+          "id": "what-does-verification-failed-or-payment-not-confirmed-yet-mean"
+        },
+        {
+          "level": 2,
+          "text": "Money was debited but my plan did not update. What should I do?",
+          "id": "money-was-debited-but-my-plan-did-not-update-what-should-i-do"
+        },
+        {
+          "level": 2,
+          "text": "Why is my payment shown as under review?",
+          "id": "why-is-my-payment-shown-as-under-review"
+        },
+        {
+          "level": 2,
+          "text": "Will I be charged twice if I tap pay again?",
+          "id": "will-i-be-charged-twice-if-i-tap-pay-again"
+        },
+        {
+          "level": 2,
+          "text": "Where can I find my invoices?",
+          "id": "where-can-i-find-my-invoices"
+        },
+        {
+          "level": 2,
+          "text": "How do I download an invoice?",
+          "id": "how-do-i-download-an-invoice"
+        },
+        {
+          "level": 2,
+          "text": "How do I share an invoice by email or WhatsApp?",
+          "id": "how-do-i-share-an-invoice-by-email-or-whatsapp"
+        },
+        {
+          "level": 2,
+          "text": "The app says No PDF viewer found. What do I do?",
+          "id": "the-app-says-no-pdf-viewer-found-what-do-i-do"
+        },
+        {
+          "level": 2,
+          "text": "How do I delete a downloaded invoice?",
+          "id": "how-do-i-delete-a-downloaded-invoice"
+        },
+        {
+          "level": 2,
+          "text": "What does the invoice number look like and what GST details does it show?",
+          "id": "what-does-the-invoice-number-look-like-and-what-gst-details-does-it-show"
+        },
+        {
+          "level": 2,
+          "text": "I do not see an invoice for my last payment.",
+          "id": "i-do-not-see-an-invoice-for-my-last-payment"
+        },
+        {
+          "level": 2,
+          "text": "Can I get a refund?",
+          "id": "can-i-get-a-refund"
+        }
+      ],
+      "words": 985,
+      "faq_questions": 17
+    },
+    {
+      "slug": "faq-plans-and-billing",
+      "title": "Plans & Billing",
+      "summary": "Answers to 25 common questions about Plans & Billing.",
+      "category": "Plans & Payments",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "plans",
+        "billing",
+        "plan",
+        "staff",
+        "free",
+        "renew",
+        "trial",
+        "app",
+        "buy",
+        "say"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/plans-and-payments/plans-and-billing.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Where can I see my current plan and its validity?",
+          "id": "where-can-i-see-my-current-plan-and-its-validity"
+        },
+        {
+          "level": 2,
+          "text": "What do Billing Date, Valid Until, Staff Limit, Used Staff and Remaining mean?",
+          "id": "what-do-billing-date-valid-until-staff-limit-used-staff-and-remaining-mean"
+        },
+        {
+          "level": 2,
+          "text": "What do the FREE TRIAL, ACTIVE, EXPIRED and NO PLAN badges mean?",
+          "id": "what-do-the-free-trial-active-expired-and-no-plan-badges-mean"
+        },
+        {
+          "level": 2,
+          "text": "How long is the free trial and what does it include?",
+          "id": "how-long-is-the-free-trial-and-what-does-it-include"
+        },
+        {
+          "level": 2,
+          "text": "What happens when my free trial or plan expires?",
+          "id": "what-happens-when-my-free-trial-or-plan-expires"
+        },
+        {
+          "level": 2,
+          "text": "How do I buy a plan for the first time?",
+          "id": "how-do-i-buy-a-plan-for-the-first-time"
+        },
+        {
+          "level": 2,
+          "text": "How is the price of a plan calculated?",
+          "id": "how-is-the-price-of-a-plan-calculated"
+        },
+        {
+          "level": 2,
+          "text": "How do I renew my plan?",
+          "id": "how-do-i-renew-my-plan"
+        },
+        {
+          "level": 2,
+          "text": "Do I lose the remaining days if I renew early?",
+          "id": "do-i-lose-the-remaining-days-if-i-renew-early"
+        },
+        {
+          "level": 2,
+          "text": "How do I add more staff seats in the middle of my plan?",
+          "id": "how-do-i-add-more-staff-seats-in-the-middle-of-my-plan"
+        },
+        {
+          "level": 2,
+          "text": "How much will adding extra staff cost?",
+          "id": "how-much-will-adding-extra-staff-cost"
+        },
+        {
+          "level": 2,
+          "text": "Can I upgrade or renew during the free trial?",
+          "id": "can-i-upgrade-or-renew-during-the-free-trial"
+        },
+        {
+          "level": 2,
+          "text": "How do I switch to a different plan?",
+          "id": "how-do-i-switch-to-a-different-plan"
+        },
+        {
+          "level": 2,
+          "text": "Why does the app say Downgrade Not Allowed?",
+          "id": "why-does-the-app-say-downgrade-not-allowed"
+        },
+        {
+          "level": 2,
+          "text": "Why does the app say You're on This Plan?",
+          "id": "why-does-the-app-say-you-re-on-this-plan"
+        },
+        {
+          "level": 2,
+          "text": "Which features are included in my plan?",
+          "id": "which-features-are-included-in-my-plan"
+        },
+        {
+          "level": 2,
+          "text": "Why can I not open CRM or staff location tracking?",
+          "id": "why-can-i-not-open-crm-or-staff-location-tracking"
+        },
+        {
+          "level": 2,
+          "text": "Why does the app say my staff limit is reached?",
+          "id": "why-does-the-app-say-my-staff-limit-is-reached"
+        },
+        {
+          "level": 2,
+          "text": "How many staff can I choose when I buy a plan?",
+          "id": "how-many-staff-can-i-choose-when-i-buy-a-plan"
+        },
+        {
+          "level": 2,
+          "text": "Is GST added to the plan price?",
+          "id": "is-gst-added-to-the-plan-price"
+        },
+        {
+          "level": 2,
+          "text": "Can I buy or renew a plan on an iPhone?",
+          "id": "can-i-buy-or-renew-a-plan-on-an-iphone"
+        },
+        {
+          "level": 2,
+          "text": "Can I get a custom plan or a bigger discount?",
+          "id": "can-i-get-a-custom-plan-or-a-bigger-discount"
+        },
+        {
+          "level": 2,
+          "text": "Which plan durations can I choose, and how do free months work?",
+          "id": "which-plan-durations-can-i-choose-and-how-do-free-months-work"
+        },
+        {
+          "level": 2,
+          "text": "What happens to my credit when I move to a longer plan?",
+          "id": "what-happens-to-my-credit-when-i-move-to-a-longer-plan"
+        },
+        {
+          "level": 2,
+          "text": "Do extra staff get the free months?",
+          "id": "do-extra-staff-get-the-free-months"
+        }
+      ],
+      "words": 1877,
+      "faq_questions": 25
+    },
+    {
+      "slug": "faq-refer-and-earn",
+      "title": "Refer & Earn",
+      "summary": "Answers to 15 common questions about Refer & Earn.",
+      "category": "Plans & Payments",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "prime-elite",
+      "handoff": "offer",
+      "tags": [
+        "refer",
+        "earn",
+        "code",
+        "reward",
+        "referral",
+        "use",
+        "promo",
+        "partner",
+        "company",
+        "much"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/plans-and-payments/refer-and-earn.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "What is Refer & Earn?",
+          "id": "what-is-refer-and-earn"
+        },
+        {
+          "level": 2,
+          "text": "Where do I find my referral code and how do I share it?",
+          "id": "where-do-i-find-my-referral-code-and-how-do-i-share-it"
+        },
+        {
+          "level": 2,
+          "text": "How does the company I refer use my code?",
+          "id": "how-does-the-company-i-refer-use-my-code"
+        },
+        {
+          "level": 2,
+          "text": "How much do I save, and when can I use my reward?",
+          "id": "how-much-do-i-save-and-when-can-i-use-my-reward"
+        },
+        {
+          "level": 2,
+          "text": "Which plans and purchases does the referral reward work on?",
+          "id": "which-plans-and-purchases-does-the-referral-reward-work-on"
+        },
+        {
+          "level": 2,
+          "text": "How do I use my referral reward when I pay?",
+          "id": "how-do-i-use-my-referral-reward-when-i-pay"
+        },
+        {
+          "level": 2,
+          "text": "Can I use a referral reward and a coupon together?",
+          "id": "can-i-use-a-referral-reward-and-a-coupon-together"
+        },
+        {
+          "level": 2,
+          "text": "I referred more than one company. Can I use the reward more than once?",
+          "id": "i-referred-more-than-one-company-can-i-use-the-reward-more-than-once"
+        },
+        {
+          "level": 2,
+          "text": "Where can I see who I referred, and why can I not apply my reward?",
+          "id": "where-can-i-see-who-i-referred-and-why-can-i-not-apply-my-reward"
+        },
+        {
+          "level": 2,
+          "text": "What is a partner promo code and where do I enter it?",
+          "id": "what-is-a-partner-promo-code-and-where-do-i-enter-it"
+        },
+        {
+          "level": 2,
+          "text": "How much discount does a partner promo code give, and how long is it valid?",
+          "id": "how-much-discount-does-a-partner-promo-code-give-and-how-long-is-it-valid"
+        },
+        {
+          "level": 2,
+          "text": "Why does my referral or promo code say it is not valid?",
+          "id": "why-does-my-referral-or-promo-code-say-it-is-not-valid"
+        },
+        {
+          "level": 2,
+          "text": "Why was my promo code reward not applied, or why does it show Expired?",
+          "id": "why-was-my-promo-code-reward-not-applied-or-why-does-it-show-expired"
+        },
+        {
+          "level": 2,
+          "text": "Can I use a friend's referral code and a partner promo code together?",
+          "id": "can-i-use-a-friend-s-referral-code-and-a-partner-promo-code-together"
+        },
+        {
+          "level": 2,
+          "text": "How can my business or channel become a Clockyn partner?",
+          "id": "how-can-my-business-or-channel-become-a-clockyn-partner"
+        }
+      ],
+      "words": 1589,
+      "faq_questions": 15
+    },
+    {
+      "slug": "faq-account-and-security",
+      "title": "Account & Security",
+      "summary": "Answers to 26 common questions about Account & Security.",
+      "category": "Set up & Account",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "account",
+        "security",
+        "mean",
+        "otp",
+        "change",
+        "member",
+        "staff",
+        "app",
+        "email",
+        "many"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/set-up-and-account/account-and-security.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How do I sign in to the admin app?",
+          "id": "how-do-i-sign-in-to-the-admin-app"
+        },
+        {
+          "level": 2,
+          "text": "I did not get the OTP e-mail. What should I do?",
+          "id": "i-did-not-get-the-otp-e-mail-what-should-i-do"
+        },
+        {
+          "level": 2,
+          "text": "How long is my OTP valid?",
+          "id": "how-long-is-my-otp-valid"
+        },
+        {
+          "level": 2,
+          "text": "What does \"Too many incorrect OTP attempts\" mean?",
+          "id": "what-does-too-many-incorrect-otp-attempts-mean"
+        },
+        {
+          "level": 2,
+          "text": "Why does it say \"Please wait seconds before requesting another code\"?",
+          "id": "why-does-it-say-please-wait-seconds-before-requesting-another-code"
+        },
+        {
+          "level": 2,
+          "text": "What does \"Too many codes requested. Try again later.\" mean?",
+          "id": "what-does-too-many-codes-requested-try-again-later-mean"
+        },
+        {
+          "level": 2,
+          "text": "What does \"Invalid or expired OTP\" mean?",
+          "id": "what-does-invalid-or-expired-otp-mean"
+        },
+        {
+          "level": 2,
+          "text": "Do I have to enter an OTP every time I open the app?",
+          "id": "do-i-have-to-enter-an-otp-every-time-i-open-the-app"
+        },
+        {
+          "level": 2,
+          "text": "How do I log out of the app?",
+          "id": "how-do-i-log-out-of-the-app"
+        },
+        {
+          "level": 2,
+          "text": "What happens when I log out? Is my data deleted?",
+          "id": "what-happens-when-i-log-out-is-my-data-deleted"
+        },
+        {
+          "level": 2,
+          "text": "Can I be signed in on more than one phone?",
+          "id": "can-i-be-signed-in-on-more-than-one-phone"
+        },
+        {
+          "level": 2,
+          "text": "Why does it say \"This is an employee account. Please use employee login portal\"?",
+          "id": "why-does-it-say-this-is-an-employee-account-please-use-employee-login-portal"
+        },
+        {
+          "level": 2,
+          "text": "A staff member sees \"There is no user with this email address\". Why?",
+          "id": "a-staff-member-sees-there-is-no-user-with-this-email-address-why"
+        },
+        {
+          "level": 2,
+          "text": "A staff member sees \"Your account is inactive\". What should I do?",
+          "id": "a-staff-member-sees-your-account-is-inactive-what-should-i-do"
+        },
+        {
+          "level": 2,
+          "text": "What does \"Your account has been deleted\" mean?",
+          "id": "what-does-your-account-has-been-deleted-mean"
+        },
+        {
+          "level": 2,
+          "text": "What does \"This email address is linked to more than one account\" mean?",
+          "id": "what-does-this-email-address-is-linked-to-more-than-one-account-mean"
+        },
+        {
+          "level": 2,
+          "text": "Registration says \"Email already registered\". What now?",
+          "id": "registration-says-email-already-registered-what-now"
+        },
+        {
+          "level": 2,
+          "text": "How does a staff member ask to use a new phone?",
+          "id": "how-does-a-staff-member-ask-to-use-a-new-phone"
+        },
+        {
+          "level": 2,
+          "text": "How do I approve a device change request?",
+          "id": "how-do-i-approve-a-device-change-request"
+        },
+        {
+          "level": 2,
+          "text": "How many device change requests can one person send?",
+          "id": "how-many-device-change-requests-can-one-person-send"
+        },
+        {
+          "level": 2,
+          "text": "Where can I read the privacy policy?",
+          "id": "where-can-i-read-the-privacy-policy"
+        },
+        {
+          "level": 2,
+          "text": "How do I delete my account?",
+          "id": "how-do-i-delete-my-account"
+        },
+        {
+          "level": 2,
+          "text": "What happens right after I request account deletion?",
+          "id": "what-happens-right-after-i-request-account-deletion"
+        },
+        {
+          "level": 2,
+          "text": "Can I cancel an account deletion request?",
+          "id": "can-i-cancel-an-account-deletion-request"
+        },
+        {
+          "level": 2,
+          "text": "Can I change the e-mail I use to sign in?",
+          "id": "can-i-change-the-e-mail-i-use-to-sign-in"
+        },
+        {
+          "level": 2,
+          "text": "How can a staff member change their profile photo?",
+          "id": "how-can-a-staff-member-change-their-profile-photo"
+        }
+      ],
+      "words": 1398,
+      "faq_questions": 26
+    },
+    {
+      "slug": "faq-company-setup",
+      "title": "Company Setup",
+      "summary": "Answers to 25 common questions about Company Setup.",
+      "category": "Set up & Account",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "company",
+        "setup",
+        "branch",
+        "delete",
+        "change",
+        "add",
+        "department",
+        "details",
+        "number",
+        "staff"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/set-up-and-account/company-setup.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How do I view my company details?",
+          "id": "how-do-i-view-my-company-details"
+        },
+        {
+          "level": 2,
+          "text": "How do I edit my company details?",
+          "id": "how-do-i-edit-my-company-details"
+        },
+        {
+          "level": 2,
+          "text": "How do I add another company?",
+          "id": "how-do-i-add-another-company"
+        },
+        {
+          "level": 2,
+          "text": "How do I switch between my companies?",
+          "id": "how-do-i-switch-between-my-companies"
+        },
+        {
+          "level": 2,
+          "text": "Can I run more than one company with one login?",
+          "id": "can-i-run-more-than-one-company-with-one-login"
+        },
+        {
+          "level": 2,
+          "text": "How do I delete a company?",
+          "id": "how-do-i-delete-a-company"
+        },
+        {
+          "level": 2,
+          "text": "Why can't I delete my company?",
+          "id": "why-can-t-i-delete-my-company"
+        },
+        {
+          "level": 2,
+          "text": "What happens to my staff and branches if I delete a company?",
+          "id": "what-happens-to-my-staff-and-branches-if-i-delete-a-company"
+        },
+        {
+          "level": 2,
+          "text": "How do I upload or change my company logo?",
+          "id": "how-do-i-upload-or-change-my-company-logo"
+        },
+        {
+          "level": 2,
+          "text": "Is the GST number mandatory?",
+          "id": "is-the-gst-number-mandatory"
+        },
+        {
+          "level": 2,
+          "text": "What are the Additional Details (PAN, CIN, TAN, MSME)?",
+          "id": "what-are-the-additional-details-pan-cin-tan-msme"
+        },
+        {
+          "level": 2,
+          "text": "What format should PAN, CIN and TAN be in?",
+          "id": "what-format-should-pan-cin-and-tan-be-in"
+        },
+        {
+          "level": 2,
+          "text": "What is Max Daily Punch Sessions?",
+          "id": "what-is-max-daily-punch-sessions"
+        },
+        {
+          "level": 2,
+          "text": "How do I change the number of punch-ins allowed per day?",
+          "id": "how-do-i-change-the-number-of-punch-ins-allowed-per-day"
+        },
+        {
+          "level": 2,
+          "text": "How do I change the company mobile number or e-mail?",
+          "id": "how-do-i-change-the-company-mobile-number-or-e-mail"
+        },
+        {
+          "level": 2,
+          "text": "How do I add a branch?",
+          "id": "how-do-i-add-a-branch"
+        },
+        {
+          "level": 2,
+          "text": "What is the attendance radius of a branch?",
+          "id": "what-is-the-attendance-radius-of-a-branch"
+        },
+        {
+          "level": 2,
+          "text": "How do I set or change a branch's GPS location?",
+          "id": "how-do-i-set-or-change-a-branch-s-gps-location"
+        },
+        {
+          "level": 2,
+          "text": "Why does it say \"Branch name already exists\"?",
+          "id": "why-does-it-say-branch-name-already-exists"
+        },
+        {
+          "level": 2,
+          "text": "How do I delete a branch?",
+          "id": "how-do-i-delete-a-branch"
+        },
+        {
+          "level": 2,
+          "text": "Can I delete a branch that still has staff?",
+          "id": "can-i-delete-a-branch-that-still-has-staff"
+        },
+        {
+          "level": 2,
+          "text": "How do I add a department?",
+          "id": "how-do-i-add-a-department"
+        },
+        {
+          "level": 2,
+          "text": "What happens to staff when I delete a department?",
+          "id": "what-happens-to-staff-when-i-delete-a-department"
+        },
+        {
+          "level": 2,
+          "text": "Why does it say \"Department name already exists\"?",
+          "id": "why-does-it-say-department-name-already-exists"
+        },
+        {
+          "level": 2,
+          "text": "What is Assign Devices in Settings?",
+          "id": "what-is-assign-devices-in-settings"
+        }
+      ],
+      "words": 1296,
+      "faq_questions": 25
+    },
+    {
+      "slug": "faq-getting-started",
+      "title": "Getting Started",
+      "summary": "Answers to 15 common questions about Getting Started.",
+      "category": "Set up & Account",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "getting",
+        "started",
+        "clockyn",
+        "home",
+        "staff",
+        "admin",
+        "branch",
+        "company",
+        "department",
+        "register"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/set-up-and-account/getting-started.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How do I register my company on Clockyn?",
+          "id": "how-do-i-register-my-company-on-clockyn"
+        },
+        {
+          "level": 2,
+          "text": "What information do I need to register my company?",
+          "id": "what-information-do-i-need-to-register-my-company"
+        },
+        {
+          "level": 2,
+          "text": "Is there a free trial when I sign up?",
+          "id": "is-there-a-free-trial-when-i-sign-up"
+        },
+        {
+          "level": 2,
+          "text": "What should I set up first after registering?",
+          "id": "what-should-i-set-up-first-after-registering"
+        },
+        {
+          "level": 2,
+          "text": "What is the difference between Admin Portal and Employee Access?",
+          "id": "what-is-the-difference-between-admin-portal-and-employee-access"
+        },
+        {
+          "level": 2,
+          "text": "What are the roles in Clockyn: admin, manager and staff?",
+          "id": "what-are-the-roles-in-clockyn-admin-manager-and-staff"
+        },
+        {
+          "level": 2,
+          "text": "What do the tabs at the bottom of the app do?",
+          "id": "what-do-the-tabs-at-the-bottom-of-the-app-do"
+        },
+        {
+          "level": 2,
+          "text": "What does the Home screen show?",
+          "id": "what-does-the-home-screen-show"
+        },
+        {
+          "level": 2,
+          "text": "How do I see who is absent or late today?",
+          "id": "how-do-i-see-who-is-absent-or-late-today"
+        },
+        {
+          "level": 2,
+          "text": "How do I filter Home by branch, department or date?",
+          "id": "how-do-i-filter-home-by-branch-department-or-date"
+        },
+        {
+          "level": 2,
+          "text": "How do I quickly add staff, a branch or a department from Home?",
+          "id": "how-do-i-quickly-add-staff-a-branch-or-a-department-from-home"
+        },
+        {
+          "level": 2,
+          "text": "Can I use Clockyn on a computer or only on my phone?",
+          "id": "can-i-use-clockyn-on-a-computer-or-only-on-my-phone"
+        },
+        {
+          "level": 2,
+          "text": "How do I switch to dark mode?",
+          "id": "how-do-i-switch-to-dark-mode"
+        },
+        {
+          "level": 2,
+          "text": "Where can I find all the settings?",
+          "id": "where-can-i-find-all-the-settings"
+        },
+        {
+          "level": 2,
+          "text": "How do my staff start using Clockyn?",
+          "id": "how-do-my-staff-start-using-clockyn"
+        }
+      ],
+      "words": 972,
+      "faq_questions": 15
+    },
+    {
+      "slug": "faq-staff-management",
+      "title": "Staff Management",
+      "summary": "Answers to 32 common questions about Staff Management.",
+      "category": "Set up & Account",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "staff",
+        "management",
+        "member",
+        "manager",
+        "add",
+        "delete",
+        "face",
+        "see",
+        "assign",
+        "branch"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/set-up-and-account/staff-management.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How do I add a new staff member?",
+          "id": "how-do-i-add-a-new-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "Which fields are required when adding staff?",
+          "id": "which-fields-are-required-when-adding-staff"
+        },
+        {
+          "level": 2,
+          "text": "How is the Employee ID chosen?",
+          "id": "how-is-the-employee-id-chosen"
+        },
+        {
+          "level": 2,
+          "text": "Why does it say \"Employee ID, mobile number, or email already exists\"?",
+          "id": "why-does-it-say-employee-id-mobile-number-or-email-already-exists"
+        },
+        {
+          "level": 2,
+          "text": "How many staff can I add?",
+          "id": "how-many-staff-can-i-add"
+        },
+        {
+          "level": 2,
+          "text": "It says \"Staff limit reached\". What can I do?",
+          "id": "it-says-staff-limit-reached-what-can-i-do"
+        },
+        {
+          "level": 2,
+          "text": "Do inactive staff count towards my staff limit?",
+          "id": "do-inactive-staff-count-towards-my-staff-limit"
+        },
+        {
+          "level": 2,
+          "text": "How do I find a staff member?",
+          "id": "how-do-i-find-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "How do I edit a staff member's details?",
+          "id": "how-do-i-edit-a-staff-member-s-details"
+        },
+        {
+          "level": 2,
+          "text": "How do I change a staff member's branch or department?",
+          "id": "how-do-i-change-a-staff-member-s-branch-or-department"
+        },
+        {
+          "level": 2,
+          "text": "How do I deactivate a staff member?",
+          "id": "how-do-i-deactivate-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "How do I reactivate a staff member?",
+          "id": "how-do-i-reactivate-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "What is the difference between deactivating and deleting a staff member?",
+          "id": "what-is-the-difference-between-deactivating-and-deleting-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "How do I permanently delete a staff member?",
+          "id": "how-do-i-permanently-delete-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "Why can't I delete a manager?",
+          "id": "why-can-t-i-delete-a-manager"
+        },
+        {
+          "level": 2,
+          "text": "Who can permanently delete staff?",
+          "id": "who-can-permanently-delete-staff"
+        },
+        {
+          "level": 2,
+          "text": "How do I make someone a manager?",
+          "id": "how-do-i-make-someone-a-manager"
+        },
+        {
+          "level": 2,
+          "text": "What can a manager do? What are the manager permissions?",
+          "id": "what-can-a-manager-do-what-are-the-manager-permissions"
+        },
+        {
+          "level": 2,
+          "text": "How do I change a manager's permissions?",
+          "id": "how-do-i-change-a-manager-s-permissions"
+        },
+        {
+          "level": 2,
+          "text": "How do I remove a manager?",
+          "id": "how-do-i-remove-a-manager"
+        },
+        {
+          "level": 2,
+          "text": "How do I see which branches and staff a manager looks after?",
+          "id": "how-do-i-see-which-branches-and-staff-a-manager-looks-after"
+        },
+        {
+          "level": 2,
+          "text": "Why does a manager need a branch and a department?",
+          "id": "why-does-a-manager-need-a-branch-and-a-department"
+        },
+        {
+          "level": 2,
+          "text": "What is a field staff member?",
+          "id": "what-is-a-field-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "How do I assign a shift to a staff member?",
+          "id": "how-do-i-assign-a-shift-to-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "What does the Assign button on the staff screen do?",
+          "id": "what-does-the-assign-button-on-the-staff-screen-do"
+        },
+        {
+          "level": 2,
+          "text": "What can I see on a staff member's detail screen?",
+          "id": "what-can-i-see-on-a-staff-member-s-detail-screen"
+        },
+        {
+          "level": 2,
+          "text": "How can I add bank details for a staff member?",
+          "id": "how-can-i-add-bank-details-for-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "How does a staff member register their face?",
+          "id": "how-does-a-staff-member-register-their-face"
+        },
+        {
+          "level": 2,
+          "text": "Face registration keeps failing. What can I tell my staff?",
+          "id": "face-registration-keeps-failing-what-can-i-tell-my-staff"
+        },
+        {
+          "level": 2,
+          "text": "Can a staff member register their face again?",
+          "id": "can-a-staff-member-register-their-face-again"
+        },
+        {
+          "level": 2,
+          "text": "What do managers see in their Settings tab?",
+          "id": "what-do-managers-see-in-their-settings-tab"
+        },
+        {
+          "level": 2,
+          "text": "How can I upload a photo for a staff member?",
+          "id": "how-can-i-upload-a-photo-for-a-staff-member"
+        }
+      ],
+      "words": 1645,
+      "faq_questions": 32
+    },
+    {
+      "slug": "faq-chat-and-announcements",
+      "title": "Chat & Announcements",
+      "summary": "Answers to 18 common questions about Chat & Announcements.",
+      "category": "Team & Customers",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "chat",
+        "announcements",
+        "announcement",
+        "send",
+        "staff",
+        "group",
+        "delete",
+        "member",
+        "people",
+        "see"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/team-and-customers/chat-and-announcements.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How do I start a chat with a staff member?",
+          "id": "how-do-i-start-a-chat-with-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "Can I send photos or documents in chat?",
+          "id": "can-i-send-photos-or-documents-in-chat"
+        },
+        {
+          "level": 2,
+          "text": "What do the tick marks next to my messages mean?",
+          "id": "what-do-the-tick-marks-next-to-my-messages-mean"
+        },
+        {
+          "level": 2,
+          "text": "How do I delete a chat?",
+          "id": "how-do-i-delete-a-chat"
+        },
+        {
+          "level": 2,
+          "text": "How do I view a staff member's contact details from chat?",
+          "id": "how-do-i-view-a-staff-member-s-contact-details-from-chat"
+        },
+        {
+          "level": 2,
+          "text": "How do I create a group chat?",
+          "id": "how-do-i-create-a-group-chat"
+        },
+        {
+          "level": 2,
+          "text": "How do I add more people to a group?",
+          "id": "how-do-i-add-more-people-to-a-group"
+        },
+        {
+          "level": 2,
+          "text": "Can I remove someone from a group or leave a group?",
+          "id": "can-i-remove-someone-from-a-group-or-leave-a-group"
+        },
+        {
+          "level": 2,
+          "text": "How do I change the colour theme of a group chat?",
+          "id": "how-do-i-change-the-colour-theme-of-a-group-chat"
+        },
+        {
+          "level": 2,
+          "text": "Why does the Chat tab say 'Feature Unavailable' or 'Chat Unavailable'?",
+          "id": "why-does-the-chat-tab-say-feature-unavailable-or-chat-unavailable"
+        },
+        {
+          "level": 2,
+          "text": "How do I send an announcement to all my staff?",
+          "id": "how-do-i-send-an-announcement-to-all-my-staff"
+        },
+        {
+          "level": 2,
+          "text": "How do I send an announcement to only some people?",
+          "id": "how-do-i-send-an-announcement-to-only-some-people"
+        },
+        {
+          "level": 2,
+          "text": "How do I send an announcement to one branch or department?",
+          "id": "how-do-i-send-an-announcement-to-one-branch-or-department"
+        },
+        {
+          "level": 2,
+          "text": "Why can't I send my announcement?",
+          "id": "why-can-t-i-send-my-announcement"
+        },
+        {
+          "level": 2,
+          "text": "How do my staff see announcements?",
+          "id": "how-do-my-staff-see-announcements"
+        },
+        {
+          "level": 2,
+          "text": "Can I edit or delete an announcement after sending it?",
+          "id": "can-i-edit-or-delete-an-announcement-after-sending-it"
+        },
+        {
+          "level": 2,
+          "text": "Who receives an announcement sent to All Staff?",
+          "id": "who-receives-an-announcement-sent-to-all-staff"
+        },
+        {
+          "level": 2,
+          "text": "How do I see my past announcements?",
+          "id": "how-do-i-see-my-past-announcements"
+        }
+      ],
+      "words": 979,
+      "faq_questions": 18
+    },
+    {
+      "slug": "faq-crm-and-leads",
+      "title": "CRM & Leads",
+      "summary": "Answers to 18 common questions about CRM & Leads.",
+      "category": "Team & Customers",
+      "audience": "all",
+      "source": "faq",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "crm",
+        "leads",
+        "lead",
+        "carry",
+        "forward",
+        "mean",
+        "request",
+        "staff",
+        "add",
+        "assign"
+      ],
+      "updated": "2026-11-15",
+      "related": [],
+      "path": "kb/faq/team-and-customers/crm-and-leads.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "What is the CRM tab used for?",
+          "id": "what-is-the-crm-tab-used-for"
+        },
+        {
+          "level": 2,
+          "text": "How do I add a new lead?",
+          "id": "how-do-i-add-a-new-lead"
+        },
+        {
+          "level": 2,
+          "text": "How do I create a new lead category?",
+          "id": "how-do-i-create-a-new-lead-category"
+        },
+        {
+          "level": 2,
+          "text": "How do I assign a lead to a staff member?",
+          "id": "how-do-i-assign-a-lead-to-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "Can a lead be assigned to more than one person?",
+          "id": "can-a-lead-be-assigned-to-more-than-one-person"
+        },
+        {
+          "level": 2,
+          "text": "How do I edit or delete a lead?",
+          "id": "how-do-i-edit-or-delete-a-lead"
+        },
+        {
+          "level": 2,
+          "text": "Why are the Edit, Delete and Assign buttons disabled on a lead?",
+          "id": "why-are-the-edit-delete-and-assign-buttons-disabled-on-a-lead"
+        },
+        {
+          "level": 2,
+          "text": "What do the numbers on the Work Status Overview mean?",
+          "id": "what-do-the-numbers-on-the-work-status-overview-mean"
+        },
+        {
+          "level": 2,
+          "text": "What does the lead status Pending, Working, Completed or Carry Forward mean?",
+          "id": "what-does-the-lead-status-pending-working-completed-or-carry-forward-mean"
+        },
+        {
+          "level": 2,
+          "text": "How do my staff see and update their leads?",
+          "id": "how-do-my-staff-see-and-update-their-leads"
+        },
+        {
+          "level": 2,
+          "text": "My employee says they cannot see an assigned lead. Why?",
+          "id": "my-employee-says-they-cannot-see-an-assigned-lead-why"
+        },
+        {
+          "level": 2,
+          "text": "What is a carry forward request?",
+          "id": "what-is-a-carry-forward-request"
+        },
+        {
+          "level": 2,
+          "text": "How do I approve or reject a carry forward request?",
+          "id": "how-do-i-approve-or-reject-a-carry-forward-request"
+        },
+        {
+          "level": 2,
+          "text": "Why can't my employee send a carry forward request?",
+          "id": "why-can-t-my-employee-send-a-carry-forward-request"
+        },
+        {
+          "level": 2,
+          "text": "Can staff add leads themselves?",
+          "id": "can-staff-add-leads-themselves"
+        },
+        {
+          "level": 2,
+          "text": "What does the mobile number error on a lead mean?",
+          "id": "what-does-the-mobile-number-error-on-a-lead-mean"
+        },
+        {
+          "level": 2,
+          "text": "Why does CRM say 'CRM Unavailable'?",
+          "id": "why-does-crm-say-crm-unavailable"
+        },
+        {
+          "level": 2,
+          "text": "How can I search leads by date?",
+          "id": "how-can-i-search-leads-by-date"
+        }
+      ],
+      "words": 1085,
+      "faq_questions": 18
+    },
+    {
+      "slug": "account-and-login",
+      "title": "Signing in, one-time codes and account problems",
+      "summary": "How admins and staff sign in with a one-time code, what the common sign-in messages mean, device changes, logging out and requesting account deletion.",
+      "category": "Set up & Account",
+      "audience": "all",
+      "source": "guide",
+      "app_path": "Admin Portal / Employee Access",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "login",
+        "sign in",
+        "otp",
+        "one time code",
+        "verification code",
+        "not receiving otp",
+        "invalid otp",
+        "logout",
+        "new phone",
+        "device change",
+        "account deleted",
+        "inactive account",
+        "delete account",
+        "password"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "adding-and-managing-staff",
+        "getting-started-register-company",
+        "faq-account-and-security"
+      ],
+      "path": "kb/guides/account-and-login.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How to sign in",
+          "id": "how-to-sign-in"
+        },
+        {
+          "level": 2,
+          "text": "One-time code rules",
+          "id": "one-time-code-rules"
+        },
+        {
+          "level": 2,
+          "text": "How long you stay signed in",
+          "id": "how-long-you-stay-signed-in"
+        },
+        {
+          "level": 2,
+          "text": "Log out",
+          "id": "log-out"
+        },
+        {
+          "level": 2,
+          "text": "A staff member gets a new phone",
+          "id": "a-staff-member-gets-a-new-phone"
+        },
+        {
+          "level": 2,
+          "text": "Request account deletion",
+          "id": "request-account-deletion"
+        },
+        {
+          "level": 2,
+          "text": "Change the e-mail you sign in with",
+          "id": "change-the-e-mail-you-sign-in-with"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "I did not get the OTP e-mail. What should I do?",
+          "id": "i-did-not-get-the-otp-e-mail-what-should-i-do"
+        },
+        {
+          "level": 3,
+          "text": "What does \"Invalid or expired OTP\" mean?",
+          "id": "what-does-invalid-or-expired-otp-mean"
+        },
+        {
+          "level": 3,
+          "text": "What does \"Too many codes requested. Try again later.\" mean?",
+          "id": "what-does-too-many-codes-requested-try-again-later-mean"
+        },
+        {
+          "level": 3,
+          "text": "Why does it say \"This is an employee account. Please use employee login portal\"?",
+          "id": "why-does-it-say-this-is-an-employee-account-please-use-employee-login-portal"
+        },
+        {
+          "level": 3,
+          "text": "What does \"Your account is inactive\" mean?",
+          "id": "what-does-your-account-is-inactive-mean"
+        },
+        {
+          "level": 3,
+          "text": "What does \"Your account has been deleted\" mean?",
+          "id": "what-does-your-account-has-been-deleted-mean"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 973,
+      "faq_questions": 0
+    },
+    {
+      "slug": "adding-and-managing-staff",
+      "title": "How to add, edit, deactivate and delete staff",
+      "summary": "How admins add staff, how many seats a plan allows, how to deactivate or permanently delete someone, and how staff sign in and register their face.",
+      "category": "Set up & Account",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Home > Manage > Staff",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "staff",
+        "employee",
+        "add staff",
+        "add employee",
+        "staff limit",
+        "seats",
+        "deactivate",
+        "reactivate",
+        "delete staff",
+        "employee id",
+        "field staff",
+        "face registration",
+        "shift",
+        "bank details",
+        "naukar"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "managers-and-permissions",
+        "adding-branches-and-departments",
+        "account-and-login",
+        "buying-renewing-and-changing-plans",
+        "faq-staff-management"
+      ],
+      "path": "kb/guides/adding-and-managing-staff.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Add a staff member",
+          "id": "add-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "How staff sign in and start",
+          "id": "how-staff-sign-in-and-start"
+        },
+        {
+          "level": 2,
+          "text": "Employee ID",
+          "id": "employee-id"
+        },
+        {
+          "level": 2,
+          "text": "How many staff you can add",
+          "id": "how-many-staff-you-can-add"
+        },
+        {
+          "level": 2,
+          "text": "Find and edit a staff member",
+          "id": "find-and-edit-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "Deactivate or reactivate",
+          "id": "deactivate-or-reactivate"
+        },
+        {
+          "level": 2,
+          "text": "Delete permanently",
+          "id": "delete-permanently"
+        },
+        {
+          "level": 2,
+          "text": "Field staff and shifts",
+          "id": "field-staff-and-shifts"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Why does it say \"Employee ID, mobile number, or email already exists\"?",
+          "id": "why-does-it-say-employee-id-mobile-number-or-email-already-exists"
+        },
+        {
+          "level": 3,
+          "text": "Do inactive staff count towards my limit?",
+          "id": "do-inactive-staff-count-towards-my-limit"
+        },
+        {
+          "level": 3,
+          "text": "A staff member sees \"There is no user with this email address\". Why?",
+          "id": "a-staff-member-sees-there-is-no-user-with-this-email-address-why"
+        },
+        {
+          "level": 3,
+          "text": "What is the difference between deactivating and deleting?",
+          "id": "what-is-the-difference-between-deactivating-and-deleting"
+        },
+        {
+          "level": 3,
+          "text": "Can a staff member register their face again?",
+          "id": "can-a-staff-member-register-their-face-again"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 978,
+      "faq_questions": 0
+    },
+    {
+      "slug": "adding-branches-and-departments",
+      "title": "How to add and manage branches and departments",
+      "summary": "How to add a branch with its GPS location and attendance radius, add departments, and what happens when you delete either one.",
+      "category": "Set up & Account",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Home > Manage > Branches",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "branch",
+        "branches",
+        "office",
+        "location",
+        "gps",
+        "radius",
+        "geofence",
+        "department",
+        "departments",
+        "add branch",
+        "delete branch",
+        "reassign staff",
+        "site"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "adding-and-managing-staff",
+        "getting-started-register-company",
+        "faq-company-setup",
+        "faq-staff-management"
+      ],
+      "path": "kb/guides/adding-branches-and-departments.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Add a branch",
+          "id": "add-a-branch"
+        },
+        {
+          "level": 2,
+          "text": "What the attendance radius means",
+          "id": "what-the-attendance-radius-means"
+        },
+        {
+          "level": 2,
+          "text": "Change a branch's GPS location",
+          "id": "change-a-branch-s-gps-location"
+        },
+        {
+          "level": 2,
+          "text": "Add a department",
+          "id": "add-a-department"
+        },
+        {
+          "level": 2,
+          "text": "Delete a branch",
+          "id": "delete-a-branch"
+        },
+        {
+          "level": 2,
+          "text": "Delete a department",
+          "id": "delete-a-department"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Why does it say \"Branch name already exists\"?",
+          "id": "why-does-it-say-branch-name-already-exists"
+        },
+        {
+          "level": 3,
+          "text": "Why does it say \"Department name already exists\"?",
+          "id": "why-does-it-say-department-name-already-exists"
+        },
+        {
+          "level": 3,
+          "text": "Can I delete a branch that still has staff?",
+          "id": "can-i-delete-a-branch-that-still-has-staff"
+        },
+        {
+          "level": 3,
+          "text": "Which radius should I choose?",
+          "id": "which-radius-should-i-choose"
+        },
+        {
+          "level": 3,
+          "text": "Can I have more than one company with different branches?",
+          "id": "can-i-have-more-than-one-company-with-different-branches"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 765,
+      "faq_questions": 0
+    },
+    {
+      "slug": "attendance-and-face-punch",
+      "title": "How attendance and face punch work",
+      "summary": "How staff register their face and punch in and out, what the punch button states mean, the daily punch limit, and how you fix a wrong day.",
+      "category": "Attendance & Time",
+      "audience": "all",
+      "source": "guide",
+      "app_path": "Home > PUNCH IN",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "attendance",
+        "punch in",
+        "punch out",
+        "check in",
+        "check out",
+        "clock in",
+        "face scan",
+        "face unlock",
+        "face registration",
+        "setup face",
+        "punch button",
+        "sessions",
+        "daily limit",
+        "mark attendance",
+        "edit attendance",
+        "haziri"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-attendance-and-face-punch",
+        "troubleshooting-punch-in",
+        "geofencing-and-locations",
+        "shifts-and-schedules",
+        "device-change-requests"
+      ],
+      "path": "kb/guides/attendance-and-face-punch.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Who can do what",
+          "id": "who-can-do-what"
+        },
+        {
+          "level": 2,
+          "text": "Register your face (first time only)",
+          "id": "register-your-face-first-time-only"
+        },
+        {
+          "level": 2,
+          "text": "Punch in and punch out",
+          "id": "punch-in-and-punch-out"
+        },
+        {
+          "level": 2,
+          "text": "What the punch button and chips mean",
+          "id": "what-the-punch-button-and-chips-mean"
+        },
+        {
+          "level": 2,
+          "text": "Daily punch sessions (admin setting)",
+          "id": "daily-punch-sessions-admin-setting"
+        },
+        {
+          "level": 2,
+          "text": "Forgotten punch out",
+          "id": "forgotten-punch-out"
+        },
+        {
+          "level": 2,
+          "text": "Fix a wrong or missing punch (admin)",
+          "id": "fix-a-wrong-or-missing-punch-admin"
+        },
+        {
+          "level": 2,
+          "text": "See punches and photos",
+          "id": "see-punches-and-photos"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Do I need to register my face again on a new phone?",
+          "id": "do-i-need-to-register-my-face-again-on-a-new-phone"
+        },
+        {
+          "level": 3,
+          "text": "Why does the button say LIMIT REACHED?",
+          "id": "why-does-the-button-say-limit-reached"
+        },
+        {
+          "level": 3,
+          "text": "Can an employee punch in for a colleague?",
+          "id": "can-an-employee-punch-in-for-a-colleague"
+        },
+        {
+          "level": 3,
+          "text": "Does the admin get an alert when staff punch?",
+          "id": "does-the-admin-get-an-alert-when-staff-punch"
+        },
+        {
+          "level": 3,
+          "text": "Can the admin change a punch time later?",
+          "id": "can-the-admin-change-a-punch-time-later"
+        },
+        {
+          "level": 3,
+          "text": "Which time zone is used?",
+          "id": "which-time-zone-is-used"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 1131,
+      "faq_questions": 0
+    },
+    {
+      "slug": "buying-renewing-and-changing-plans",
+      "title": "How to buy, renew, upgrade or switch your Clockyn plan",
+      "summary": "Step-by-step: buy your first plan, renew, add staff seats mid-plan, switch plans and durations, what the credit is, and why some options are blocked.",
+      "category": "Plans & Payments",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > Your Plan & Validity",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "buy plan",
+        "renew",
+        "renewal",
+        "upgrade",
+        "add staff",
+        "more seats",
+        "change plan",
+        "switch plan",
+        "downgrade",
+        "credit",
+        "plan upgrade credit",
+        "validity",
+        "expired plan",
+        "plan details",
+        "extend",
+        "subscription"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "plans-and-pricing",
+        "free-trial",
+        "payments-and-invoices",
+        "refer-and-earn",
+        "adding-and-managing-staff",
+        "faq-plans-and-billing"
+      ],
+      "path": "kb/guides/buying-renewing-and-changing-plans.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Buy a plan for the first time",
+          "id": "buy-a-plan-for-the-first-time"
+        },
+        {
+          "level": 2,
+          "text": "Renew your plan",
+          "id": "renew-your-plan"
+        },
+        {
+          "level": 2,
+          "text": "Add more staff seats during your plan",
+          "id": "add-more-staff-seats-during-your-plan"
+        },
+        {
+          "level": 2,
+          "text": "Switch to a different plan or a longer duration",
+          "id": "switch-to-a-different-plan-or-a-longer-duration"
+        },
+        {
+          "level": 2,
+          "text": "Why some options are blocked",
+          "id": "why-some-options-are-blocked"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Do I lose my remaining days if I renew early?",
+          "id": "do-i-lose-my-remaining-days-if-i-renew-early"
+        },
+        {
+          "level": 3,
+          "text": "Can I use a coupon on a renewal?",
+          "id": "can-i-use-a-coupon-on-a-renewal"
+        },
+        {
+          "level": 3,
+          "text": "How many staff can I choose?",
+          "id": "how-many-staff-can-i-choose"
+        },
+        {
+          "level": 3,
+          "text": "What happens to my credit if I move to a longer plan?",
+          "id": "what-happens-to-my-credit-if-i-move-to-a-longer-plan"
+        },
+        {
+          "level": 3,
+          "text": "Where do I see my staff limit and how many I use?",
+          "id": "where-do-i-see-my-staff-limit-and-how-many-i-use"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 982,
+      "faq_questions": 0
+    },
+    {
+      "slug": "chat-and-announcements",
+      "title": "Chat, group chat and announcements",
+      "summary": "How to message staff one to one, create group chats, send announcements to everyone, selected staff, a branch or a department, and what staff see.",
+      "category": "Team & Customers",
+      "audience": "all",
+      "source": "guide",
+      "app_path": "Chat",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "chat",
+        "message",
+        "individual chat",
+        "group chat",
+        "group",
+        "announcement",
+        "broadcast",
+        "notification",
+        "branch",
+        "department",
+        "send message",
+        "photos",
+        "documents",
+        "ticks",
+        "read receipt"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-chat-and-announcements",
+        "contacting-support-and-live-chat"
+      ],
+      "path": "kb/guides/chat-and-announcements.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Chat with one person",
+          "id": "chat-with-one-person"
+        },
+        {
+          "level": 3,
+          "text": "Photos and documents",
+          "id": "photos-and-documents"
+        },
+        {
+          "level": 3,
+          "text": "What the tick marks mean",
+          "id": "what-the-tick-marks-mean"
+        },
+        {
+          "level": 3,
+          "text": "Delete a chat or see contact details",
+          "id": "delete-a-chat-or-see-contact-details"
+        },
+        {
+          "level": 2,
+          "text": "Group chats",
+          "id": "group-chats"
+        },
+        {
+          "level": 2,
+          "text": "Send an announcement",
+          "id": "send-an-announcement"
+        },
+        {
+          "level": 3,
+          "text": "To all staff",
+          "id": "to-all-staff"
+        },
+        {
+          "level": 3,
+          "text": "To selected people",
+          "id": "to-selected-people"
+        },
+        {
+          "level": 3,
+          "text": "To a branch or department",
+          "id": "to-a-branch-or-department"
+        },
+        {
+          "level": 3,
+          "text": "History, edit and delete",
+          "id": "history-edit-and-delete"
+        },
+        {
+          "level": 2,
+          "text": "What staff see",
+          "id": "what-staff-see"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Why does the Chat tab say \"Feature Unavailable\" or \"Chat Unavailable\"?",
+          "id": "why-does-the-chat-tab-say-feature-unavailable-or-chat-unavailable"
+        },
+        {
+          "level": 3,
+          "text": "Why can I not send my announcement?",
+          "id": "why-can-i-not-send-my-announcement"
+        },
+        {
+          "level": 3,
+          "text": "Can I edit an announcement after sending?",
+          "id": "can-i-edit-an-announcement-after-sending"
+        },
+        {
+          "level": 3,
+          "text": "Who receives an announcement sent to All Staff?",
+          "id": "who-receives-an-announcement-sent-to-all-staff"
+        },
+        {
+          "level": 3,
+          "text": "Can I remove someone from a group?",
+          "id": "can-i-remove-someone-from-a-group"
+        },
+        {
+          "level": 3,
+          "text": "Can staff create groups?",
+          "id": "can-staff-create-groups"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 988,
+      "faq_questions": 0
+    },
+    {
+      "slug": "contacting-support-and-live-chat",
+      "title": "Contact Clockyn support: Live Chat, tickets, FAQ and videos",
+      "summary": "How to reach the Clockyn support team from the app, who can use Live Chat, support hours and reply time, how to send files, raise tickets and what details to share.",
+      "category": "Help & Fixes",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Support > Live Chat",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "support",
+        "contact",
+        "live chat",
+        "chat with support",
+        "help",
+        "ticket",
+        "support request",
+        "raise ticket",
+        "faq",
+        "video hub",
+        "suggest a feature",
+        "support hours",
+        "reply time",
+        "human",
+        "talk to someone",
+        "customer care"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-support-and-feedback",
+        "faq-troubleshooting",
+        "chat-and-announcements"
+      ],
+      "path": "kb/guides/contacting-support-and-live-chat.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Where support is in the app",
+          "id": "where-support-is-in-the-app"
+        },
+        {
+          "level": 2,
+          "text": "Live Chat",
+          "id": "live-chat"
+        },
+        {
+          "level": 3,
+          "text": "Send a message or a file",
+          "id": "send-a-message-or-a-file"
+        },
+        {
+          "level": 3,
+          "text": "Support hours and reply time",
+          "id": "support-hours-and-reply-time"
+        },
+        {
+          "level": 3,
+          "text": "A closed conversation",
+          "id": "a-closed-conversation"
+        },
+        {
+          "level": 3,
+          "text": "Replies and notifications",
+          "id": "replies-and-notifications"
+        },
+        {
+          "level": 2,
+          "text": "Raise a support ticket",
+          "id": "raise-a-support-ticket"
+        },
+        {
+          "level": 2,
+          "text": "Suggest a feature",
+          "id": "suggest-a-feature"
+        },
+        {
+          "level": 2,
+          "text": "What to tell support",
+          "id": "what-to-tell-support"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Who can use Live Chat?",
+          "id": "who-can-use-live-chat"
+        },
+        {
+          "level": 3,
+          "text": "When is support online?",
+          "id": "when-is-support-online"
+        },
+        {
+          "level": 3,
+          "text": "How fast will I get a reply?",
+          "id": "how-fast-will-i-get-a-reply"
+        },
+        {
+          "level": 3,
+          "text": "What is the difference between Live Chat and a ticket?",
+          "id": "what-is-the-difference-between-live-chat-and-a-ticket"
+        },
+        {
+          "level": 3,
+          "text": "Why can I not submit another ticket?",
+          "id": "why-can-i-not-submit-another-ticket"
+        },
+        {
+          "level": 3,
+          "text": "Is there an automatic assistant in Live Chat today?",
+          "id": "is-there-an-automatic-assistant-in-live-chat-today"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 983,
+      "faq_questions": 0
+    },
+    {
+      "slug": "crm-and-leads",
+      "title": "CRM and leads: add, assign and follow up",
+      "summary": "How to add client leads, assign them to staff, follow their status, handle carry forward requests, and what staff see in My Leads.",
+      "category": "Team & Customers",
+      "audience": "all",
+      "source": "guide",
+      "app_path": "CRM",
+      "plan": "elite",
+      "handoff": "none",
+      "tags": [
+        "crm",
+        "leads",
+        "lead",
+        "client",
+        "customer",
+        "assign lead",
+        "work status",
+        "carry forward",
+        "my leads",
+        "category",
+        "follow up",
+        "sales",
+        "enquiry"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-crm-and-leads",
+        "faq-plans-and-billing"
+      ],
+      "path": "kb/guides/crm-and-leads.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "What the admin does in CRM",
+          "id": "what-the-admin-does-in-crm"
+        },
+        {
+          "level": 2,
+          "text": "Add a lead",
+          "id": "add-a-lead"
+        },
+        {
+          "level": 3,
+          "text": "Create a new category",
+          "id": "create-a-new-category"
+        },
+        {
+          "level": 2,
+          "text": "Assign a lead to a staff member",
+          "id": "assign-a-lead-to-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "Edit or delete a lead",
+          "id": "edit-or-delete-a-lead"
+        },
+        {
+          "level": 2,
+          "text": "Lead status and the Work Status Overview",
+          "id": "lead-status-and-the-work-status-overview"
+        },
+        {
+          "level": 2,
+          "text": "Carry forward requests",
+          "id": "carry-forward-requests"
+        },
+        {
+          "level": 2,
+          "text": "What staff and managers see",
+          "id": "what-staff-and-managers-see"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Why does CRM say \"CRM Unavailable\"?",
+          "id": "why-does-crm-say-crm-unavailable"
+        },
+        {
+          "level": 3,
+          "text": "My employee cannot see an assigned lead. Why?",
+          "id": "my-employee-cannot-see-an-assigned-lead-why"
+        },
+        {
+          "level": 3,
+          "text": "Can a lead be assigned to two people?",
+          "id": "can-a-lead-be-assigned-to-two-people"
+        },
+        {
+          "level": 3,
+          "text": "Why are Edit, Delete and Assign disabled?",
+          "id": "why-are-edit-delete-and-assign-disabled"
+        },
+        {
+          "level": 3,
+          "text": "Why can my employee not send a carry forward request?",
+          "id": "why-can-my-employee-not-send-a-carry-forward-request"
+        },
+        {
+          "level": 3,
+          "text": "How can I search leads by date?",
+          "id": "how-can-i-search-leads-by-date"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 1137,
+      "faq_questions": 0
+    },
+    {
+      "slug": "data-privacy-and-account-deletion",
+      "title": "Data privacy and deleting your account or staff",
+      "summary": "How to request deletion of your Clockyn account, what happens next, how deactivating differs from deleting a staff member, and what to ask support about your data.",
+      "category": "Set up & Account",
+      "audience": "all",
+      "source": "guide",
+      "app_path": "Settings > Beyond > More Options > Privacy Policy",
+      "plan": "all",
+      "handoff": "required",
+      "tags": [
+        "privacy",
+        "privacy policy",
+        "delete account",
+        "account deletion",
+        "remove my data",
+        "data deletion",
+        "close account",
+        "deactivate staff",
+        "delete staff",
+        "permanent delete",
+        "gdpr",
+        "data removal",
+        "personal data"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-account-and-security",
+        "faq-staff-management",
+        "contacting-support-and-live-chat"
+      ],
+      "path": "kb/guides/data-privacy-and-account-deletion.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Where to read the privacy policy",
+          "id": "where-to-read-the-privacy-policy"
+        },
+        {
+          "level": 2,
+          "text": "Request deletion of an admin account",
+          "id": "request-deletion-of-an-admin-account"
+        },
+        {
+          "level": 2,
+          "text": "What deletion removes, and what it does not",
+          "id": "what-deletion-removes-and-what-it-does-not"
+        },
+        {
+          "level": 2,
+          "text": "If you are a manager or staff member",
+          "id": "if-you-are-a-manager-or-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "Deactivate or permanently delete a staff member",
+          "id": "deactivate-or-permanently-delete-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "What happens when you log out",
+          "id": "what-happens-when-you-log-out"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "How do I delete my account?",
+          "id": "how-do-i-delete-my-account"
+        },
+        {
+          "level": 3,
+          "text": "Can I cancel an account deletion request?",
+          "id": "can-i-cancel-an-account-deletion-request"
+        },
+        {
+          "level": 3,
+          "text": "Is my data deleted when I log out?",
+          "id": "is-my-data-deleted-when-i-log-out"
+        },
+        {
+          "level": 3,
+          "text": "What is the difference between deactivating and deleting a staff member?",
+          "id": "what-is-the-difference-between-deactivating-and-deleting-a-staff-member"
+        },
+        {
+          "level": 3,
+          "text": "Will my payment and invoice records be deleted?",
+          "id": "will-my-payment-and-invoice-records-be-deleted"
+        },
+        {
+          "level": 3,
+          "text": "Can a manager delete a staff member?",
+          "id": "can-a-manager-delete-a-staff-member"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 904,
+      "faq_questions": 0
+    },
+    {
+      "slug": "device-change-requests",
+      "title": "Device change requests (new phone for staff)",
+      "summary": "What to do when a manager or staff member gets a new phone or loses theirs, how they request access, how the admin approves it, and the limits on requests.",
+      "category": "Help & Fixes",
+      "audience": "all",
+      "source": "guide",
+      "app_path": "Requests > Device Change Request",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "device change",
+        "new phone",
+        "lost phone",
+        "changed phone",
+        "different device",
+        "request access",
+        "login new device",
+        "one device",
+        "single device",
+        "device approval",
+        "phone damaged",
+        "assign devices"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-leave-and-requests",
+        "faq-troubleshooting",
+        "leave-and-requests",
+        "troubleshooting-punch-in",
+        "notifications-and-permissions"
+      ],
+      "path": "kb/guides/device-change-requests.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "When you need it",
+          "id": "when-you-need-it"
+        },
+        {
+          "level": 2,
+          "text": "Request access (staff and managers)",
+          "id": "request-access-staff-and-managers"
+        },
+        {
+          "level": 2,
+          "text": "Limits",
+          "id": "limits"
+        },
+        {
+          "level": 2,
+          "text": "Approve or reject (admin)",
+          "id": "approve-or-reject-admin"
+        },
+        {
+          "level": 2,
+          "text": "What approval does",
+          "id": "what-approval-does"
+        },
+        {
+          "level": 2,
+          "text": "Do not confuse it with Assign Devices",
+          "id": "do-not-confuse-it-with-assign-devices"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Does the employee need to register the face again on the new phone?",
+          "id": "does-the-employee-need-to-register-the-face-again-on-the-new-phone"
+        },
+        {
+          "level": 3,
+          "text": "Can the admin log in on a new phone without a request?",
+          "id": "can-the-admin-log-in-on-a-new-phone-without-a-request"
+        },
+        {
+          "level": 3,
+          "text": "How long does approval take?",
+          "id": "how-long-does-approval-take"
+        },
+        {
+          "level": 3,
+          "text": "The staff member cannot find Request Access",
+          "id": "the-staff-member-cannot-find-request-access"
+        },
+        {
+          "level": 3,
+          "text": "Can a manager approve requests?",
+          "id": "can-a-manager-approve-requests"
+        },
+        {
+          "level": 3,
+          "text": "What if the old phone is lost?",
+          "id": "what-if-the-old-phone-is-lost"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 832,
+      "faq_questions": 0
+    },
+    {
+      "slug": "expenses-and-advances",
+      "title": "Staff expenses, odometer allowance and salary advances",
+      "summary": "How staff submit odometer readings, travel tickets and bills, how you approve them, how the odometer rate works, and how to give a salary advance.",
+      "category": "Pay & Expenses",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > Expenses & Allowances",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "expenses",
+        "odometer",
+        "odo meter",
+        "km",
+        "allowance",
+        "travel ticket",
+        "other bills",
+        "bill",
+        "reimbursement",
+        "approve",
+        "reject",
+        "advance",
+        "salary advance",
+        "deduction",
+        "rate per km"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-expenses-and-advances",
+        "payroll-and-salary",
+        "salary-structure-and-deductions"
+      ],
+      "path": "kb/guides/expenses-and-advances.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How staff submit expenses",
+          "id": "how-staff-submit-expenses"
+        },
+        {
+          "level": 3,
+          "text": "Record an odometer reading",
+          "id": "record-an-odometer-reading"
+        },
+        {
+          "level": 3,
+          "text": "Submit a travel ticket or an other bill",
+          "id": "submit-a-travel-ticket-or-an-other-bill"
+        },
+        {
+          "level": 2,
+          "text": "Approve or reject claims",
+          "id": "approve-or-reject-claims"
+        },
+        {
+          "level": 2,
+          "text": "Odometer allowance and the rate per km",
+          "id": "odometer-allowance-and-the-rate-per-km"
+        },
+        {
+          "level": 2,
+          "text": "Give a salary advance",
+          "id": "give-a-salary-advance"
+        },
+        {
+          "level": 2,
+          "text": "Advance or expense claim?",
+          "id": "advance-or-expense-claim"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Can a staff member record more than one odometer trip in a day?",
+          "id": "can-a-staff-member-record-more-than-one-odometer-trip-in-a-day"
+        },
+        {
+          "level": 3,
+          "text": "Can I change my decision after approving an expense?",
+          "id": "can-i-change-my-decision-after-approving-an-expense"
+        },
+        {
+          "level": 3,
+          "text": "Why do I see \"Stop reading must be greater than start reading\"?",
+          "id": "why-do-i-see-stop-reading-must-be-greater-than-start-reading"
+        },
+        {
+          "level": 3,
+          "text": "Who can give advances?",
+          "id": "who-can-give-advances"
+        },
+        {
+          "level": 3,
+          "text": "Where do approved expenses show in the salary?",
+          "id": "where-do-approved-expenses-show-in-the-salary"
+        },
+        {
+          "level": 3,
+          "text": "Can I edit an advance I entered by mistake?",
+          "id": "can-i-edit-an-advance-i-entered-by-mistake"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 1082,
+      "faq_questions": 0
+    },
+    {
+      "slug": "exporting-data-and-reports",
+      "title": "Reports: generate, view and download",
+      "summary": "Which reports Clockyn has, how to generate and download them as PDF, DOC, Excel or CSV, where earlier downloads are kept, and what managers can open.",
+      "category": "Attendance & Time",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > View & Download Reports",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "reports",
+        "report",
+        "download",
+        "export",
+        "pdf",
+        "excel",
+        "csv",
+        "doc",
+        "monthly summary",
+        "late report",
+        "overtime report",
+        "staff report",
+        "attendance report",
+        "salary report",
+        "view reports",
+        "history"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-reports-and-analytics",
+        "payroll-and-salary"
+      ],
+      "path": "kb/guides/exporting-data-and-reports.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Where to find reports",
+          "id": "where-to-find-reports"
+        },
+        {
+          "level": 2,
+          "text": "Generate the monthly attendance report",
+          "id": "generate-the-monthly-attendance-report"
+        },
+        {
+          "level": 2,
+          "text": "Other attendance reports",
+          "id": "other-attendance-reports"
+        },
+        {
+          "level": 2,
+          "text": "Salary and employee reports",
+          "id": "salary-and-employee-reports"
+        },
+        {
+          "level": 2,
+          "text": "Download a report",
+          "id": "download-a-report"
+        },
+        {
+          "level": 2,
+          "text": "What managers can open",
+          "id": "what-managers-can-open"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Can I download reports in Excel or CSV?",
+          "id": "can-i-download-reports-in-excel-or-csv"
+        },
+        {
+          "level": 3,
+          "text": "Where are my earlier downloads saved?",
+          "id": "where-are-my-earlier-downloads-saved"
+        },
+        {
+          "level": 3,
+          "text": "Why is my report empty or failing to download?",
+          "id": "why-is-my-report-empty-or-failing-to-download"
+        },
+        {
+          "level": 3,
+          "text": "Why are some report rows greyed out?",
+          "id": "why-are-some-report-rows-greyed-out"
+        },
+        {
+          "level": 3,
+          "text": "How can a manager see reports?",
+          "id": "how-can-a-manager-see-reports"
+        },
+        {
+          "level": 3,
+          "text": "Can I get the report for an earlier month?",
+          "id": "can-i-get-the-report-for-an-earlier-month"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 827,
+      "faq_questions": 0
+    },
+    {
+      "slug": "free-trial",
+      "title": "How the Clockyn free trial works",
+      "summary": "What you get in the first month, how many staff you can add, how to see when it ends, and what changes after the trial.",
+      "category": "Plans & Payments",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > Your Plan & Validity",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "free trial",
+        "trial",
+        "trial period",
+        "trial end",
+        "trial expired",
+        "free",
+        "demo",
+        "first month",
+        "buy a plan",
+        "no plan"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "plans-and-pricing",
+        "buying-renewing-and-changing-plans",
+        "getting-started-register-company",
+        "faq-plans-and-billing",
+        "faq-getting-started"
+      ],
+      "path": "kb/guides/free-trial.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How long the trial lasts",
+          "id": "how-long-the-trial-lasts"
+        },
+        {
+          "level": 2,
+          "text": "What the trial includes",
+          "id": "what-the-trial-includes"
+        },
+        {
+          "level": 2,
+          "text": "How to see your trial status",
+          "id": "how-to-see-your-trial-status"
+        },
+        {
+          "level": 2,
+          "text": "Buying a plan during the trial",
+          "id": "buying-a-plan-during-the-trial"
+        },
+        {
+          "level": 2,
+          "text": "What happens when the trial ends",
+          "id": "what-happens-when-the-trial-ends"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Is a credit card needed to start the trial?",
+          "id": "is-a-credit-card-needed-to-start-the-trial"
+        },
+        {
+          "level": 3,
+          "text": "How many staff can I add during the trial?",
+          "id": "how-many-staff-can-i-add-during-the-trial"
+        },
+        {
+          "level": 3,
+          "text": "Can I upgrade or renew during the trial?",
+          "id": "can-i-upgrade-or-renew-during-the-trial"
+        },
+        {
+          "level": 3,
+          "text": "Will I lose my data when the trial ends?",
+          "id": "will-i-lose-my-data-when-the-trial-ends"
+        },
+        {
+          "level": 3,
+          "text": "Is the trial the same on iPhone?",
+          "id": "is-the-trial-the-same-on-iphone"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 668,
+      "faq_questions": 0
+    },
+    {
+      "slug": "geofencing-and-locations",
+      "title": "Branch location, punch area and field staff tracking",
+      "summary": "How the branch punch area works, how admins set a branch location and radius, how field staff punch from anywhere, and how to see where field staff are.",
+      "category": "Attendance & Time",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Home > Branches, Home > Staff Location",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "geofence",
+        "geofencing",
+        "location",
+        "gps",
+        "branch",
+        "radius",
+        "punch area",
+        "outside branch area",
+        "field staff",
+        "staff location",
+        "live location",
+        "tracking",
+        "map",
+        "work area",
+        "branch address"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-attendance-and-face-punch",
+        "attendance-and-face-punch",
+        "troubleshooting-punch-in",
+        "notifications-and-permissions"
+      ],
+      "path": "kb/guides/geofencing-and-locations.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How the punch area works",
+          "id": "how-the-punch-area-works"
+        },
+        {
+          "level": 2,
+          "text": "Add a branch with a location and radius",
+          "id": "add-a-branch-with-a-location-and-radius"
+        },
+        {
+          "level": 2,
+          "text": "Mark an employee as field staff",
+          "id": "mark-an-employee-as-field-staff"
+        },
+        {
+          "level": 2,
+          "text": "How field staff location tracking works",
+          "id": "how-field-staff-location-tracking-works"
+        },
+        {
+          "level": 2,
+          "text": "See where your field staff are",
+          "id": "see-where-your-field-staff-are"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Can field staff punch from anywhere?",
+          "id": "can-field-staff-punch-from-anywhere"
+        },
+        {
+          "level": 3,
+          "text": "Why can I not see a staff member on the map?",
+          "id": "why-can-i-not-see-a-staff-member-on-the-map"
+        },
+        {
+          "level": 3,
+          "text": "What is the default radius?",
+          "id": "what-is-the-default-radius"
+        },
+        {
+          "level": 3,
+          "text": "Do managers see Staff Location?",
+          "id": "do-managers-see-staff-location"
+        },
+        {
+          "level": 3,
+          "text": "Why does the app ask for Allow all the time on Android?",
+          "id": "why-does-the-app-ask-for-allow-all-the-time-on-android"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 891,
+      "faq_questions": 0
+    },
+    {
+      "slug": "getting-started-register-company",
+      "title": "How to register your company on Clockyn",
+      "summary": "Step-by-step guide to creating your company account in the Clockyn app, what information you need, and what to set up first.",
+      "category": "Set up & Account",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Admin Portal > Register Company",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "register",
+        "sign up",
+        "create account",
+        "new company",
+        "admin portal",
+        "registration",
+        "onboarding",
+        "get started",
+        "otp",
+        "setup"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "free-trial",
+        "adding-branches-and-departments",
+        "adding-and-managing-staff",
+        "account-and-login",
+        "partner-promo-codes",
+        "faq-getting-started",
+        "faq-company-setup"
+      ],
+      "path": "kb/guides/getting-started-register-company.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "What you need before you start",
+          "id": "what-you-need-before-you-start"
+        },
+        {
+          "level": 2,
+          "text": "How to register your company",
+          "id": "how-to-register-your-company"
+        },
+        {
+          "level": 2,
+          "text": "Referral codes at registration",
+          "id": "referral-codes-at-registration"
+        },
+        {
+          "level": 2,
+          "text": "What to set up first",
+          "id": "what-to-set-up-first"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Do I need a GST number to register?",
+          "id": "do-i-need-a-gst-number-to-register"
+        },
+        {
+          "level": 3,
+          "text": "I already have an account but the app shows Register Company. Why?",
+          "id": "i-already-have-an-account-but-the-app-shows-register-company-why"
+        },
+        {
+          "level": 3,
+          "text": "What does \"Email already registered\" mean?",
+          "id": "what-does-email-already-registered-mean"
+        },
+        {
+          "level": 3,
+          "text": "Can I use Clockyn on a computer?",
+          "id": "can-i-use-clockyn-on-a-computer"
+        },
+        {
+          "level": 3,
+          "text": "Can I run more than one company?",
+          "id": "can-i-run-more-than-one-company"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 784,
+      "faq_questions": 0
+    },
+    {
+      "slug": "holidays-and-attendance-rules",
+      "title": "Holidays, weekly offs and the late punch-in rule",
+      "summary": "How the admin adds holidays, blocks attendance on them, sets weekly off days, and sets the Attendance Rule that turns repeated late arrivals into a half day or leave.",
+      "category": "Attendance & Time",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > Company Settings > Holiday Management; Settings > Attendance & Devices > Attendance Rule",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "holiday",
+        "holidays",
+        "block attendance",
+        "weekly off",
+        "sunday off",
+        "off days",
+        "attendance rule",
+        "late punch",
+        "late penalty",
+        "half day rule",
+        "grace time",
+        "late count",
+        "deduction",
+        "public holiday"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-shifts-holidays-and-rules",
+        "shifts-and-schedules",
+        "attendance-and-face-punch",
+        "faq-payroll-and-salary"
+      ],
+      "path": "kb/guides/holidays-and-attendance-rules.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Add a holiday",
+          "id": "add-a-holiday"
+        },
+        {
+          "level": 2,
+          "text": "What Block Attendance does",
+          "id": "what-block-attendance-does"
+        },
+        {
+          "level": 2,
+          "text": "Holidays for one branch or department",
+          "id": "holidays-for-one-branch-or-department"
+        },
+        {
+          "level": 2,
+          "text": "Edit or delete a holiday",
+          "id": "edit-or-delete-a-holiday"
+        },
+        {
+          "level": 2,
+          "text": "Set weekly off days",
+          "id": "set-weekly-off-days"
+        },
+        {
+          "level": 2,
+          "text": "The Attendance Rule",
+          "id": "the-attendance-rule"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Can I give staff a grace time for late punch in?",
+          "id": "can-i-give-staff-a-grace-time-for-late-punch-in"
+        },
+        {
+          "level": 3,
+          "text": "Does a late day always cost salary?",
+          "id": "does-a-late-day-always-cost-salary"
+        },
+        {
+          "level": 3,
+          "text": "Can a holiday be for one department only?",
+          "id": "can-a-holiday-be-for-one-department-only"
+        },
+        {
+          "level": 3,
+          "text": "Why can staff still punch in on a holiday?",
+          "id": "why-can-staff-still-punch-in-on-a-holiday"
+        },
+        {
+          "level": 3,
+          "text": "Where are weekly offs set?",
+          "id": "where-are-weekly-offs-set"
+        },
+        {
+          "level": 3,
+          "text": "Which manager permissions control these screens?",
+          "id": "which-manager-permissions-control-these-screens"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 889,
+      "faq_questions": 0
+    },
+    {
+      "slug": "incentives",
+      "title": "Incentives, overtime and bonus",
+      "summary": "How to set up Count Basis and Turnover Basis incentives, overtime pay and a monthly bonus, assign them to staff, and understand how each amount is calculated.",
+      "category": "Pay & Expenses",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > Salary Structure > Incentive / OT / Bonus",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "incentive",
+        "overtime",
+        "ot",
+        "bonus",
+        "count basis",
+        "turnover basis",
+        "extra pay",
+        "target",
+        "over time",
+        "assign staff",
+        "bonus percentage"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-payroll-and-salary",
+        "payroll-and-salary",
+        "salary-structure-and-deductions"
+      ],
+      "path": "kb/guides/incentives.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Count Basis incentive",
+          "id": "count-basis-incentive"
+        },
+        {
+          "level": 2,
+          "text": "Turnover Basis incentive",
+          "id": "turnover-basis-incentive"
+        },
+        {
+          "level": 2,
+          "text": "Overtime pay",
+          "id": "overtime-pay"
+        },
+        {
+          "level": 2,
+          "text": "Bonus",
+          "id": "bonus"
+        },
+        {
+          "level": 2,
+          "text": "Removing someone from a template",
+          "id": "removing-someone-from-a-template"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Why do I get \"This value already exists\" when saving?",
+          "id": "why-do-i-get-this-value-already-exists-when-saving"
+        },
+        {
+          "level": 3,
+          "text": "Why is overtime not showing for a staff member?",
+          "id": "why-is-overtime-not-showing-for-a-staff-member"
+        },
+        {
+          "level": 3,
+          "text": "Why is the bonus not in the salary?",
+          "id": "why-is-the-bonus-not-in-the-salary"
+        },
+        {
+          "level": 3,
+          "text": "Are incentives shown in the Reports list?",
+          "id": "are-incentives-shown-in-the-reports-list"
+        },
+        {
+          "level": 3,
+          "text": "What percentages are allowed?",
+          "id": "what-percentages-are-allowed"
+        },
+        {
+          "level": 3,
+          "text": "Does a Count Basis incentive depend on the number of sales?",
+          "id": "does-a-count-basis-incentive-depend-on-the-number-of-sales"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 1008,
+      "faq_questions": 0
+    },
+    {
+      "slug": "leave-and-requests",
+      "title": "Leave, permission and shift change requests",
+      "summary": "How staff apply for leave, short permission and a one-day shift change, and how admins and managers approve or reject them date by date.",
+      "category": "Attendance & Time",
+      "audience": "all",
+      "source": "guide",
+      "app_path": "Requests",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "leave",
+        "leave request",
+        "permission",
+        "permission request",
+        "shift change",
+        "approve",
+        "reject",
+        "requests",
+        "pending requests",
+        "half day",
+        "time off",
+        "chutti",
+        "leave approval",
+        "my requests"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-leave-and-requests",
+        "device-change-requests",
+        "shifts-and-schedules",
+        "attendance-and-face-punch",
+        "holidays-and-attendance-rules"
+      ],
+      "path": "kb/guides/leave-and-requests.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Apply for leave (staff)",
+          "id": "apply-for-leave-staff"
+        },
+        {
+          "level": 2,
+          "text": "Apply for permission (staff)",
+          "id": "apply-for-permission-staff"
+        },
+        {
+          "level": 2,
+          "text": "Ask for a different shift for one day (staff)",
+          "id": "ask-for-a-different-shift-for-one-day-staff"
+        },
+        {
+          "level": 2,
+          "text": "See your own requests (staff)",
+          "id": "see-your-own-requests-staff"
+        },
+        {
+          "level": 2,
+          "text": "Approve or reject (admin and managers)",
+          "id": "approve-or-reject-admin-and-managers"
+        },
+        {
+          "level": 2,
+          "text": "What the statuses mean",
+          "id": "what-the-statuses-mean"
+        },
+        {
+          "level": 2,
+          "text": "What an approved leave does to attendance",
+          "id": "what-an-approved-leave-does-to-attendance"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Why can I not pick a past date?",
+          "id": "why-can-i-not-pick-a-past-date"
+        },
+        {
+          "level": 3,
+          "text": "Why can I not pick a Sunday?",
+          "id": "why-can-i-not-pick-a-sunday"
+        },
+        {
+          "level": 3,
+          "text": "Can I approve only some days of a leave?",
+          "id": "can-i-approve-only-some-days-of-a-leave"
+        },
+        {
+          "level": 3,
+          "text": "What is the number on the Requests tile?",
+          "id": "what-is-the-number-on-the-requests-tile"
+        },
+        {
+          "level": 3,
+          "text": "Who can approve requests?",
+          "id": "who-can-approve-requests"
+        },
+        {
+          "level": 3,
+          "text": "How long can the reason be?",
+          "id": "how-long-can-the-reason-be"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 886,
+      "faq_questions": 0
+    },
+    {
+      "slug": "managers-and-permissions",
+      "title": "How to make a manager and set their permissions",
+      "summary": "How to assign a staff member as a manager for branches and departments, choose what they can do, and remove the role.",
+      "category": "Set up & Account",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > Managers",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "manager",
+        "managers",
+        "assign manager",
+        "permissions",
+        "manager permissions",
+        "remove manager",
+        "branch manager",
+        "access",
+        "roles",
+        "admin settings",
+        "supervisor"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "adding-and-managing-staff",
+        "adding-branches-and-departments",
+        "account-and-login",
+        "faq-staff-management",
+        "faq-getting-started"
+      ],
+      "path": "kb/guides/managers-and-permissions.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "The three roles",
+          "id": "the-three-roles"
+        },
+        {
+          "level": 2,
+          "text": "Make someone a manager",
+          "id": "make-someone-a-manager"
+        },
+        {
+          "level": 2,
+          "text": "Choose a manager's permissions",
+          "id": "choose-a-manager-s-permissions"
+        },
+        {
+          "level": 2,
+          "text": "What managers see",
+          "id": "what-managers-see"
+        },
+        {
+          "level": 2,
+          "text": "See who a manager looks after",
+          "id": "see-who-a-manager-looks-after"
+        },
+        {
+          "level": 2,
+          "text": "Remove a manager",
+          "id": "remove-a-manager"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Why does a manager need a branch and a department?",
+          "id": "why-does-a-manager-need-a-branch-and-a-department"
+        },
+        {
+          "level": 3,
+          "text": "How do managers sign in?",
+          "id": "how-do-managers-sign-in"
+        },
+        {
+          "level": 3,
+          "text": "Can a manager buy or change a plan?",
+          "id": "can-a-manager-buy-or-change-a-plan"
+        },
+        {
+          "level": 3,
+          "text": "What happens to a manager's staff if I remove the manager role?",
+          "id": "what-happens-to-a-manager-s-staff-if-i-remove-the-manager-role"
+        },
+        {
+          "level": 3,
+          "text": "Why can't I delete a manager?",
+          "id": "why-can-t-i-delete-a-manager"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 753,
+      "faq_questions": 0
+    },
+    {
+      "slug": "notifications-and-permissions",
+      "title": "App permissions and notifications",
+      "summary": "Which phone permissions Clockyn needs and why, how to switch them on, which notifications admins and staff receive, and what to check when alerts do not arrive.",
+      "category": "Help & Fixes",
+      "audience": "all",
+      "source": "guide",
+      "app_path": "Settings > Beyond > App Permissions",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "notifications",
+        "notification",
+        "alerts",
+        "push",
+        "permission",
+        "permissions",
+        "camera permission",
+        "location permission",
+        "allow location",
+        "allow all the time",
+        "photos permission",
+        "app permissions",
+        "not getting notifications",
+        "do not disturb",
+        "battery saver"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-notifications-and-permissions",
+        "troubleshooting-punch-in",
+        "attendance-and-face-punch",
+        "geofencing-and-locations"
+      ],
+      "path": "kb/guides/notifications-and-permissions.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Which permissions the app needs and why",
+          "id": "which-permissions-the-app-needs-and-why"
+        },
+        {
+          "level": 2,
+          "text": "Check or change permissions (admin)",
+          "id": "check-or-change-permissions-admin"
+        },
+        {
+          "level": 2,
+          "text": "Check or change permissions (staff and managers)",
+          "id": "check-or-change-permissions-staff-and-managers"
+        },
+        {
+          "level": 2,
+          "text": "What happens when you tap a permission card",
+          "id": "what-happens-when-you-tap-a-permission-card"
+        },
+        {
+          "level": 2,
+          "text": "Notifications the admin receives",
+          "id": "notifications-the-admin-receives"
+        },
+        {
+          "level": 2,
+          "text": "Notifications staff receive",
+          "id": "notifications-staff-receive"
+        },
+        {
+          "level": 2,
+          "text": "When alerts do not arrive",
+          "id": "when-alerts-do-not-arrive"
+        },
+        {
+          "level": 2,
+          "text": "Turn notifications off",
+          "id": "turn-notifications-off"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Why does the app ask for my photos?",
+          "id": "why-does-the-app-ask-for-my-photos"
+        },
+        {
+          "level": 3,
+          "text": "Why did I not get an alert when staff punched in?",
+          "id": "why-did-i-not-get-an-alert-when-staff-punched-in"
+        },
+        {
+          "level": 3,
+          "text": "Why does the camera not open when I punch?",
+          "id": "why-does-the-camera-not-open-when-i-punch"
+        },
+        {
+          "level": 3,
+          "text": "Why does the app say \"Allow location to punch in\"?",
+          "id": "why-does-the-app-say-allow-location-to-punch-in"
+        },
+        {
+          "level": 3,
+          "text": "Do staff get a notification when I approve their leave?",
+          "id": "do-staff-get-a-notification-when-i-approve-their-leave"
+        },
+        {
+          "level": 3,
+          "text": "Do Live Chat replies from support send a notification?",
+          "id": "do-live-chat-replies-from-support-send-a-notification"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 863,
+      "faq_questions": 0
+    },
+    {
+      "slug": "partner-promo-codes",
+      "title": "Partner promo codes from YouTube, Instagram and other channels",
+      "summary": "What a partner promo code is, where to enter it, the discount and expiry, why it can be refused or expired, and how a channel can become a Clockyn partner.",
+      "category": "Plans & Payments",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Register screen > Referral code",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "promo code",
+        "partner code",
+        "youtube code",
+        "instagram code",
+        "influencer code",
+        "referral code",
+        "discount code",
+        "channel code",
+        "code not valid",
+        "expired reward",
+        "become a partner",
+        "affiliate"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "refer-and-earn",
+        "getting-started-register-company",
+        "buying-renewing-and-changing-plans",
+        "faq-refer-and-earn"
+      ],
+      "path": "kb/guides/partner-promo-codes.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Where to enter a partner promo code",
+          "id": "where-to-enter-a-partner-promo-code"
+        },
+        {
+          "level": 2,
+          "text": "How much discount you get",
+          "id": "how-much-discount-you-get"
+        },
+        {
+          "level": 2,
+          "text": "How long the discount is valid",
+          "id": "how-long-the-discount-is-valid"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Why does my promo code say it is not valid?",
+          "id": "why-does-my-promo-code-say-it-is-not-valid"
+        },
+        {
+          "level": 3,
+          "text": "Why was my reward not applied, or why does it show Expired?",
+          "id": "why-was-my-reward-not-applied-or-why-does-it-show-expired"
+        },
+        {
+          "level": 3,
+          "text": "Can I use a friend's referral code and a partner promo code together?",
+          "id": "can-i-use-a-friend-s-referral-code-and-a-partner-promo-code-together"
+        },
+        {
+          "level": 3,
+          "text": "Can I enter the code after I registered?",
+          "id": "can-i-enter-the-code-after-i-registered"
+        },
+        {
+          "level": 3,
+          "text": "How can my business or channel become a Clockyn partner?",
+          "id": "how-can-my-business-or-channel-become-a-clockyn-partner"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 846,
+      "faq_questions": 0
+    },
+    {
+      "slug": "payments-and-invoices",
+      "title": "Paying for your plan, payment problems and invoices",
+      "summary": "How to pay, what to do when a payment is cancelled, unconfirmed or debited without the plan updating, and how to download, share and delete invoices.",
+      "category": "Plans & Payments",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > Your Plan & Validity > Download Invoices",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "payment",
+        "pay",
+        "payment failed",
+        "money debited",
+        "plan not updated",
+        "retry verification",
+        "payment not confirmed",
+        "invoice",
+        "download invoice",
+        "gst invoice",
+        "refund",
+        "charged twice",
+        "coupon",
+        "receipt",
+        "bill",
+        "razorpay"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "buying-renewing-and-changing-plans",
+        "plans-and-pricing",
+        "refer-and-earn",
+        "faq-payments-and-invoices",
+        "faq-plans-and-billing"
+      ],
+      "path": "kb/guides/payments-and-invoices.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How to pay",
+          "id": "how-to-pay"
+        },
+        {
+          "level": 2,
+          "text": "Apply a coupon",
+          "id": "apply-a-coupon"
+        },
+        {
+          "level": 2,
+          "text": "If a payment does not go as expected",
+          "id": "if-a-payment-does-not-go-as-expected"
+        },
+        {
+          "level": 3,
+          "text": "Will I be charged twice if I tap pay again?",
+          "id": "will-i-be-charged-twice-if-i-tap-pay-again"
+        },
+        {
+          "level": 2,
+          "text": "Your invoices",
+          "id": "your-invoices"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "I do not see an invoice for my last payment.",
+          "id": "i-do-not-see-an-invoice-for-my-last-payment"
+        },
+        {
+          "level": 3,
+          "text": "The app says \"No PDF viewer found\". What do I do?",
+          "id": "the-app-says-no-pdf-viewer-found-what-do-i-do"
+        },
+        {
+          "level": 3,
+          "text": "Can I get a refund?",
+          "id": "can-i-get-a-refund"
+        },
+        {
+          "level": 3,
+          "text": "Is the coupon a percentage or a fixed amount?",
+          "id": "is-the-coupon-a-percentage-or-a-fixed-amount"
+        },
+        {
+          "level": 3,
+          "text": "I closed the payment window. Was I charged?",
+          "id": "i-closed-the-payment-window-was-i-charged"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 997,
+      "faq_questions": 0
+    },
+    {
+      "slug": "payroll-and-salary",
+      "title": "How salary is calculated and paid in Clockyn",
+      "summary": "How Clockyn works out a staff member's monthly salary, where to see it, how to mark it as paid, and why a figure may look different from what you expected.",
+      "category": "Pay & Expenses",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > View & Download Reports > Salary Reports",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "salary",
+        "payroll",
+        "net salary",
+        "salary slip",
+        "payslip",
+        "monthly salary",
+        "mark as paid",
+        "paid",
+        "unpaid",
+        "staff salary",
+        "wages",
+        "earnings",
+        "deductions",
+        "tankhwa",
+        "salary report"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-payroll-and-salary",
+        "salary-structure-and-deductions",
+        "incentives",
+        "expenses-and-advances"
+      ],
+      "path": "kb/guides/payroll-and-salary.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How the monthly salary is calculated",
+          "id": "how-the-monthly-salary-is-calculated"
+        },
+        {
+          "level": 2,
+          "text": "A worked example",
+          "id": "a-worked-example"
+        },
+        {
+          "level": 2,
+          "text": "Daily wages and hourly pay",
+          "id": "daily-wages-and-hourly-pay"
+        },
+        {
+          "level": 2,
+          "text": "See the salary of all your staff for a month",
+          "id": "see-the-salary-of-all-your-staff-for-a-month"
+        },
+        {
+          "level": 2,
+          "text": "Mark a salary as paid",
+          "id": "mark-a-salary-as-paid"
+        },
+        {
+          "level": 2,
+          "text": "Previous months and changing figures",
+          "id": "previous-months-and-changing-figures"
+        },
+        {
+          "level": 2,
+          "text": "How a staff member sees their payslip",
+          "id": "how-a-staff-member-sees-their-payslip"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Why is a net salary lower than the basic salary?",
+          "id": "why-is-a-net-salary-lower-than-the-basic-salary"
+        },
+        {
+          "level": 3,
+          "text": "Can I undo a salary I marked as paid by mistake?",
+          "id": "can-i-undo-a-salary-i-marked-as-paid-by-mistake"
+        },
+        {
+          "level": 3,
+          "text": "Does Mark as paid send money to my staff?",
+          "id": "does-mark-as-paid-send-money-to-my-staff"
+        },
+        {
+          "level": 3,
+          "text": "Who appears in the Monthly Salary list?",
+          "id": "who-appears-in-the-monthly-salary-list"
+        },
+        {
+          "level": 3,
+          "text": "Does the salary change during the month?",
+          "id": "does-the-salary-change-during-the-month"
+        },
+        {
+          "level": 3,
+          "text": "Can I change the amount of a salary after marking it as paid?",
+          "id": "can-i-change-the-amount-of-a-salary-after-marking-it-as-paid"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 1213,
+      "faq_questions": 0
+    },
+    {
+      "slug": "plans-and-pricing",
+      "title": "Clockyn plans, durations, free months and how the price is worked out",
+      "summary": "What Core, Prime and Elite include, how durations and free months work, how the price and 18% GST are calculated, and what each plan unlocks.",
+      "category": "Plans & Payments",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > Your Plan & Validity > Plan Details",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "plans",
+        "pricing",
+        "price",
+        "core",
+        "prime",
+        "elite",
+        "duration",
+        "6 months",
+        "12 months",
+        "1 year",
+        "free months",
+        "offer",
+        "gst",
+        "staff limit",
+        "per staff",
+        "features",
+        "cost",
+        "kitna paisa",
+        "subscription"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "buying-renewing-and-changing-plans",
+        "free-trial",
+        "payments-and-invoices",
+        "refer-and-earn",
+        "faq-plans-and-billing"
+      ],
+      "path": "kb/guides/plans-and-pricing.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "What each plan includes",
+          "id": "what-each-plan-includes"
+        },
+        {
+          "level": 2,
+          "text": "Plan durations and free months",
+          "id": "plan-durations-and-free-months"
+        },
+        {
+          "level": 2,
+          "text": "How the price is calculated",
+          "id": "how-the-price-is-calculated"
+        },
+        {
+          "level": 3,
+          "text": "Worked example",
+          "id": "worked-example"
+        },
+        {
+          "level": 2,
+          "text": "Staff count",
+          "id": "staff-count"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Which plan should I choose?",
+          "id": "which-plan-should-i-choose"
+        },
+        {
+          "level": 3,
+          "text": "Is GST included in the price?",
+          "id": "is-gst-included-in-the-price"
+        },
+        {
+          "level": 3,
+          "text": "Is the price per month the same for 1 month and 12 months?",
+          "id": "is-the-price-per-month-the-same-for-1-month-and-12-months"
+        },
+        {
+          "level": 3,
+          "text": "Why can I not open CRM or staff location tracking?",
+          "id": "why-can-i-not-open-crm-or-staff-location-tracking"
+        },
+        {
+          "level": 3,
+          "text": "Can I get a custom plan or a bigger discount?",
+          "id": "can-i-get-a-custom-plan-or-a-bigger-discount"
+        },
+        {
+          "level": 3,
+          "text": "Can I buy a plan on an iPhone?",
+          "id": "can-i-buy-a-plan-on-an-iphone"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 843,
+      "faq_questions": 0
+    },
+    {
+      "slug": "refer-and-earn",
+      "title": "How Refer & Earn works: share your code and save on your plan",
+      "summary": "Where to find and share your referral code, how both companies get a discount, which plans it works on, how to use the reward and see who you referred.",
+      "category": "Plans & Payments",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > Refer & Earn",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "refer and earn",
+        "referral",
+        "referral code",
+        "refer a friend",
+        "invite",
+        "share code",
+        "reward",
+        "discount",
+        "pending reward",
+        "available reward",
+        "whatsapp",
+        "sms",
+        "copy code",
+        "referred companies"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "partner-promo-codes",
+        "buying-renewing-and-changing-plans",
+        "payments-and-invoices",
+        "faq-refer-and-earn"
+      ],
+      "path": "kb/guides/refer-and-earn.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "How it works",
+          "id": "how-it-works"
+        },
+        {
+          "level": 2,
+          "text": "Find and share your referral code",
+          "id": "find-and-share-your-referral-code"
+        },
+        {
+          "level": 2,
+          "text": "How the company you refer uses your code",
+          "id": "how-the-company-you-refer-uses-your-code"
+        },
+        {
+          "level": 2,
+          "text": "Where you see who you referred",
+          "id": "where-you-see-who-you-referred"
+        },
+        {
+          "level": 2,
+          "text": "Use your reward when you pay",
+          "id": "use-your-reward-when-you-pay"
+        },
+        {
+          "level": 2,
+          "text": "Which purchases the reward works on",
+          "id": "which-purchases-the-reward-works-on"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "I referred more than one company. Can I use the reward more than once?",
+          "id": "i-referred-more-than-one-company-can-i-use-the-reward-more-than-once"
+        },
+        {
+          "level": 3,
+          "text": "Can I use a referral reward and a coupon together?",
+          "id": "can-i-use-a-referral-reward-and-a-coupon-together"
+        },
+        {
+          "level": 3,
+          "text": "Why can I not apply my reward?",
+          "id": "why-can-i-not-apply-my-reward"
+        },
+        {
+          "level": 3,
+          "text": "Can I add a referral code after I registered?",
+          "id": "can-i-add-a-referral-code-after-i-registered"
+        },
+        {
+          "level": 3,
+          "text": "Where can I see how much I saved?",
+          "id": "where-can-i-see-how-much-i-saved"
+        },
+        {
+          "level": 3,
+          "text": "What is the difference between a friend's code and a partner promo code?",
+          "id": "what-is-the-difference-between-a-friend-s-code-and-a-partner-promo-code"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 956,
+      "faq_questions": 0
+    },
+    {
+      "slug": "reports-and-analytics",
+      "title": "Reports, exports and the attendance dashboard",
+      "summary": "How to read the Home dashboard, generate attendance, late, overtime and employee reports, download them as PDF, Excel or CSV, and find saved reports.",
+      "category": "Attendance & Time",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > View & Download Reports; Home > View Reports",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "reports",
+        "report",
+        "monthly report",
+        "attendance report",
+        "late report",
+        "overtime report",
+        "staff report",
+        "export",
+        "download",
+        "pdf",
+        "excel",
+        "csv",
+        "dashboard",
+        "staff overview",
+        "absent",
+        "late",
+        "present",
+        "analytics"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-reports-and-analytics",
+        "attendance-and-face-punch",
+        "shifts-and-schedules",
+        "holidays-and-attendance-rules"
+      ],
+      "path": "kb/guides/reports-and-analytics.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "The Home dashboard: Staff Overview",
+          "id": "the-home-dashboard-staff-overview"
+        },
+        {
+          "level": 2,
+          "text": "Check an earlier date or one branch",
+          "id": "check-an-earlier-date-or-one-branch"
+        },
+        {
+          "level": 2,
+          "text": "Open the reports",
+          "id": "open-the-reports"
+        },
+        {
+          "level": 2,
+          "text": "Generate the monthly attendance report",
+          "id": "generate-the-monthly-attendance-report"
+        },
+        {
+          "level": 2,
+          "text": "Other reports",
+          "id": "other-reports"
+        },
+        {
+          "level": 2,
+          "text": "Download in another format",
+          "id": "download-in-another-format"
+        },
+        {
+          "level": 2,
+          "text": "Find a report you generated earlier",
+          "id": "find-a-report-you-generated-earlier"
+        },
+        {
+          "level": 2,
+          "text": "Reports for managers",
+          "id": "reports-for-managers"
+        },
+        {
+          "level": 2,
+          "text": "See one employee's attendance calendar",
+          "id": "see-one-employee-s-attendance-calendar"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Why is my report empty?",
+          "id": "why-is-my-report-empty"
+        },
+        {
+          "level": 3,
+          "text": "Can I get a report in Excel?",
+          "id": "can-i-get-a-report-in-excel"
+        },
+        {
+          "level": 3,
+          "text": "Where did my downloaded report go?",
+          "id": "where-did-my-downloaded-report-go"
+        },
+        {
+          "level": 3,
+          "text": "What is the difference between Punched-In and Working?",
+          "id": "what-is-the-difference-between-punched-in-and-working"
+        },
+        {
+          "level": 3,
+          "text": "Why can a manager not see a report?",
+          "id": "why-can-a-manager-not-see-a-report"
+        },
+        {
+          "level": 3,
+          "text": "Why are some report rows grey?",
+          "id": "why-are-some-report-rows-grey"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 903,
+      "faq_questions": 0
+    },
+    {
+      "slug": "salary-structure-and-deductions",
+      "title": "Set up payslips, daily wages, hourly pay and late fines",
+      "summary": "How to create and assign a monthly payslip, set up daily wage and hourly templates, add extra earnings and deductions, and charge a fine for late punch-ins.",
+      "category": "Pay & Expenses",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > Salary Structure",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "salary structure",
+        "payslip",
+        "template",
+        "basic salary",
+        "hra",
+        "house rent allowance",
+        "epf",
+        "professional tax",
+        "health insurance",
+        "deduction",
+        "extra earning",
+        "daily wages",
+        "hourly",
+        "day pay",
+        "late fine",
+        "penalty",
+        "fine",
+        "attendance rule"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-payroll-and-salary",
+        "payroll-and-salary",
+        "incentives"
+      ],
+      "path": "kb/guides/salary-structure-and-deductions.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Create a monthly payslip",
+          "id": "create-a-monthly-payslip"
+        },
+        {
+          "level": 2,
+          "text": "Assign a payslip to staff",
+          "id": "assign-a-payslip-to-staff"
+        },
+        {
+          "level": 2,
+          "text": "Edit or delete a payslip",
+          "id": "edit-or-delete-a-payslip"
+        },
+        {
+          "level": 2,
+          "text": "Set up daily wages",
+          "id": "set-up-daily-wages"
+        },
+        {
+          "level": 2,
+          "text": "Set up hourly pay",
+          "id": "set-up-hourly-pay"
+        },
+        {
+          "level": 2,
+          "text": "Deductions in a salary",
+          "id": "deductions-in-a-salary"
+        },
+        {
+          "level": 2,
+          "text": "Charge a fine for late punch-ins",
+          "id": "charge-a-fine-for-late-punch-ins"
+        },
+        {
+          "level": 2,
+          "text": "Remove someone from a template",
+          "id": "remove-someone-from-a-template"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Which payslip fields are compulsory?",
+          "id": "which-payslip-fields-are-compulsory"
+        },
+        {
+          "level": 3,
+          "text": "Can one staff member be on two monthly payslips?",
+          "id": "can-one-staff-member-be-on-two-monthly-payslips"
+        },
+        {
+          "level": 3,
+          "text": "Why can I not delete an old payslip?",
+          "id": "why-can-i-not-delete-an-old-payslip"
+        },
+        {
+          "level": 3,
+          "text": "What is the highest amount I can enter?",
+          "id": "what-is-the-highest-amount-i-can-enter"
+        },
+        {
+          "level": 3,
+          "text": "Why was no late fine charged?",
+          "id": "why-was-no-late-fine-charged"
+        },
+        {
+          "level": 3,
+          "text": "Does editing a payslip change salaries I have already paid?",
+          "id": "does-editing-a-payslip-change-salaries-i-have-already-paid"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 1107,
+      "faq_questions": 0
+    },
+    {
+      "slug": "shifts-and-schedules",
+      "title": "Create shifts and assign staff to them",
+      "summary": "How to create, edit and delete shifts (including night shifts), assign staff, and how a shift decides who is late or on half day.",
+      "category": "Attendance & Time",
+      "audience": "admin",
+      "source": "guide",
+      "app_path": "Settings > Attendance & Devices > Shift Setting",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "shift",
+        "shifts",
+        "shift timing",
+        "night shift",
+        "assign shift",
+        "shift setting",
+        "shift change",
+        "late",
+        "half day",
+        "working hours",
+        "duty time",
+        "roster",
+        "schedule"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-shifts-holidays-and-rules",
+        "holidays-and-attendance-rules",
+        "leave-and-requests",
+        "attendance-and-face-punch"
+      ],
+      "path": "kb/guides/shifts-and-schedules.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Create a shift",
+          "id": "create-a-shift"
+        },
+        {
+          "level": 2,
+          "text": "Create a night shift",
+          "id": "create-a-night-shift"
+        },
+        {
+          "level": 2,
+          "text": "Assign staff to a shift",
+          "id": "assign-staff-to-a-shift"
+        },
+        {
+          "level": 2,
+          "text": "Remove someone from a shift",
+          "id": "remove-someone-from-a-shift"
+        },
+        {
+          "level": 2,
+          "text": "Edit or delete a shift",
+          "id": "edit-or-delete-a-shift"
+        },
+        {
+          "level": 2,
+          "text": "What happens if an employee has no shift",
+          "id": "what-happens-if-an-employee-has-no-shift"
+        },
+        {
+          "level": 2,
+          "text": "How a shift affects the day",
+          "id": "how-a-shift-affects-the-day"
+        },
+        {
+          "level": 2,
+          "text": "One-day shift change",
+          "id": "one-day-shift-change"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Can one employee have two shifts?",
+          "id": "can-one-employee-have-two-shifts"
+        },
+        {
+          "level": 3,
+          "text": "Can I create a shift that ends the next day?",
+          "id": "can-i-create-a-shift-that-ends-the-next-day"
+        },
+        {
+          "level": 3,
+          "text": "Why does the app say my shift is too many hours?",
+          "id": "why-does-the-app-say-my-shift-is-too-many-hours"
+        },
+        {
+          "level": 3,
+          "text": "What happens to staff when I delete a shift?",
+          "id": "what-happens-to-staff-when-i-delete-a-shift"
+        },
+        {
+          "level": 3,
+          "text": "Which Settings menu has shifts?",
+          "id": "which-settings-menu-has-shifts"
+        },
+        {
+          "level": 3,
+          "text": "Can a manager manage shifts?",
+          "id": "can-a-manager-manage-shifts"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 961,
+      "faq_questions": 0
+    },
+    {
+      "slug": "troubleshooting-punch-in",
+      "title": "Punch in or punch out is not working",
+      "summary": "A step-by-step decision tree for punch problems, covering face not recognised, outside the branch area, location or camera blocked, already punched in, limit reached, wrong time and a changed phone.",
+      "category": "Help & Fixes",
+      "audience": "all",
+      "source": "guide",
+      "app_path": "Home > PUNCH IN",
+      "plan": "all",
+      "handoff": "offer",
+      "tags": [
+        "punch not working",
+        "cannot punch",
+        "face not recognised",
+        "face not matching",
+        "photo is not matching",
+        "outside branch area",
+        "location required",
+        "location error",
+        "camera not opening",
+        "camera blocked",
+        "already punched in",
+        "limit reached",
+        "wrong time",
+        "time zone",
+        "new phone",
+        "spoof detected",
+        "too dark",
+        "attendance problem",
+        "punch failed"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "faq-troubleshooting",
+        "faq-attendance-and-face-punch",
+        "attendance-and-face-punch",
+        "geofencing-and-locations",
+        "notifications-and-permissions",
+        "device-change-requests"
+      ],
+      "path": "kb/guides/troubleshooting-punch-in.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Step 1: What does the punch button say?",
+          "id": "step-1-what-does-the-punch-button-say"
+        },
+        {
+          "level": 2,
+          "text": "Step 2: What message appears after tapping?",
+          "id": "step-2-what-message-appears-after-tapping"
+        },
+        {
+          "level": 3,
+          "text": "\"Feature Unavailable\" or \"Your plan has expired\"",
+          "id": "feature-unavailable-or-your-plan-has-expired"
+        },
+        {
+          "level": 3,
+          "text": "\"Location Required\"",
+          "id": "location-required"
+        },
+        {
+          "level": 3,
+          "text": "\"Location Error\" or \"Unable to get your location\"",
+          "id": "location-error-or-unable-to-get-your-location"
+        },
+        {
+          "level": 3,
+          "text": "\"Outside Branch Area\"",
+          "id": "outside-branch-area"
+        },
+        {
+          "level": 3,
+          "text": "\"Today is a holiday ... Attendance is not required.\"",
+          "id": "today-is-a-holiday-attendance-is-not-required"
+        },
+        {
+          "level": 3,
+          "text": "\"Already punched in. Please punch out first.\"",
+          "id": "already-punched-in-please-punch-out-first"
+        },
+        {
+          "level": 3,
+          "text": "\"No active punch in found\"",
+          "id": "no-active-punch-in-found"
+        },
+        {
+          "level": 2,
+          "text": "Step 3: Face problems",
+          "id": "step-3-face-problems"
+        },
+        {
+          "level": 2,
+          "text": "Step 4: Camera and connection messages",
+          "id": "step-4-camera-and-connection-messages"
+        },
+        {
+          "level": 2,
+          "text": "Step 5: Wrong time or date",
+          "id": "step-5-wrong-time-or-date"
+        },
+        {
+          "level": 2,
+          "text": "Step 6: \"You are logging in from a different device\"",
+          "id": "step-6-you-are-logging-in-from-a-different-device"
+        },
+        {
+          "level": 2,
+          "text": "Common questions",
+          "id": "common-questions"
+        },
+        {
+          "level": 3,
+          "text": "Why does face punch work for some staff and not others?",
+          "id": "why-does-face-punch-work-for-some-staff-and-not-others"
+        },
+        {
+          "level": 3,
+          "text": "Can the admin mark attendance if punching is impossible?",
+          "id": "can-the-admin-mark-attendance-if-punching-is-impossible"
+        },
+        {
+          "level": 3,
+          "text": "Can staff punch in from a different phone?",
+          "id": "can-staff-punch-in-from-a-different-phone"
+        },
+        {
+          "level": 3,
+          "text": "What if punches are marked outside working hours?",
+          "id": "what-if-punches-are-marked-outside-working-hours"
+        },
+        {
+          "level": 2,
+          "text": "What can go wrong",
+          "id": "what-can-go-wrong"
+        },
+        {
+          "level": 2,
+          "text": "When to contact support",
+          "id": "when-to-contact-support"
+        }
+      ],
+      "words": 1043,
+      "faq_questions": 0
+    },
+    {
+      "slug": "answer-rules",
+      "title": "Answer rules",
+      "summary": "The rules the Clockyn assistant follows for every answer: stay grounded in the knowledge base, never invent facts, never promise, never handle secrets.",
+      "category": "Playbook",
+      "audience": "bot",
+      "source": "playbook",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "rules",
+        "grounding",
+        "citations",
+        "safety",
+        "no guessing",
+        "prices",
+        "refunds",
+        "otp",
+        "password"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "handoff-rules",
+        "tone-and-style",
+        "out-of-scope"
+      ],
+      "path": "kb/playbook/answer-rules.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Ground every answer in retrieved text",
+          "id": "ground-every-answer-in-retrieved-text"
+        },
+        {
+          "level": 2,
+          "text": "Never invent or promise",
+          "id": "never-invent-or-promise"
+        },
+        {
+          "level": 2,
+          "text": "Protect the customer",
+          "id": "protect-the-customer"
+        },
+        {
+          "level": 2,
+          "text": "Check who is asking",
+          "id": "check-who-is-asking"
+        },
+        {
+          "level": 2,
+          "text": "Keep answers short and complete",
+          "id": "keep-answers-short-and-complete"
+        }
+      ],
+      "words": 548,
+      "faq_questions": 0
+    },
+    {
+      "slug": "conversation-flows",
+      "title": "Conversation flows",
+      "summary": "The step-by-step flow of a Live Chat conversation with the Clockyn assistant: greeting, clarifying, answering, confirming, handing over and closing.",
+      "category": "Playbook",
+      "audience": "bot",
+      "source": "playbook",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "flow",
+        "greeting",
+        "clarify",
+        "resolve",
+        "handoff",
+        "closing",
+        "after hours",
+        "support hours"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "answer-rules",
+        "handoff-rules",
+        "tone-and-style",
+        "information-to-collect"
+      ],
+      "path": "kb/playbook/conversation-flows.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "1. Greeting",
+          "id": "1-greeting"
+        },
+        {
+          "level": 2,
+          "text": "2. Understand the question",
+          "id": "2-understand-the-question"
+        },
+        {
+          "level": 2,
+          "text": "3. Answer",
+          "id": "3-answer"
+        },
+        {
+          "level": 2,
+          "text": "4. Confirm the result",
+          "id": "4-confirm-the-result"
+        },
+        {
+          "level": 2,
+          "text": "5. Hand over",
+          "id": "5-hand-over"
+        },
+        {
+          "level": 2,
+          "text": "6. Close",
+          "id": "6-close"
+        },
+        {
+          "level": 2,
+          "text": "After hours",
+          "id": "after-hours"
+        },
+        {
+          "level": 2,
+          "text": "When the assistant cannot reply",
+          "id": "when-the-assistant-cannot-reply"
+        }
+      ],
+      "words": 514,
+      "faq_questions": 0
+    },
+    {
+      "slug": "escalation-categories",
+      "title": "Escalation categories",
+      "summary": "A table of hand-off categories matched to the FAQ buckets, with examples, priority, what the support team needs and what the assistant says while the customer waits.",
+      "category": "Playbook",
+      "audience": "bot",
+      "source": "playbook",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "escalation",
+        "categories",
+        "priority",
+        "handoff",
+        "payments",
+        "security",
+        "billing",
+        "support team"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "handoff-rules",
+        "information-to-collect",
+        "conversation-flows"
+      ],
+      "path": "kb/playbook/escalation-categories.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Categories",
+          "id": "categories"
+        },
+        {
+          "level": 2,
+          "text": "Rules for the waiting message",
+          "id": "rules-for-the-waiting-message"
+        }
+      ],
+      "words": 483,
+      "faq_questions": 0
+    },
+    {
+      "slug": "handoff-rules",
+      "title": "Hand-off rules",
+      "summary": "When the Clockyn assistant must stop answering and connect the customer with the human support team, and the three hand-off levels.",
+      "category": "Playbook",
+      "audience": "bot",
+      "source": "playbook",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "handoff",
+        "escalate",
+        "human",
+        "agent",
+        "support team",
+        "refund",
+        "payment",
+        "deletion",
+        "security",
+        "angry"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "information-to-collect",
+        "escalation-categories",
+        "answer-rules",
+        "conversation-flows"
+      ],
+      "path": "kb/playbook/handoff-rules.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "The three levels",
+          "id": "the-three-levels"
+        },
+        {
+          "level": 2,
+          "text": "Always hand over (required)",
+          "id": "always-hand-over-required"
+        },
+        {
+          "level": 2,
+          "text": "Offer a human (offer)",
+          "id": "offer-a-human-offer"
+        },
+        {
+          "level": 2,
+          "text": "How to hand over",
+          "id": "how-to-hand-over"
+        },
+        {
+          "level": 2,
+          "text": "Do not hand over for",
+          "id": "do-not-hand-over-for"
+        }
+      ],
+      "words": 502,
+      "faq_questions": 0
+    },
+    {
+      "slug": "information-to-collect",
+      "title": "Information to collect before a hand-off",
+      "summary": "The exact details the assistant gathers for each type of hand-off so the support team can act without asking again, and the details it must never ask for.",
+      "category": "Playbook",
+      "audience": "bot",
+      "source": "playbook",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "details",
+        "information",
+        "collect",
+        "handoff",
+        "payment reference",
+        "screenshot",
+        "company name",
+        "privacy"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "handoff-rules",
+        "escalation-categories",
+        "conversation-flows"
+      ],
+      "path": "kb/playbook/information-to-collect.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Always",
+          "id": "always"
+        },
+        {
+          "level": 2,
+          "text": "Payment problems",
+          "id": "payment-problems"
+        },
+        {
+          "level": 2,
+          "text": "Refunds, discounts and custom plans",
+          "id": "refunds-discounts-and-custom-plans"
+        },
+        {
+          "level": 2,
+          "text": "Invoice and GST changes",
+          "id": "invoice-and-gst-changes"
+        },
+        {
+          "level": 2,
+          "text": "Account deletion, data copy and security",
+          "id": "account-deletion-data-copy-and-security"
+        },
+        {
+          "level": 2,
+          "text": "Sign-in problems",
+          "id": "sign-in-problems"
+        },
+        {
+          "level": 2,
+          "text": "Face punch, location and other app problems",
+          "id": "face-punch-location-and-other-app-problems"
+        },
+        {
+          "level": 2,
+          "text": "Referral and partner codes",
+          "id": "referral-and-partner-codes"
+        },
+        {
+          "level": 2,
+          "text": "Never ask for",
+          "id": "never-ask-for"
+        }
+      ],
+      "words": 553,
+      "faq_questions": 0
+    },
+    {
+      "slug": "out-of-scope",
+      "title": "Out of scope",
+      "summary": "What the Clockyn assistant politely declines (other products, other people's or other companies' data, advice outside the knowledge base) and where it sends the customer instead.",
+      "category": "Playbook",
+      "audience": "bot",
+      "source": "playbook",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "out of scope",
+        "decline",
+        "privacy",
+        "other company",
+        "personal data",
+        "legal",
+        "tax",
+        "other apps"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "answer-rules",
+        "handoff-rules",
+        "tone-and-style"
+      ],
+      "path": "kb/playbook/out-of-scope.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "What to decline",
+          "id": "what-to-decline"
+        },
+        {
+          "level": 2,
+          "text": "Where to send customers",
+          "id": "where-to-send-customers"
+        },
+        {
+          "level": 2,
+          "text": "Staff and managers",
+          "id": "staff-and-managers"
+        },
+        {
+          "level": 2,
+          "text": "Feature requests and complaints about the product",
+          "id": "feature-requests-and-complaints-about-the-product"
+        }
+      ],
+      "words": 459,
+      "faq_questions": 0
+    },
+    {
+      "slug": "tone-and-style",
+      "title": "Tone and style",
+      "summary": "How the Clockyn assistant writes: warm, short, plain English, one question at a time, steps as numbered lists, simple Hinglish only when the customer writes it.",
+      "category": "Playbook",
+      "audience": "bot",
+      "source": "playbook",
+      "app_path": "",
+      "plan": "all",
+      "handoff": "none",
+      "tags": [
+        "tone",
+        "style",
+        "language",
+        "hinglish",
+        "apology",
+        "short answers",
+        "steps",
+        "plain english"
+      ],
+      "updated": "2026-11-15",
+      "related": [
+        "answer-rules",
+        "conversation-flows"
+      ],
+      "path": "kb/playbook/tone-and-style.md",
+      "headings": [
+        {
+          "level": 2,
+          "text": "Voice",
+          "id": "voice"
+        },
+        {
+          "level": 2,
+          "text": "Length and layout",
+          "id": "length-and-layout"
+        },
+        {
+          "level": 2,
+          "text": "Language",
+          "id": "language"
+        },
+        {
+          "level": 2,
+          "text": "Apologies",
+          "id": "apologies"
+        },
+        {
+          "level": 2,
+          "text": "Handling emotion",
+          "id": "handling-emotion"
+        },
+        {
+          "level": 2,
+          "text": "Examples",
+          "id": "examples"
+        }
+      ],
+      "words": 453,
+      "faq_questions": 0
+    }
+  ]
+}

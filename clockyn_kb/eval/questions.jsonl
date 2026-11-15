@@ -1,0 +1,150 @@
+{"id": "q001", "question": "how do i register my company", "expected_docs": ["faq-getting-started", "getting-started-register-company"], "handoff": "none"}
+{"id": "q002", "question": "is there any free trial?", "expected_docs": ["faq-getting-started", "free-trial"], "handoff": "none"}
+{"id": "q003", "question": "what is employee access and admin portal, which one do i use", "expected_docs": ["faq-getting-started"], "handoff": "none"}
+{"id": "q004", "question": "can i use clockyn on laptop or only phone", "expected_docs": ["faq-getting-started"], "handoff": "none"}
+{"id": "q005", "question": "dark mode kaise on kare", "expected_docs": ["faq-getting-started"], "handoff": "none", "notes": "Hinglish"}
+{"id": "q006", "question": "where do i see who is absent or late today", "expected_docs": ["faq-getting-started", "reports-and-analytics"], "handoff": "none"}
+{"id": "q007", "question": "didnt get otp mail", "expected_docs": ["faq-account-and-security", "faq-troubleshooting", "account-and-login"], "handoff": "none", "notes": "typo"}
+{"id": "q008", "question": "how long is the otp valid", "expected_docs": ["faq-account-and-security", "account-and-login"], "handoff": "none"}
+{"id": "q009", "question": "it says too many codes requested try again later", "expected_docs": ["faq-account-and-security", "account-and-login"], "handoff": "offer", "notes": "limit explained, then offer a human"}
+{"id": "q010", "question": "can i be logged in on 2 phones", "expected_docs": ["faq-account-and-security", "account-and-login"], "handoff": "none"}
+{"id": "q011", "question": "my staff sees this is an employee account use employee login portal", "expected_docs": ["faq-account-and-security", "account-and-login"], "handoff": "none"}
+{"id": "q012", "question": "my staff changed phone how will he login", "expected_docs": ["faq-account-and-security", "device-change-requests"], "handoff": "none"}
+{"id": "q013", "question": "how many device change requests can one person send", "expected_docs": ["faq-account-and-security", "device-change-requests"], "handoff": "none"}
+{"id": "q014", "question": "can i change the email i use to sign in", "expected_docs": ["faq-account-and-security", "account-and-login"], "handoff": "none"}
+{"id": "q015", "question": "where can i read privacy policy", "expected_docs": ["faq-account-and-security", "data-privacy-and-account-deletion"], "handoff": "none"}
+{"id": "q016", "question": "how to edit my company details", "expected_docs": ["faq-company-setup"], "handoff": "none"}
+{"id": "q017", "question": "can i add a second company with same login", "expected_docs": ["faq-company-setup"], "handoff": "none"}
+{"id": "q018", "question": "is gst number compulsory when registering", "expected_docs": ["faq-company-setup"], "handoff": "none"}
+{"id": "q019", "question": "what is max daily punch sessions", "expected_docs": ["faq-company-setup", "faq-attendance-and-face-punch"], "handoff": "none"}
+{"id": "q020", "question": "branch ka radius kya hota hai", "expected_docs": ["faq-company-setup", "geofencing-and-locations"], "handoff": "none", "notes": "Hinglish"}
+{"id": "q021", "question": "it says branch name already exists", "expected_docs": ["faq-company-setup", "adding-branches-and-departments"], "handoff": "none"}
+{"id": "q022", "question": "why cant i delete my company", "expected_docs": ["faq-company-setup"], "handoff": "offer", "notes": "explain the rules, then offer a human"}
+{"id": "q023", "question": "how to add new employee", "expected_docs": ["faq-staff-management", "adding-and-managing-staff"], "handoff": "none"}
+{"id": "q024", "question": "employee id mobile or email already exists error while adding staff", "expected_docs": ["faq-staff-management", "adding-and-managing-staff"], "handoff": "none"}
+{"id": "q025", "question": "staff limit reached what do i do", "expected_docs": ["faq-staff-management", "faq-plans-and-billing", "adding-and-managing-staff"], "handoff": "offer", "notes": "plan choice is made in the app; offer a human"}
+{"id": "q026", "question": "difference between deactivate and delete staff", "expected_docs": ["faq-staff-management", "adding-and-managing-staff"], "handoff": "none"}
+{"id": "q027", "question": "how do i make someone a manager", "expected_docs": ["faq-staff-management", "managers-and-permissions"], "handoff": "none"}
+{"id": "q028", "question": "what can a manager do list of permissions", "expected_docs": ["faq-staff-management", "managers-and-permissions"], "handoff": "none"}
+{"id": "q029", "question": "staff ka face register nahi ho raha", "expected_docs": ["faq-staff-management", "faq-attendance-and-face-punch", "troubleshooting-punch-in"], "handoff": "none", "notes": "Hinglish"}
+{"id": "q030", "question": "who is field staff", "expected_docs": ["faq-staff-management", "geofencing-and-locations"], "handoff": "none"}
+{"id": "q031", "question": "how does an employee punch in", "expected_docs": ["faq-attendance-and-face-punch", "attendance-and-face-punch"], "handoff": "none"}
+{"id": "q032", "question": "punch button shows limit reached", "expected_docs": ["faq-attendance-and-face-punch", "attendance-and-face-punch"], "handoff": "none"}
+{"id": "q033", "question": "photo is not matching error when punching", "expected_docs": ["faq-attendance-and-face-punch", "troubleshooting-punch-in"], "handoff": "offer", "notes": "tips first, then offer a human"}
+{"id": "q034", "question": "app says i am outside the branch area", "expected_docs": ["faq-attendance-and-face-punch", "geofencing-and-locations"], "handoff": "none"}
+{"id": "q035", "question": "employee forgot to punch out what happens", "expected_docs": ["faq-attendance-and-face-punch", "attendance-and-face-punch"], "handoff": "none"}
+{"id": "q036", "question": "how can admin fix a wrong or missing punch", "expected_docs": ["faq-attendance-and-face-punch", "attendance-and-face-punch"], "handoff": "none"}
+{"id": "q037", "question": "when is a staff marked late", "expected_docs": ["faq-attendance-and-face-punch", "holidays-and-attendance-rules"], "handoff": "none"}
+{"id": "q038", "question": "half day kab count hota hai", "expected_docs": ["faq-attendance-and-face-punch", "holidays-and-attendance-rules"], "handoff": "none", "notes": "Hinglish"}
+{"id": "q039", "question": "night shift punch kis date me jayega", "expected_docs": ["faq-attendance-and-face-punch", "shifts-and-schedules"], "handoff": "none", "notes": "Hinglish"}
+{"id": "q040", "question": "which time zone does clockyn use", "expected_docs": ["faq-attendance-and-face-punch"], "handoff": "none"}
+{"id": "q041", "question": "what if someone holds a photo infront of the camera", "expected_docs": ["faq-attendance-and-face-punch", "attendance-and-face-punch"], "handoff": "none", "notes": "typo"}
+{"id": "q042", "question": "how to create a night shift that ends next day", "expected_docs": ["faq-shifts-holidays-and-rules", "shifts-and-schedules"], "handoff": "none"}
+{"id": "q043", "question": "what happens if i delete a shift", "expected_docs": ["faq-shifts-holidays-and-rules", "shifts-and-schedules"], "handoff": "none"}
+{"id": "q044", "question": "how to add a holiday", "expected_docs": ["faq-shifts-holidays-and-rules", "holidays-and-attendance-rules"], "handoff": "none"}
+{"id": "q045", "question": "set sunday as weekly off", "expected_docs": ["faq-shifts-holidays-and-rules", "holidays-and-attendance-rules"], "handoff": "none"}
+{"id": "q046", "question": "is there grace time for late punch in", "expected_docs": ["faq-shifts-holidays-and-rules", "holidays-and-attendance-rules"], "handoff": "none"}
+{"id": "q047", "question": "how does overtime work", "expected_docs": ["faq-shifts-holidays-and-rules", "faq-payroll-and-salary"], "handoff": "none"}
+{"id": "q048", "question": "how does staff apply for leave", "expected_docs": ["faq-leave-and-requests", "leave-and-requests"], "handoff": "none"}
+{"id": "q049", "question": "can i approve only some dates of a leave", "expected_docs": ["faq-leave-and-requests", "leave-and-requests"], "handoff": "none"}
+{"id": "q050", "question": "why cant i select past date for leave", "expected_docs": ["faq-leave-and-requests", "leave-and-requests"], "handoff": "none"}
+{"id": "q051", "question": "if leave is approved will attendance change", "expected_docs": ["faq-leave-and-requests", "leave-and-requests"], "handoff": "none"}
+{"id": "q052", "question": "who can approve requests", "expected_docs": ["faq-leave-and-requests", "leave-and-requests"], "handoff": "none"}
+{"id": "q053", "question": "shift change request kaise kare", "expected_docs": ["faq-leave-and-requests", "shifts-and-schedules"], "handoff": "none", "notes": "Hinglish"}
+{"id": "q054", "question": "where do i find reports", "expected_docs": ["faq-reports-and-analytics", "reports-and-analytics"], "handoff": "none"}
+{"id": "q055", "question": "monthly attendance report in excel", "expected_docs": ["faq-reports-and-analytics", "exporting-data-and-reports"], "handoff": "none"}
+{"id": "q056", "question": "what does the late report show", "expected_docs": ["faq-reports-and-analytics", "reports-and-analytics"], "handoff": "none"}
+{"id": "q057", "question": "report download nahi ho raha its empty", "expected_docs": ["faq-reports-and-analytics", "exporting-data-and-reports"], "handoff": "none", "notes": "Hinglish"}
+{"id": "q058", "question": "can manager see reports", "expected_docs": ["faq-reports-and-analytics", "managers-and-permissions"], "handoff": "none"}
+{"id": "q059", "question": "how to see monthly attendance calendar of one staff", "expected_docs": ["faq-reports-and-analytics", "reports-and-analytics"], "handoff": "none"}
+{"id": "q060", "question": "how is monthly salary calculated", "expected_docs": ["faq-payroll-and-salary", "payroll-and-salary"], "handoff": "none"}
+{"id": "q061", "question": "how to create payslip structure for fixed salary staff", "expected_docs": ["faq-payroll-and-salary", "salary-structure-and-deductions"], "handoff": "none"}
+{"id": "q062", "question": "can one staff be on two payslips", "expected_docs": ["faq-payroll-and-salary", "salary-structure-and-deductions"], "handoff": "none"}
+{"id": "q063", "question": "how to set daily wages", "expected_docs": ["faq-payroll-and-salary", "payroll-and-salary"], "handoff": "none"}
+{"id": "q064", "question": "hourly pay is lower than i expected why", "expected_docs": ["faq-payroll-and-salary", "payroll-and-salary"], "handoff": "offer", "notes": "explain the calculation, then offer a human"}
+{"id": "q065", "question": "does mark as paid transfer money to staff", "expected_docs": ["faq-payroll-and-salary", "payroll-and-salary"], "handoff": "none"}
+{"id": "q066", "question": "i marked salary paid by mistake can i undo", "expected_docs": ["faq-payroll-and-salary", "payroll-and-salary"], "handoff": "offer", "notes": "answer from the article, then offer a human"}
+{"id": "q067", "question": "bonus is not appearing in salary", "expected_docs": ["faq-payroll-and-salary", "incentives"], "handoff": "none"}
+{"id": "q068", "question": "fine for late punch in says coming soon", "expected_docs": ["faq-payroll-and-salary", "faq-support-and-feedback", "salary-structure-and-deductions"], "handoff": "none"}
+{"id": "q069", "question": "how do employees submit expenses", "expected_docs": ["faq-expenses-and-advances", "expenses-and-advances"], "handoff": "none"}
+{"id": "q070", "question": "stop reading must be greater than start reading", "expected_docs": ["faq-expenses-and-advances", "expenses-and-advances"], "handoff": "none"}
+{"id": "q071", "question": "difference between travel ticket and other bills", "expected_docs": ["faq-expenses-and-advances", "expenses-and-advances"], "handoff": "none"}
+{"id": "q072", "question": "where to approve expense claims", "expected_docs": ["faq-expenses-and-advances", "expenses-and-advances"], "handoff": "none"}
+{"id": "q073", "question": "how to give salary advance to staff", "expected_docs": ["faq-expenses-and-advances", "expenses-and-advances"], "handoff": "none"}
+{"id": "q074", "question": "how is advance deducted from salary", "expected_docs": ["faq-expenses-and-advances", "faq-payroll-and-salary"], "handoff": "none"}
+{"id": "q075", "question": "how to add a new lead", "expected_docs": ["faq-crm-and-leads", "crm-and-leads"], "handoff": "none"}
+{"id": "q076", "question": "what does carry forward mean in leads", "expected_docs": ["faq-crm-and-leads", "crm-and-leads"], "handoff": "none"}
+{"id": "q077", "question": "my employee cannot see the lead i assigned", "expected_docs": ["faq-crm-and-leads", "crm-and-leads"], "handoff": "offer", "notes": "check steps, then offer a human"}
+{"id": "q078", "question": "edit delete assign buttons are disabled on a lead", "expected_docs": ["faq-crm-and-leads", "crm-and-leads"], "handoff": "none"}
+{"id": "q079", "question": "crm unavailable message why", "expected_docs": ["faq-crm-and-leads", "faq-plans-and-billing", "plans-and-pricing"], "handoff": "none", "notes": "plan feature"}
+{"id": "q080", "question": "can staff add leads themselves", "expected_docs": ["faq-crm-and-leads", "crm-and-leads"], "handoff": "none"}
+{"id": "q081", "question": "how to start chat with one staff", "expected_docs": ["faq-chat-and-announcements", "chat-and-announcements"], "handoff": "none"}
+{"id": "q082", "question": "how do i make a group chat", "expected_docs": ["faq-chat-and-announcements", "chat-and-announcements"], "handoff": "none"}
+{"id": "q083", "question": "what do the tick marks mean", "expected_docs": ["faq-chat-and-announcements", "chat-and-announcements"], "handoff": "none"}
+{"id": "q084", "question": "send announcement to only one branch", "expected_docs": ["faq-chat-and-announcements", "chat-and-announcements"], "handoff": "none"}
+{"id": "q085", "question": "can i edit announcement after sending", "expected_docs": ["faq-chat-and-announcements", "chat-and-announcements"], "handoff": "none"}
+{"id": "q086", "question": "chat tab says feature unavailable", "expected_docs": ["faq-chat-and-announcements", "faq-plans-and-billing"], "handoff": "none", "notes": "plan feature"}
+{"id": "q087", "question": "where can i see my current plan and validity", "expected_docs": ["faq-plans-and-billing", "plans-and-pricing"], "handoff": "none"}
+{"id": "q088", "question": "free trial kitne din ka hai", "expected_docs": ["faq-plans-and-billing", "free-trial"], "handoff": "none", "notes": "Hinglish; the answer must not invent a number the article does not give"}
+{"id": "q089", "question": "how is the plan price calculated", "expected_docs": ["faq-plans-and-billing", "plans-and-pricing"], "handoff": "none", "notes": "must not quote prices"}
+{"id": "q090", "question": "if i renew early do i lose remaining days", "expected_docs": ["faq-plans-and-billing", "buying-renewing-and-changing-plans"], "handoff": "none"}
+{"id": "q091", "question": "need to add 5 more staff in the middle of my plan", "expected_docs": ["faq-plans-and-billing", "buying-renewing-and-changing-plans"], "handoff": "none"}
+{"id": "q092", "question": "app says downgrade not allowed", "expected_docs": ["faq-plans-and-billing", "buying-renewing-and-changing-plans"], "handoff": "none"}
+{"id": "q093", "question": "6 month plan me free month kaise milta hai", "expected_docs": ["faq-plans-and-billing", "plans-and-pricing"], "handoff": "none", "notes": "Hinglish"}
+{"id": "q094", "question": "can i buy a plan on my iphone", "expected_docs": ["faq-plans-and-billing", "buying-renewing-and-changing-plans"], "handoff": "offer", "notes": "iPhone shows status only; offer a human"}
+{"id": "q095", "question": "how do i pay for my plan", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "none"}
+{"id": "q096", "question": "my coupon code is not working", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "none"}
+{"id": "q097", "question": "i closed the payment window was i charged", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "none", "notes": "no money lost if closed before paying; check plan status first"}
+{"id": "q098", "question": "where can i download my invoice", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "none"}
+{"id": "q099", "question": "no pdf viewer found when opening invoice", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "none"}
+{"id": "q100", "question": "what is refer and earn", "expected_docs": ["faq-refer-and-earn", "refer-and-earn"], "handoff": "none"}
+{"id": "q101", "question": "how do i use my referral reward when paying", "expected_docs": ["faq-refer-and-earn", "refer-and-earn"], "handoff": "none"}
+{"id": "q102", "question": "can i use referral reward and coupon together", "expected_docs": ["faq-refer-and-earn", "refer-and-earn"], "handoff": "none"}
+{"id": "q103", "question": "i have a promo code from a youtuber where to enter it", "expected_docs": ["faq-refer-and-earn", "partner-promo-codes"], "handoff": "none"}
+{"id": "q104", "question": "my promo code reward shows expired", "expected_docs": ["faq-refer-and-earn", "partner-promo-codes"], "handoff": "offer", "notes": "explain expiry, then offer a human"}
+{"id": "q105", "question": "notifications nahi aa rahe phone pe", "expected_docs": ["faq-notifications-and-permissions", "notifications-and-permissions"], "handoff": "none", "notes": "Hinglish"}
+{"id": "q106", "question": "why does app ask location allow all the time on android", "expected_docs": ["faq-notifications-and-permissions", "notifications-and-permissions"], "handoff": "none"}
+{"id": "q107", "question": "do live chat replies from support send a notification", "expected_docs": ["faq-notifications-and-permissions", "contacting-support-and-live-chat"], "handoff": "none"}
+{"id": "q108", "question": "camera not opening when i punch", "expected_docs": ["faq-notifications-and-permissions", "troubleshooting-punch-in"], "handoff": "none"}
+{"id": "q109", "question": "how to allow camera and location in browser", "expected_docs": ["faq-notifications-and-permissions", "notifications-and-permissions"], "handoff": "none"}
+{"id": "q110", "question": "admin login says no user with this email", "expected_docs": ["faq-troubleshooting", "account-and-login"], "handoff": "none"}
+{"id": "q111", "question": "screen is empty or shows error how to fix", "expected_docs": ["faq-troubleshooting"], "handoff": "none"}
+{"id": "q112", "question": "app says too many requests please try again later", "expected_docs": ["faq-troubleshooting"], "handoff": "none"}
+{"id": "q113", "question": "app is asking me to update and i cant continue", "expected_docs": ["faq-troubleshooting"], "handoff": "none"}
+{"id": "q114", "question": "access denied your free trial and plan have expired", "expected_docs": ["faq-troubleshooting", "faq-plans-and-billing"], "handoff": "none"}
+{"id": "q115", "question": "unable to get your location while punching", "expected_docs": ["faq-troubleshooting", "geofencing-and-locations", "troubleshooting-punch-in"], "handoff": "none"}
+{"id": "q116", "question": "how can i contact clockyn support", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "none"}
+{"id": "q117", "question": "how to raise a support ticket", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "none"}
+{"id": "q118", "question": "i cant see the support tab", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "none", "notes": "Support tab is for admins only"}
+{"id": "q119", "question": "i want to suggest a new feature", "expected_docs": ["faq-support-and-feedback"], "handoff": "none", "notes": "explain how to send a suggestion; no promise"}
+{"id": "q120", "question": "why cant i submit another ticket", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "none"}
+{"id": "q121", "question": "money was deducted from my bank but plan is still expired", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "required", "notes": "payment not applied"}
+{"id": "q122", "question": "payment cut hua par plan active nahi hua", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "required", "notes": "Hinglish; payment not applied"}
+{"id": "q123", "question": "i got charged twice for my renewal", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "required", "notes": "double charge"}
+{"id": "q124", "question": "payment is showing under review since yesterday", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "required", "notes": "payment under review"}
+{"id": "q125", "question": "payment not confirmed yet and retry verification also fails", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "required", "notes": "retry step already failed"}
+{"id": "q126", "question": "i want a refund for my last payment", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "required", "notes": "refund"}
+{"id": "q127", "question": "i paid for wrong plan by mistake, give my money back", "expected_docs": ["faq-payments-and-invoices", "faq-plans-and-billing"], "handoff": "required", "notes": "refund"}
+{"id": "q128", "question": "please change gst number on my invoice INV-2026-0001", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "required", "notes": "invoice or GST change"}
+{"id": "q129", "question": "invoice is not coming but my plan is active", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "required", "notes": "missing invoice after plan is active"}
+{"id": "q130", "question": "can you give a bigger discount we have 80 staff", "expected_docs": ["faq-plans-and-billing", "plans-and-pricing"], "handoff": "required", "notes": "discount request"}
+{"id": "q131", "question": "we need a custom plan for 300 staff", "expected_docs": ["faq-plans-and-billing", "plans-and-pricing"], "handoff": "required", "notes": "custom plan"}
+{"id": "q132", "question": "my promo code reward was not applied but the code is valid", "expected_docs": ["faq-refer-and-earn", "partner-promo-codes"], "handoff": "required", "notes": "code or reward problem"}
+{"id": "q133", "question": "i want to become your partner, i have a youtube channel", "expected_docs": ["faq-refer-and-earn", "partner-promo-codes"], "handoff": "required", "notes": "partner enquiry"}
+{"id": "q134", "question": "someone else is logged in to my account", "expected_docs": ["faq-account-and-security", "account-and-login"], "handoff": "required", "notes": "suspected misuse"}
+{"id": "q135", "question": "i got an otp i never asked for", "expected_docs": ["faq-account-and-security", "account-and-login"], "handoff": "required", "notes": "suspected misuse; never ask for the code"}
+{"id": "q136", "question": "cancel my account deletion request", "expected_docs": ["faq-account-and-security", "data-privacy-and-account-deletion"], "handoff": "required", "notes": "deletion cancel needs the team"}
+{"id": "q137", "question": "send me all my company data", "expected_docs": ["data-privacy-and-account-deletion", "faq-account-and-security"], "handoff": "required", "notes": "data copy request; policy gap"}
+{"id": "q138", "question": "delete my account", "expected_docs": ["faq-account-and-security", "data-privacy-and-account-deletion"], "handoff": "offer", "notes": "give the self-service steps, say it is permanent, offer a human"}
+{"id": "q139", "question": "no otp since 2 days, cant login at all", "expected_docs": ["faq-account-and-security", "faq-troubleshooting", "account-and-login"], "handoff": "offer", "notes": "limits and steps first, then offer a human"}
+{"id": "q140", "question": "human please", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "required", "notes": "asked for a person"}
+{"id": "q141", "question": "i want to talk to someone on call", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "required", "notes": "asked for a person; do not promise a call"}
+{"id": "q142", "question": "this is the third time you give same answer, nothing works!!", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "required", "notes": "angry and repeated"}
+{"id": "q143", "question": "face punch not working for all my staff since morning, tried everything", "expected_docs": ["faq-attendance-and-face-punch", "troubleshooting-punch-in"], "handoff": "required", "notes": "blocking, affects all staff"}
+{"id": "q144", "question": "salary of my staff still looks wrong even after your steps", "expected_docs": ["faq-payroll-and-salary", "payroll-and-salary"], "handoff": "required", "notes": "numbers disputed after explanation"}
+{"id": "q145", "question": "all my data is missing after the app update", "expected_docs": ["faq-troubleshooting"], "handoff": "required", "notes": "blocking problem; collect details"}
+{"id": "q146", "question": "app keeps crashing and i cannot do any work", "expected_docs": ["faq-troubleshooting"], "handoff": "offer", "notes": "article steps first, then offer a human"}
+{"id": "q147", "question": "is gst on subscription refundable and can we claim input credit", "expected_docs": ["faq-plans-and-billing", "faq-payments-and-invoices"], "handoff": "required", "notes": "tax question beyond the articles"}
+{"id": "q148", "question": "i want to talk to your manager, i am very unhappy", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "required", "notes": "angry; asked for a person"}
+{"id": "q149", "question": "cant buy plan on iphone, please do the payment for me", "expected_docs": ["faq-plans-and-billing", "buying-renewing-and-changing-plans"], "handoff": "offer", "notes": "the assistant cannot act in the account; explain Android or web, offer a human"}
+{"id": "q150", "question": "company wont delete it says cannot delete, please delete it for me", "expected_docs": ["faq-company-setup"], "handoff": "offer", "notes": "the assistant cannot act; explain the rules, offer a human"}

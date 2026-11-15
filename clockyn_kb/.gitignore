@@ -1,0 +1,6 @@
+dist/
+node_modules/
+*.log
+rows.json
+__pycache__/
+*.pyc

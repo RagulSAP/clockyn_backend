@@ -1,0 +1,113 @@
+---
+title: Contact Clockyn support: Live Chat, tickets, FAQ and videos
+summary: How to reach the Clockyn support team from the app, who can use Live Chat, support hours and reply time, how to send files, raise tickets and what details to share.
+category: Help & Fixes
+audience: admin
+source: guide
+app_path: Support > Live Chat
+plan: all
+handoff: none
+tags: support, contact, live chat, chat with support, help, ticket, support request, raise ticket, faq, video hub, suggest a feature, support hours, reply time, human, talk to someone, customer care
+updated: 2026-11-15
+related: faq-support-and-feedback, faq-troubleshooting, chat-and-announcements
+---
+
+You can reach the Clockyn support team from inside the app. Live Chat is the fastest way to talk to a person, and tickets are best for issues you want tracked. This guide explains what is available today, when the team is online, and what to include so you get help quickly. Support options are available to organisation admins; managers and staff should ask their admin.
+
+## Where support is in the app
+
+Open the Support tab. It has three rows:
+
+- FAQ: answers to common questions
+- Live Chat: chat with our support team, with an unread badge when there is a new reply
+- Video Hub: step-by-step guide videos, which you tap to play full screen
+
+If you do not see the Support tab, you are not signed in with the admin account. Managers and staff do not see it.
+
+## Live Chat
+
+Live Chat connects you to the Clockyn support team. It is for the company admin only, and the conversation belongs to your organisation. The screen is titled Live Chat with the subtitle Clockyn Support. Until you write, it says "Start a conversation. Our support team will reply here."
+
+### Send a message or a file
+
+1. Open Support > Live Chat.
+2. Type your message and send. A message can be up to 4,000 characters.
+3. To send a photo or document, tap the camera icon to take a photo, or tap the attach icon and choose Photo library or Document.
+4. A preview opens with Cancel and Send; the file is sent only when you tap Send.
+
+While a file uploads the camera and attach buttons are disabled. The default file size limit is 25 MB. A message that fails to send can be retried or discarded.
+
+### Support hours and reply time
+
+The chat shows a Support hours card with an Online or Offline status. The support team answers Monday to Friday, 10 AM to 6 PM India time (IST). When the team is online, it says "We usually reply within 5 minutes." When it is offline, it tells you when the team is back, for example "We're offline right now. We'll reply tomorrow at 10 AM." Public holidays are not shown, so replies may come later on those days.
+
+If a message waits longer than expected while the team is online, a note says "We're handling a lot of requests. Thank you for your patience. Our team has your message and will respond as soon as possible."
+
+### A closed conversation
+
+If the team closes the conversation, you see "This conversation was closed by support. Send a message to reopen it." Send a new message to reopen it.
+
+### Replies and notifications
+
+Replies reach you as notifications, and the Live Chat row shows an unread badge until you open it.
+
+## Raise a support ticket
+
+1. Open Settings > Beyond > Support.
+2. Choose a subject.
+3. Describe your issue or question.
+4. Optionally tap Upload Photo to add a screenshot.
+5. Tap Submit Request.
+
+You will see "Support request submitted". You can send up to 10 tickets per hour. Under My Tickets you can follow each ticket: the status is Open, In Progress or Resolved, with your message, any photo and the replies from our team. To reply, type in the box at the bottom of the ticket. When a ticket is resolved the box says "Reply to reopen this ticket", and replying moves it back to In Progress.
+
+Use Live Chat for fast answers and tickets for issues you want tracked.
+
+## Suggest a feature
+
+1. Open Settings > Beyond > Suggest a Feature.
+2. Type a short title and describe your idea.
+3. Tap Send Suggestion.
+
+You will see "Thank you, your suggestion has been sent". You can send up to 10 suggestions per hour.
+
+## What to tell support
+
+Mention what you were trying to do, what the screen said (the exact message helps), your company name and the time it happened. For payment issues add the amount, the date and time and the last digits of the transaction reference. A screenshot helps.
+
+## Common questions
+
+### Who can use Live Chat?
+
+Only organisation admins. Managers and staff do not see the Support tab.
+
+### When is support online?
+
+Monday to Friday, 10 AM to 6 PM IST. Outside those hours your message is kept and answered when the team is back.
+
+### How fast will I get a reply?
+
+When the team is online we usually reply within 5 minutes. When it is busy you may see a note asking for your patience.
+
+### What is the difference between Live Chat and a ticket?
+
+Live Chat is for fast answers and quick contact. A ticket has a subject, a description and an optional photo, and you can follow its replies.
+
+### Why can I not submit another ticket?
+
+Each user can send up to 10 tickets per hour. Wait a while, or add your update as a reply on an existing ticket or in Live Chat.
+
+### Is there an automatic assistant in Live Chat today?
+
+No. Today Live Chat is a conversation with the Clockyn support team.
+
+## What can go wrong
+
+- **No Support tab.** Cause: signed in as a manager or staff member. Fix: sign in with the admin account.
+- **A message shows a red alert.** Cause: it failed to send. Fix: tap to retry and check the internet connection.
+- **No reply after a while.** Cause: the team is offline or busy. Fix: wait for the next support hours, or add details in the same chat.
+- **A file will not send.** Cause: it is over the size limit. Fix: send a smaller file or a screenshot.
+
+## When to contact support
+
+Contact support for anything this guide does not solve: billing questions, refunds or special requests, a salary marked as paid by mistake, or a feature that is not working. Have ready your company name, the admin e-mail, what you tried and a screenshot. Please do not send passwords or OTPs in the chat.

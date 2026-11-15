@@ -1,0 +1,17 @@
+{
+  "name": "clockyn-kb",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Customer knowledge base of the Clockyn app: the retrieval source for the future Live Chat assistant (AWS Bedrock). Markdown in git, generated FAQ files, checks and an S3 export.",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "faq:generate": "node scripts/faq-to-kb.js",
+    "faq:from-db": "python scripts/export-faq-from-db.py --out rows.json && node scripts/faq-to-kb.js --rows rows.json",
+    "index": "node scripts/build-index.js",
+    "build": "npm run faq:generate && npm run index",
+    "check": "node scripts/check-kb.js && node scripts/faq-to-kb.js --check && node scripts/build-index.js --check",
+    "test": "node scripts/run-tests.js",
+    "export": "node scripts/export-bedrock.js",
+    "export:playbook": "node scripts/export-bedrock.js --include-playbook"
+  }
+}
