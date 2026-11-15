@@ -1886,7 +1886,7 @@ SELECT 'Help & Fixes', 'Notifications & Permissions', 'Why did I not get a notif
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('Why did I not get a notification when staff punched in?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Help & Fixes', 'Notifications & Permissions', 'Do Live Chat replies from the support team send a notification?', 'Yes. When our team replies in Live Chat, admins receive a notification and the Live Chat row in Support shows an unread badge. Live Chat is available only to organisation admins.', 3420, 1
+SELECT 'Help & Fixes', 'Notifications & Permissions', 'Do Live Chat replies from the support team send a notification?', 'Yes. When our team replies in Live Chat, or sends you a message first, admins receive a notification and the Live Chat row in Support shows an unread badge. Live Chat is available only to organisation admins.', 3420, 1
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('Do Live Chat replies from the support team send a notification?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
@@ -1992,7 +1992,7 @@ SELECT 'Help & Fixes', 'Support & Feedback', 'How can I contact Clockyn support?
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('How can I contact Clockyn support?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Help & Fixes', 'Support & Feedback', 'What is Live Chat and who can use it?', 'Live Chat lets you talk directly to the Clockyn support team from the Support tab. It is available to organisation admins. Replies reach you as notifications and the Live Chat row shows an unread badge until you open it. It is the best place to ask about billing, refunds or special requests.', 3680, 1
+SELECT 'Help & Fixes', 'Support & Feedback', 'What is Live Chat and who can use it?', 'Live Chat lets you talk directly to the Clockyn support team from the Support tab. It is available to organisation admins. Messages from our team reach you as notifications and the Live Chat row shows an unread badge until you open it. Our team may also message you first, for example about your plan or a question you raised: the message appears in Support > Live Chat and you can reply there. It is the best place to ask about billing, refunds or special requests.', 3680, 1
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('What is Live Chat and who can use it?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)

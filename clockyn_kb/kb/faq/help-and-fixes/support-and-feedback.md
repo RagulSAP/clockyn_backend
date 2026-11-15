@@ -15,7 +15,7 @@ Open the Support tab. You will find FAQ for answers, Live Chat to talk to our su
 
 ## What is Live Chat and who can use it?
 
-Live Chat lets you talk directly to the Clockyn support team from the Support tab. It is available to organisation admins. Replies reach you as notifications and the Live Chat row shows an unread badge until you open it. It is the best place to ask about billing, refunds or special requests.
+Live Chat lets you talk directly to the Clockyn support team from the Support tab. It is available to organisation admins. Messages from our team reach you as notifications and the Live Chat row shows an unread badge until you open it. Our team may also message you first, for example about your plan or a question you raised: the message appears in Support > Live Chat and you can reply there. It is the best place to ask about billing, refunds or special requests.
 
 ## What is the Video Hub?
 

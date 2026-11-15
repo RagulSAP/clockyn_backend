@@ -49,7 +49,11 @@ If the team closes the conversation, you see "This conversation was closed by su
 
 ### Replies and notifications
 
-Replies reach you as notifications, and the Live Chat row shows an unread badge until you open it.
+Messages from our team reach you as notifications, and the Live Chat row shows an unread badge until you open it.
+
+### When support writes to you first
+
+Our team may also start the conversation, for example about your plan or a question you raised. You get a notification, and the message appears in Support > Live Chat. Open it and reply there. You do not have to do anything else, and a conversation that support started works exactly like one you started. Do not share your password or a one-time code in the chat.
 
 ## Raise a support ticket
 
@@ -97,6 +101,10 @@ Live Chat is for fast answers and quick contact. A ticket has a subject, a descr
 
 Each user can send up to 10 tickets per hour. Wait a while, or add your update as a reply on an existing ticket or in Live Chat.
 
+### Can Clockyn support message me first?
+
+Yes. Our team may write to you in Live Chat, for example about your plan or a question you raised. You will get a notification and the message appears in Support > Live Chat, where you can reply.
+
 ### Is there an automatic assistant in Live Chat today?
 
 No. Today Live Chat is a conversation with the Clockyn support team.
@@ -105,6 +113,7 @@ No. Today Live Chat is a conversation with the Clockyn support team.
 
 - **No Support tab.** Cause: signed in as a manager or staff member. Fix: sign in with the admin account.
 - **A message shows a red alert.** Cause: it failed to send. Fix: tap to retry and check the internet connection.
+- **A message from support I did not expect.** Cause: our team may write first. Fix: read it in Support > Live Chat and reply there; if you are unsure it is genuine, do not share a password or code and ask in the same chat.
 - **No reply after a while.** Cause: the team is offline or busy. Fix: wait for the next support hours, or add details in the same chat.
 - **A file will not send.** Cause: it is over the size limit. Fix: send a smaller file or a screenshot.
 

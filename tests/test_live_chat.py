@@ -57,6 +57,7 @@ class FakeDB:
         self.orgs = {ORG: "Acme Traders", ORG2: "Bharat Logistics", ORG3: "Zenith Pharma"}
         self.operators = [{"email": AGENT, "phone_number": "9000000009", "name": "Priya"}]
         self.threads, self.messages, self.log = [], [], []
+        self.org_status = {}            # org_id -> org_info.status (2 = deleted); default 1
         self.commits = self.rollbacks = 0
 
     def thread(self, org_id):
@@ -100,6 +101,8 @@ class FakeCursor:
         if s.startswith("SELECT user_id FROM users WHERE org_id = %s AND role_id = 1 AND status = 1"):
             return self._set([{"user_id": u["user_id"]} for u in db.users if u["org_id"] == p[0] and u["role_id"] == 1 and u["status"] == 1])
         if s.startswith("SELECT org_name FROM org_info WHERE org_id = %s"):
+            if "COALESCE(status, 1) <> 2" in s and db.org_status.get(p[0], 1) == 2:
+                return self._set([])
             return self._set([{"org_name": db.orgs[p[0]]}] if p[0] in db.orgs else [])
         if s.startswith("SELECT DISTINCT ON (org_id) org_id, name, email, mobile_number FROM users WHERE org_id = ANY(%s) AND role_id = 1 ORDER BY org_id, id"):
             out = {}
@@ -115,6 +118,16 @@ class FakeCursor:
         if s.startswith("SELECT thread_id, status FROM live_chat_thread WHERE org_id = %s"):
             t = db.thread(p[0])
             return self._set([{"thread_id": t["thread_id"], "status": t["status"]}] if t else [])
+        if s.startswith("INSERT INTO live_chat_thread") and "'support'" in s.split("VALUES")[1].split("ON CONFLICT")[0]:
+            # SUPPORT's first message creates the thread; a thread that exists is returned UNTOUCHED (status and preview kept)
+            assert "ON CONFLICT (org_id) DO UPDATE SET updated_at = live_chat_thread.updated_at" in s and "RETURNING thread_id, status" in s
+            thread_id, org_id, preview, mtype, at = p[0], p[1], p[2], p[3], p[4]
+            t = db.thread(org_id)
+            if t is None:
+                t = {"thread_id": thread_id, "org_id": org_id, "created_at": at, "status": "open", "last_message": preview,
+                     "last_message_type": mtype, "last_sender_type": "support", "last_message_at": at, "updated_at": p[6]}
+                db.threads.append(t)
+            return self._set([{"thread_id": t["thread_id"], "status": t["status"]}])
         if s.startswith("INSERT INTO live_chat_thread"):
             assert "ON CONFLICT (org_id) DO UPDATE" in s and "RETURNING thread_id, status" in s     # race-safe lazy creation
             # the fake applies the upsert itself, so the real clause is asserted here: an org message REOPENS the thread
@@ -360,7 +373,7 @@ class TestRefusals:
             assert not P.evaluate(method, path, ident(2)).allowed and not P.evaluate(method, path, ident(3)).allowed, path
             assert P.classify(method, path) == P.AUTHENTICATED         # no plan gate, bearer token routes
 
-    def test_operator_routes_404_without_a_thread_and_never_create_one(self, env):
+    def test_operator_routes_404_for_an_unknown_organization_and_never_create_anything(self, env):
         o = "/gen-dashboard/live-chat/threads/org-9"
         assert env.client.get(o + "/messages").status_code == 404
         assert reply(env, org="org-9").status_code == 404

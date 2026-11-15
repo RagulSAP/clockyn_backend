@@ -199,6 +199,27 @@ async def get_super_admin_stats():
         """)
         open_requests = cursor.fetchone()["cnt"]
 
+        # Organisations whose paid plan ends today / within 7 / within 30 days (IST, today included). The SAME rule as the
+        # Organizations page "Expiring" filter, so a number here equals the rows you get when you click it: the LATEST
+        # subscription of the organisation is ACTIVE and ends in the window, and the organisation is not deleted (status 2).
+        today = ist_today()
+        cursor.execute("""
+            SELECT COUNT(*) FILTER (WHERE sub.end_date = %s) AS today,
+                   COUNT(*) FILTER (WHERE sub.end_date <= %s) AS within_7_days,
+                   COUNT(*) AS within_30_days
+            FROM org_info o
+            JOIN LATERAL (
+                SELECT status, end_date FROM subscription
+                WHERE org_id = o.org_id
+                ORDER BY created_at DESC
+                LIMIT 1
+            ) sub ON true
+            WHERE COALESCE(o.status, 1) <> 2
+              AND sub.status = 'ACTIVE'
+              AND sub.end_date BETWEEN %s AND %s
+        """, (today, today + timedelta(days=7), today, today + timedelta(days=30)))
+        exp = cursor.fetchone() or {}
+
         return {
             "total_orgs": total_orgs,
             "total_users": total_users,
@@ -209,6 +230,12 @@ async def get_super_admin_stats():
             "failed_payments": failed_payments,
             "today_attendance": today_attendance,
             "open_requests": open_requests,
+            "expiring": {
+                "today": int(exp.get("today") or 0),
+                "within_7_days": int(exp.get("within_7_days") or 0),
+                "within_30_days": int(exp.get("within_30_days") or 0),
+                "as_of": today.isoformat(),
+            },
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch dashboard stats: {str(e)}")

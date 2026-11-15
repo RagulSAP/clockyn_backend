@@ -22,6 +22,9 @@ Collected 2026-11-15 from the agents that wrote the guides and the playbook. FAQ
 
 ### Support promises
 - [ ] **Support hours and reply times** (contacting-support-and-live-chat, playbook/conversation-flows): the app shows Mon-Fri 10 AM-6 PM IST and "usually reply within 5 minutes". Promises or targets? No FAQ mentions them. What does the assistant do outside hours? Owner decides.
+- [ ] **Who may start a chat with a customer, and when** (contacting-support-and-live-chat; console: start-a-chat-with-a-company): any operator can now open a conversation with any organisation from the Organizations page. Should this be limited to some operators, or to certain reasons? Owner decides.
+- [ ] **Outreach policy for support-started chats** (console: start-a-chat-with-a-company): which messages are allowed (renewal reminders, onboarding help, payment follow-ups) and which are not (marketing, bulk), what the first message must say, and whether important outcomes must be logged in a ticket. Owner decides.
+- [ ] **Quiet hours for push notifications** (contacting-support-and-live-chat): a message from support reaches the admin's phone immediately, at any hour; there are no quiet hours. Should messages sent outside the support hours (Mon-Fri 10 AM-6 PM IST) be held or flagged? Owner decides.
 - [ ] **What support can do for a failing face or re-registration** (troubleshooting-punch-in, attendance-and-face-punch): no re-register path was found in the app; what can support actually do? Owner decides.
 
 ### Data and privacy

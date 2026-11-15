@@ -717,7 +717,7 @@
           "id": "why-does-the-camera-not-open-when-i-punch"
         }
       ],
-      "words": 793,
+      "words": 799,
       "faq_questions": 15
     },
     {
@@ -812,7 +812,7 @@
           "id": "where-can-i-see-the-fine-deduction-feature"
         }
       ],
-      "words": 666,
+      "words": 698,
       "faq_questions": 13
     },
     {
@@ -3321,6 +3321,11 @@
           "id": "replies-and-notifications"
         },
         {
+          "level": 3,
+          "text": "When support writes to you first",
+          "id": "when-support-writes-to-you-first"
+        },
+        {
           "level": 2,
           "text": "Raise a support ticket",
           "id": "raise-a-support-ticket"
@@ -3367,6 +3372,11 @@
         },
         {
           "level": 3,
+          "text": "Can Clockyn support message me first?",
+          "id": "can-clockyn-support-message-me-first"
+        },
+        {
+          "level": 3,
           "text": "Is there an automatic assistant in Live Chat today?",
           "id": "is-there-an-automatic-assistant-in-live-chat-today"
         },
@@ -3381,7 +3391,7 @@
           "id": "when-to-contact-support"
         }
       ],
-      "words": 983,
+      "words": 1145,
       "faq_questions": 0
     },
     {
@@ -6043,7 +6053,7 @@
           "id": "when-the-assistant-cannot-reply"
         }
       ],
-      "words": 514,
+      "words": 565,
       "faq_questions": 0
     },
     {

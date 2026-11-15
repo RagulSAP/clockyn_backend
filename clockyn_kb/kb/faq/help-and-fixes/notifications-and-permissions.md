@@ -57,7 +57,7 @@ Punch alerts go to the phones of your admins. Make sure Notifications are allowe
 
 ## Do Live Chat replies from the support team send a notification?
 
-Yes. When our team replies in Live Chat, admins receive a notification and the Live Chat row in Support shows an unread badge. Live Chat is available only to organisation admins.
+Yes. When our team replies in Live Chat, or sends you a message first, admins receive a notification and the Live Chat row in Support shows an unread badge. Live Chat is available only to organisation admins.
 
 ## How do I stop notifications or turn them off?
 

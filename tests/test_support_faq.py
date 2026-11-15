@@ -593,7 +593,7 @@ class TestReferralUpdateFile:
         _, rows = starter
         _, _, updates = update
         answers = {r["question"].lower(): r["answer"] for r in rows}
-        assert len(updates) == 12 and len({q.lower() for q, _ in updates}) == 12
+        assert len(updates) == 14 and len({q.lower() for q, _ in updates}) == 14
         for question, answer in updates:
             assert answers[question.lower()] == answer, question
 
@@ -634,4 +634,4 @@ class TestReferralUpdateFile:
         if path == "FAQ.sql":
             assert kinds.count("InsertStmt") == 397
         else:
-            assert kinds.count("UpdateStmt") == 12 and kinds.count("InsertStmt") == 9
+            assert kinds.count("UpdateStmt") == 14 and kinds.count("InsertStmt") == 9

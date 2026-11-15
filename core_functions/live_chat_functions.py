@@ -6,8 +6,10 @@ Text and image / file attachments, read ticks (`read_at` = the OTHER side has re
 admins when support writes. Not plan-gated: a lapsed customer must still be able to reach support.
 
 App side (`app_*`): the caller must be a role-1 user of the organisation, otherwise 403 (also when REQUIRE_AUTH is off).
-Operator side (`op_*`): the routers sit behind `operator_auth.require_operator`; support never starts a conversation
-(replying to an organisation without a thread is a 404). Names of senders always come from the database, never from the
+Operator side (`op_*`): the routers sit behind `operator_auth.require_operator`. Support CAN start a conversation: opening
+the chat of an organisation without a thread writes nothing (`exists: false`), and the first message support sends creates the
+thread together with that message in one transaction (the organisation must exist and not be deleted, and have an active admin to
+receive it: 404 / 409 otherwise). Closing or marking read a thread that does not exist stays a 404. Names of senders always come from the database, never from the
 client. Attachments are stored in S3 (`ml.s3.upload_chat_file`) and only presigned URLs leave the server, never the key.
 """
 import asyncio
@@ -35,6 +37,8 @@ SUPPORT_SENDER_ID = "support"           # sender id of a reply made with the ope
 PUSH_TITLE = "Clockyn Support"
 ATTACHMENT_PUSH_TEXT = "\U0001f4ce Sent an attachment"
 THREAD_STATUSES = ("open", "closed")
+MSG_ORG_NOT_FOUND = "Organization not found"
+MSG_NO_ADMIN = "This organization has no active admin to chat with"
 
 
 # ═══════════════════ MODELS ═══════════════════
@@ -204,6 +208,23 @@ def _org_admin_info(cur, org_ids: List[str]) -> Dict[str, Dict[str, Any]]:
             for r in (cur.fetchall() or [])}
 
 
+def _chat_org_name(cur, org_id: str) -> str:
+    """Name of an organisation support may START a conversation with: it exists and is not deleted (org_info.status 2), else 404."""
+    cur.execute("SELECT org_name FROM org_info WHERE org_id = %s AND COALESCE(status, 1) <> 2", (org_id,))
+    row = cur.fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail=MSG_ORG_NOT_FOUND)
+    return row["org_name"]
+
+
+def _require_active_admin(cur, org_id: str) -> List[str]:
+    """The user ids of the organisation's active admins; 409 when there is nobody to receive a conversation support starts."""
+    admin_ids = _org_admin_ids(cur, org_id)
+    if not admin_ids:
+        raise HTTPException(status_code=409, detail=MSG_NO_ADMIN)
+    return admin_ids
+
+
 def _thread_row(cur, org_id: str) -> Optional[Dict[str, Any]]:
     cur.execute("SELECT thread_id, status FROM live_chat_thread WHERE org_id = %s", (org_id,))
     return cur.fetchone()
@@ -223,6 +244,22 @@ def _upsert_org_thread(cur, org_id: str, preview: str, message_type: str, now: d
             last_sender_type = 'org',
             last_message_at = EXCLUDED.last_message_at,
             updated_at = EXCLUDED.updated_at
+        RETURNING thread_id, status
+        """,
+        (str(uuid.uuid4()), org_id, preview, message_type, now, now, now),
+    )
+    return cur.fetchone()
+
+
+def _start_support_thread(cur, org_id: str, preview: str, message_type: str, now: datetime) -> Dict[str, Any]:
+    """Race-safe creation of the thread by SUPPORT's first message. When the organisation (or another operator) created it in the
+    meantime the existing row is returned untouched (status and preview are kept; the caller updates the preview afterwards)."""
+    cur.execute(
+        """
+        INSERT INTO live_chat_thread (thread_id, org_id, status, last_message, last_message_type, last_sender_type,
+                                      last_message_at, created_at, updated_at)
+        VALUES (%s, %s, 'open', %s, %s, 'support', %s, %s, %s)
+        ON CONFLICT (org_id) DO UPDATE SET updated_at = live_chat_thread.updated_at
         RETURNING thread_id, status
         """,
         (str(uuid.uuid4()), org_id, preview, message_type, now, now, now),
@@ -433,7 +470,18 @@ def _thread_header(cur, org_id: str, thread: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "thread_id": thread["thread_id"], "org_id": org_id, "org_name": _org_name(cur, org_id),
         "admin_name": admin.get("name"), "admin_email": admin.get("email"), "admin_mobile": admin.get("mobile"),
-        "status": thread["status"],
+        "status": thread["status"], "exists": True,
+    }
+
+
+def _empty_thread_header(cur, org_id: str, org_name: str) -> Dict[str, Any]:
+    """The header of an organisation that has no conversation yet: opening it writes nothing (support's first message creates it)."""
+    admin = _org_admin_info(cur, [org_id]).get(org_id, {})
+    return {
+        "thread_id": None, "org_id": org_id, "org_name": org_name,
+        "admin_name": admin.get("name"), "admin_email": admin.get("email"), "admin_mobile": admin.get("mobile"),
+        "status": "open", "exists": False, "unread_count": 0, "last_message": None, "last_message_type": None,
+        "last_sender_type": None, "last_message_at": None,
     }
 
 
@@ -498,10 +546,13 @@ async def op_get_messages(org_id: str) -> Dict[str, Any]:
     try:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             thread = _thread_row(cur, org_id)
-            if not thread:
-                raise HTTPException(status_code=404, detail="No conversation for this organization")
-            header = _thread_header(cur, org_id, thread)
-            rows = _history(cur, thread["thread_id"])
+            if thread:
+                header = _thread_header(cur, org_id, thread)
+                rows = _history(cur, thread["thread_id"])
+            else:
+                # no conversation yet: fine for an organisation support can start one with (nothing is written), else 404
+                header = _empty_thread_header(cur, org_id, _chat_org_name(cur, org_id))
+                rows = []
         return {"success": True, "thread": header, "messages": [message_payload(r) for r in rows]}
     except HTTPException:
         raise
@@ -519,11 +570,16 @@ async def _op_store(org_id: str, admin_id: Optional[str], message_type: str, mes
     conn = get_db_connection()
     try:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            thread = _thread_row(cur, org_id)
-            if not thread:
-                raise HTTPException(status_code=404, detail="No conversation for this organization")
-            sender_id, sender_name = _operator_identity(cur, admin_id)
             now = get_utc_now()
+            thread = _thread_row(cur, org_id)
+            admin_ids = None
+            if not thread:
+                # support starts the conversation: the organisation must exist (not deleted) and have an active admin to receive it;
+                # the thread is created in THIS transaction together with the first message
+                _chat_org_name(cur, org_id)
+                admin_ids = _require_active_admin(cur, org_id)
+                thread = _start_support_thread(cur, org_id, message, message_type, now)
+            sender_id, sender_name = _operator_identity(cur, admin_id)
             row = _insert_message(cur, thread_id=thread["thread_id"], org_id=org_id, sender_type="support",
                                   sender_id=sender_id, sender_name=sender_name, message_type=message_type,
                                   message=message, file_key=file_key, file_name=file_name, content_type=content_type,
@@ -534,7 +590,8 @@ async def _op_store(org_id: str, admin_id: Optional[str], message_type: str, mes
                 (message, message_type, now, now, org_id),
             )
             org_name = _org_name(cur, org_id)
-            admin_ids = _org_admin_ids(cur, org_id)
+            if admin_ids is None:
+                admin_ids = _org_admin_ids(cur, org_id)
         conn.commit()
     except HTTPException:
         conn.rollback()
@@ -560,12 +617,14 @@ async def op_send_text(org_id: str, text: str, admin_id: Optional[str]) -> Dict[
 
 
 def op_check_thread(org_id: str) -> None:
-    """404 before an upload is read (multipart route): support never starts a conversation."""
+    """Checked BEFORE an upload is read (multipart route). An existing thread is fine; otherwise support may START one only with an
+    organisation that exists, is not deleted and has an active admin (404 / 409), so nothing is uploaded for a refused request."""
     conn = get_db_connection()
     try:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             if not _thread_row(cur, org_id):
-                raise HTTPException(status_code=404, detail="No conversation for this organization")
+                _chat_org_name(cur, org_id)
+                _require_active_admin(cur, org_id)
     except HTTPException:
         raise
     except Exception as exc:

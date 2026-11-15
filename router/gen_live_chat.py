@@ -1,5 +1,7 @@
 """Live Chat, OPERATOR side: the Clockyn support team in the web console (ClockynConsole).
 
+Support can start a conversation with any organisation (GET .../threads/{org_id}/messages answers `exists: false` for one without
+a thread and writes nothing; the first POST creates the thread with that message: see live_chat_functions).
 HTTP routes live under /gen-dashboard/live-chat (an OPERATOR route class: `auth_policy.OPERATOR_RULES`), each guarded by
 `operator_auth.require_operator` (operator session token, the operator key, or the legacy admin header while it is enabled).
 The console's realtime channel is the WebSocket /ws/support-ops?token=<operator session token> (legacy: ?admin_id=<operator

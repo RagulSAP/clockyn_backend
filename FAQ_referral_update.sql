@@ -1,11 +1,12 @@
 -- ============================================================================================
 -- Clockyn FAQ update for EXISTING databases: referral percent now comes from the database, partner promo codes,
--- plan durations with free months. Generated 2026-11-15 together with FAQ.sql (same answer texts, word for word).
+-- plan durations with free months, and support starting a Live Chat conversation. Generated 2026-11-15 together with FAQ.sql
+-- (same answer texts, word for word).
 --
 -- WHEN TO RUN: once, after the backend / console / app versions with these features are deployed.
 -- Run it in the same schema as FAQ.sql (table clockyn_dev.support_faq); everything runs in one transaction.
 --
--- !! Part 1 DELIBERATELY OVERWRITES the answer of 12 existing questions (matched by lower(question)) and sets
+-- !! Part 1 DELIBERATELY OVERWRITES the answer of 14 existing questions (matched by lower(question)) and sets
 -- !! updated_at = now(). If you edited one of these answers in the FAQ Hub, your edit is replaced.
 -- !! Questions you deleted are not brought back by part 1 (the UPDATE finds nothing).
 -- Part 2 adds 9 new questions with the same INSERT ... WHERE NOT EXISTS pattern as FAQ.sql, so it is safe to run again:
@@ -70,6 +71,12 @@ WHERE lower(question) = lower('How do I switch to a different plan?');
 
 UPDATE clockyn_dev.support_faq SET answer = 'The app does not let you move from your current plan to a lower plan on your own. It also does not let you pick the same plan with the same or a shorter duration than you have now, or a higher plan with a shorter duration. Choose a longer duration instead, or write to our team in Support > Live Chat and they will guide you.', updated_at = now()
 WHERE lower(question) = lower('Why does the app say Downgrade Not Allowed?');
+
+UPDATE clockyn_dev.support_faq SET answer = 'Live Chat lets you talk directly to the Clockyn support team from the Support tab. It is available to organisation admins. Messages from our team reach you as notifications and the Live Chat row shows an unread badge until you open it. Our team may also message you first, for example about your plan or a question you raised: the message appears in Support > Live Chat and you can reply there. It is the best place to ask about billing, refunds or special requests.', updated_at = now()
+WHERE lower(question) = lower('What is Live Chat and who can use it?');
+
+UPDATE clockyn_dev.support_faq SET answer = 'Yes. When our team replies in Live Chat, or sends you a message first, admins receive a notification and the Live Chat row in Support shows an unread badge. Live Chat is available only to organisation admins.', updated_at = now()
+WHERE lower(question) = lower('Do Live Chat replies from the support team send a notification?');
 
 -- ───── Part 2: new questions ─────────────────────────────────────────────────
 -- Plans & Payments / Plans & Billing
