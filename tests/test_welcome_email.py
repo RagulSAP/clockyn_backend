@@ -40,7 +40,7 @@ class State:
             "mgr-1": {"user_id": "mgr-1", "name": "Ravi", "email": "ravi@example.com", "org_id": "org-1", "role_id": 2,
                       "welcome_email_sent_at": None, "welcome_email_attempts": 0, "welcome_email_last_attempt_at": None},
         }
-        self.orgs = {"org-1": {"org_name": "Sunrise Traders"}}
+        self.orgs = {"org-1": {"org_name": "Sunrise Traders", "parent_id": "admin-1"}}   # org_info.parent_id = the admin's user id
         self.trials = {"org-1": {"start_date": date(2026, 11, 16), "end_date": date(2026, 12, 16)}}
 
 
@@ -54,7 +54,8 @@ class Cur:
         self.row = None
         if s.startswith("UPDATE users u SET welcome_email_attempts"):
             with st.lock:                                              # the real statement is atomic: row lock + re-check
-                u = st.users.get(params[0])
+                owner = (st.orgs.get(params[1]) or {}).get("parent_id")       # the id may be the organisation's (what the app sends)
+                u = st.users.get(params[0]) or st.users.get(owner)
                 if u and we.should_welcome(u, now=st.now):
                     u["welcome_email_attempts"] += 1
                     u["welcome_email_last_attempt_at"] = st.now

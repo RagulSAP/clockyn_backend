@@ -45,11 +45,14 @@ _TRUTHY = {"1", "true", "yes", "on"}
 # ONE atomic statement. It only succeeds for an ADMIN who has not been welcomed, has tried fewer than MAX_ATTEMPTS times, did not try in the
 # last hour and has a plausible e-mail address (so a blank or broken address never burns an attempt). Two parallel callers: the second one
 # finds the first one's new last_attempt_at (row lock + READ COMMITTED re-check) and gets no row.
+# The id the Home screen sends is the ORGANISATION id for an admin (GET /home/dashboard-status?user_id=<org id>: the backend treats the value as
+# the organisation for an admin), and an admin's own user id is a different uuid. So the id is matched as the admin's user id OR as the
+# organisation whose owner (org_info.parent_id) is that admin; role_id = 1 still keeps managers and staff out.
 CLAIM_SQL = """
     UPDATE users u
     SET welcome_email_attempts = u.welcome_email_attempts + 1,
         welcome_email_last_attempt_at = NOW()
-    WHERE u.user_id = %s
+    WHERE (u.user_id = %s OR u.user_id = (SELECT o.parent_id FROM org_info o WHERE o.org_id = %s))
       AND u.role_id = 1
       AND u.welcome_email_sent_at IS NULL
       AND u.welcome_email_attempts < %s
@@ -124,7 +127,7 @@ def _remember(user_id: str) -> bool:
 # ── database ────────────────────────────────────────────────────────────────────────────────────────────────────────
 def claim_send(cursor, user_id: str) -> Optional[Dict[str, Any]]:
     """The admin's {user_id, name, email, org_id} when THIS call won the right to send the welcome e-mail, else None. The caller commits."""
-    cursor.execute(CLAIM_SQL, (user_id, MAX_ATTEMPTS))
+    cursor.execute(CLAIM_SQL, (user_id, user_id, MAX_ATTEMPTS))
     row = cursor.fetchone()
     return dict(row) if row else None
 
@@ -226,7 +229,7 @@ def process(user_id: str) -> str:
         subject = getattr(mail, "subject", None) or subject_for(claimed.get("name"), data["trial_months"])
         send_email(claimed["email"], subject, mail.html, mail.text,
                    logo_cid=getattr(mail, "logo_cid", None), logo_bytes=getattr(mail, "logo_bytes", None))
-        cur.execute(MARK_SENT_SQL, (user_id,))
+        cur.execute(MARK_SENT_SQL, (claimed["user_id"],))      # the ADMIN's user id (the id we were called with may be the organisation's)
         conn.commit()
         logger.info("Welcome e-mail sent to user %s", user_id)
         return "sent"

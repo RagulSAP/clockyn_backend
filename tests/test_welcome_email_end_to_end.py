@@ -110,3 +110,20 @@ def test_save_a_sample_message_for_a_manual_look(world, tmp_path):
     target.write_bytes(world.ses.calls[0]["RawMessage"]["Data"])
     assert target.stat().st_size > 20000
     assert re.search(rb"Content-ID: <[^>]+>", target.read_bytes())
+
+
+def test_the_home_screen_sends_the_organisation_id_and_the_admin_still_gets_the_email(world):
+    """GET /home/dashboard-status?user_id=<ORG id>: the id of an admin's Home call is the organisation's, not the admin's own user id."""
+    assert world.st.users["admin-1"]["org_id"] == "org-1" and "org-1" not in world.st.users       # the two ids really differ
+    assert we.process("org-1") == "sent"
+    assert len(world.ses.calls) == 1 and world.ses.calls[0]["Destinations"] == ["asha@example.com"]
+    user = world.st.users["admin-1"]
+    assert user["welcome_email_sent_at"] is not None                                              # recorded on the ADMIN's row
+    assert we.process("org-1") == "skipped" and we.process("admin-1") == "skipped"               # either id: still only once
+    assert len(world.ses.calls) == 1
+
+
+def test_an_organisation_id_never_reaches_a_manager(world):
+    world.st.orgs["org-1"]["parent_id"] = "mgr-1"                                                  # even a wrongly linked owner: role_id must be 1
+    assert we.process("org-1") == "skipped"
+    assert world.ses.calls == []
