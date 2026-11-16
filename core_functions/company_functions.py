@@ -460,6 +460,10 @@ async def delete_user_account(user_id: str):
         orgs = cursor.fetchall()
         face_user_ids = [user_id]      # whose Rekognition faces are deleted after the commit
 
+        # Refer & Earn: the organisations' referral code and rewards go with the account (never fails the deletion)
+        from core_functions import referral_functions
+        referral_functions.delete_org_referral_data(cursor, [o['org_id'] for o in orgs])
+
         for org in orgs:
             org_id = org['org_id']
 

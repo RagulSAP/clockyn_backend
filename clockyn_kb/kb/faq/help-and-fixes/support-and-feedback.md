@@ -1,17 +1,17 @@
 ---
 title: Support & Feedback
-summary: Answers to 13 common questions about Support & Feedback.
+summary: Answers to 8 common questions about Support & Feedback.
 category: Help & Fixes
 audience: all
 source: faq
 plan: all
 handoff: offer
-tags: support, feedback, see, ticket, feature, tab, account, another, between, chat
+tags: support, feedback, feature, see, account, chat, clockyn, contact, deduction, deletion
 updated: 2026-11-15
 ---
 ## How can I contact Clockyn support?
 
-Open the Support tab. You will find FAQ for answers, Live Chat to talk to our support team, and Video Hub for step-by-step guides. You can also raise a ticket from Settings > Beyond > Support. Support options are available to organisation admins.
+Open the Support tab. You will find FAQ for answers, Live Chat to talk to our support team, and Video Hub for step-by-step guides. To report a problem or ask for help, use Live Chat. Support options are available to organisation admins.
 
 ## What is Live Chat and who can use it?
 
@@ -24,27 +24,6 @@ Video Hub in the Support tab has step-by-step guide videos on how to use the app
 ## Why can I not see the Support tab?
 
 The Support tab with FAQ, Live Chat and Video Hub is meant for organisation admins. Staff and managers do not see it. Sign in with the admin account to use it.
-
-## How do I raise a support ticket?
-
-1. Open Settings > Beyond > Support.
-2. Choose a subject.
-3. Describe your issue or question.
-4. Optionally tap Upload Photo to add a screenshot.
-5. Tap Submit Request.
-You will see Support request submitted. You can send up to 10 tickets per hour.
-
-## How do I see the status of my tickets?
-
-Open Settings > Beyond > Support and scroll to My Tickets. Each ticket shows a status: Open, In Progress or Resolved, with your message, the photo if any, and the replies from our team.
-
-## How do I reply to a ticket or reopen a resolved one?
-
-Open the ticket in My Tickets and type in the reply box at the bottom, then send. When a ticket is resolved the box says Reply to reopen this ticket, and replying moves it back to In Progress. You will see a Reply sent confirmation.
-
-## What is the difference between Support in Settings and the Support tab?
-
-The Support tab is for self-help and quick contact: FAQ, Live Chat and Video Hub. Support under Settings > Beyond is for raising a ticket with a subject, a description and an optional photo, and following its replies. Use Live Chat for fast answers and tickets for issues you want tracked.
 
 ## How do I suggest a new feature?
 
@@ -63,11 +42,7 @@ The request is sent for review, and once it is reviewed, all the data is permane
 
 ## What should I tell support so they can help me faster?
 
-Mention what you were trying to do, what the screen said (the exact message helps), your company name and the time it happened. For payment issues add the amount, the date and time and the last digits of the transaction reference. A screenshot attached to a ticket also helps.
-
-## Why can I not submit another support ticket?
-
-To prevent spam, each user can send up to 10 tickets per hour. If you reach that you will see a message asking you to try again later. Wait a while, or add your update as a reply on an existing ticket or in Live Chat.
+Mention what you were trying to do, what the screen said (the exact message helps), your company name and the time it happened. For payment issues add the amount, the date and time and the last digits of the transaction reference. A screenshot sent in Live Chat also helps.
 
 ## Where can I see the Fine / Deduction feature?
 

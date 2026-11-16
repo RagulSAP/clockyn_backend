@@ -1,18 +1,18 @@
 ---
-title: Contact Clockyn support: Live Chat, tickets, FAQ and videos
-summary: How to reach the Clockyn support team from the app, who can use Live Chat, support hours and reply time, how to send files, raise tickets and what details to share.
+title: Contact Clockyn support: Live Chat, FAQ and videos
+summary: How to reach the Clockyn support team from the app, who can use Live Chat, support hours and reply time, how to send files and what details to share.
 category: Help & Fixes
 audience: admin
 source: guide
 app_path: Support > Live Chat
 plan: all
 handoff: none
-tags: support, contact, live chat, chat with support, help, ticket, support request, raise ticket, faq, video hub, suggest a feature, support hours, reply time, human, talk to someone, customer care
-updated: 2026-11-15
+tags: support, contact, live chat, chat with support, help, report a problem, ticket, raise ticket, faq, video hub, suggest a feature, support hours, reply time, human, talk to someone, customer care
+updated: 2026-11-16
 related: faq-support-and-feedback, faq-troubleshooting, chat-and-announcements
 ---
 
-You can reach the Clockyn support team from inside the app. Live Chat is the fastest way to talk to a person, and tickets are best for issues you want tracked. This guide explains what is available today, when the team is online, and what to include so you get help quickly. Support options are available to organisation admins; managers and staff should ask their admin.
+You can reach the Clockyn support team from inside the app. Live Chat is how you talk to a person: report a problem, ask for help or follow up on an earlier question. This guide explains what is available today, when the team is online, and what to include so you get help quickly. Support options are available to organisation admins; managers and staff should ask their admin.
 
 ## Where support is in the app
 
@@ -55,18 +55,6 @@ Messages from our team reach you as notifications, and the Live Chat row shows a
 
 Our team may also start the conversation, for example about your plan or a question you raised. You get a notification, and the message appears in Support > Live Chat. Open it and reply there. You do not have to do anything else, and a conversation that support started works exactly like one you started. Do not share your password or a one-time code in the chat.
 
-## Raise a support ticket
-
-1. Open Settings > Beyond > Support.
-2. Choose a subject.
-3. Describe your issue or question.
-4. Optionally tap Upload Photo to add a screenshot.
-5. Tap Submit Request.
-
-You will see "Support request submitted". You can send up to 10 tickets per hour. Under My Tickets you can follow each ticket: the status is Open, In Progress or Resolved, with your message, any photo and the replies from our team. To reply, type in the box at the bottom of the ticket. When a ticket is resolved the box says "Reply to reopen this ticket", and replying moves it back to In Progress.
-
-Use Live Chat for fast answers and tickets for issues you want tracked.
-
 ## Suggest a feature
 
 1. Open Settings > Beyond > Suggest a Feature.
@@ -93,13 +81,9 @@ Monday to Friday, 10 AM to 6 PM IST. Outside those hours your message is kept an
 
 When the team is online we usually reply within 5 minutes. When it is busy you may see a note asking for your patience.
 
-### What is the difference between Live Chat and a ticket?
+### Can I raise a support ticket?
 
-Live Chat is for fast answers and quick contact. A ticket has a subject, a description and an optional photo, and you can follow its replies.
-
-### Why can I not submit another ticket?
-
-Each user can send up to 10 tickets per hour. Wait a while, or add your update as a reply on an existing ticket or in Live Chat.
+No. There is no separate ticket screen any more. To report a problem or ask for help, open the Support tab and send a message in Live Chat. You can send a screenshot or document in the same chat, and the whole conversation stays in one place.
 
 ### Can Clockyn support message me first?
 

@@ -95,7 +95,7 @@ def test_very_long_keys_are_clipped(clock):
 # ---------------------------------------------------------------------------------------------------- rules and env
 def test_default_rules_match_the_documentation():
     assert {n: (r[0], r[1]) for n, r in RL.DEFAULT_RULES.items()} == {
-        "SUPPORT_CREATE": (10, 3600), "SUGGESTION_CREATE": (10, 3600), "VIDEO_VIEW": (120, 3600), "LIVE_CHAT_SEND": (30, 60), "ANALYTICS_EVENTS": (30, 60),
+        "SUGGESTION_CREATE": (10, 3600), "VIDEO_VIEW": (120, 3600), "LIVE_CHAT_SEND": (30, 60), "ANALYTICS_EVENTS": (30, 60),
         "AUTH_CHECK": (30, 60), "AUTH_LOGIN": (30, 60), "OTP_GENERATE": (20, 3600), "DEVICE_CHANGE_SUBMIT": (10, 3600),
         "REFERRAL_VALIDATE": (20, 60), "OPERATOR_FAIL": (20, 60)}
 
@@ -231,25 +231,6 @@ async def _stub(*a, **k):
     return {"success": True}
 
 
-def test_support_tickets_are_limited_per_user_not_per_ip(clock, monkeypatch):
-    import router.support as sp
-
-    async def submit(*a):
-        return {"id": 1}
-    monkeypatch.setattr(sp, "submit_support_request", submit)
-    monkeypatch.setenv("RATE_LIMIT_SUPPORT_CREATE", "2/3600")
-    app = FastAPI()
-    app.include_router(sp.router)
-    c = TestClient(app)
-
-    def post(user):
-        return c.post("/support/submit", data={"user_id": user, "org_id": "o", "subject": "s", "message": "m"})
-    assert post("u1").status_code == 200 and post("u1").status_code == 200
-    assert post("u1").status_code == 429
-    assert post("u2").status_code == 200                      # another user from the same IP is not affected
-    clock.now += 3601
-    assert post("u1").status_code == 200
-
 
 def test_suggestions_are_limited(clock, monkeypatch):
     import router.company as co
@@ -275,7 +256,7 @@ def test_a_token_identity_beats_the_claimed_user(clock, monkeypatch):
     from types import SimpleNamespace
     ident = SimpleNamespace(user_id="real", role_id=3, org_id="o")
     app = FastAPI()
-    monkeypatch.setenv("RATE_LIMIT_SUPPORT_CREATE", "1/60")
+    monkeypatch.setenv("RATE_LIMIT_SUGGESTION_CREATE", "1/60")
 
     @app.middleware("http")
     async def attach(request: Request, call_next):
@@ -284,7 +265,7 @@ def test_a_token_identity_beats_the_claimed_user(clock, monkeypatch):
 
     @app.post("/t")
     def t(request: Request, user_id: str = ""):
-        RL.check_user("SUPPORT_CREATE", request, user_id)
+        RL.check_user("SUGGESTION_CREATE", request, user_id)
         return {"ok": True}
     c = TestClient(app)
     assert c.post("/t?user_id=a").status_code == 200

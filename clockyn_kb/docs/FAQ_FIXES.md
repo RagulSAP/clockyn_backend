@@ -24,3 +24,7 @@ Found 2026-11-15 while writing the guides. Each item is a proposal for the owner
 | 16 | Payroll & Salary | "Count Upto Basic Salary", "Next Count", "Turnover Upto Basic Salary" are inputs. | Only Each Incentive and After Target Incentive affect pay. | Correct. |
 | 17 | Payroll & Salary | Odometer rate may be decimal. | The backend accepts decimals; the app saves whole rupees. | Follow the app. |
 | 18 | Notifications & Permissions | Logging out and in re-registers the phone for notifications; managers can open Staff Location. | Not verified in code. | Verify, then keep or remove. |
+
+## 2026-11-16: the support-ticket screen was removed
+
+Settings > Beyond > Support (raise and follow tickets) no longer exists; Live Chat in the Support tab replaces it. Five FAQ questions about tickets were deleted and six answers that pointed to the ticket screen now point to Live Chat (see `FAQ.sql` / `FAQ_referral_update.sql` in the backend). The guide "Contact Clockyn support" no longer has a ticket section.

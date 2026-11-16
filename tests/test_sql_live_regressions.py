@@ -57,11 +57,11 @@ def _grouping_gaps(sql: str):
     return gaps
 
 
-@pytest.mark.parametrize("rel", ["core_functions/suggest_feature_functions.py", "core_functions/support_functions.py"])
+@pytest.mark.parametrize("rel", ["core_functions/suggest_feature_functions.py"])
 def test_group_by_lists_every_selected_column(rel):
-    """email_log and admin_subject_request have no primary key in the schema, so `GROUP BY r.id` does not make the
-    other selected columns functionally dependent (PostgreSQL error 42803, which the support code then hid by falling
-    back to a query without replies)."""
+    """email_log has no primary key in the schema, so `GROUP BY r.id` does not make the other selected columns
+    functionally dependent (PostgreSQL error 42803, which the suggestion code once hid by falling back to a query
+    without replies)."""
     checked = 0
     for st in _statements(rel):
         sql = S.render(st.var.tokens, None)[0]

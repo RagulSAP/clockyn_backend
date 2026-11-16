@@ -114,10 +114,10 @@
 {"id": "q114", "question": "access denied your free trial and plan have expired", "expected_docs": ["faq-troubleshooting", "faq-plans-and-billing"], "handoff": "none"}
 {"id": "q115", "question": "unable to get your location while punching", "expected_docs": ["faq-troubleshooting", "geofencing-and-locations", "troubleshooting-punch-in"], "handoff": "none"}
 {"id": "q116", "question": "how can i contact clockyn support", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "none"}
-{"id": "q117", "question": "how to raise a support ticket", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "none"}
+{"id": "q117", "question": "how to raise a support ticket", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "none", "notes": "the ticket screen was removed 2026-11-16; answer: use Support > Live Chat"}
 {"id": "q118", "question": "i cant see the support tab", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "none", "notes": "Support tab is for admins only"}
 {"id": "q119", "question": "i want to suggest a new feature", "expected_docs": ["faq-support-and-feedback"], "handoff": "none", "notes": "explain how to send a suggestion; no promise"}
-{"id": "q120", "question": "why cant i submit another ticket", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "none"}
+{"id": "q120", "question": "where can i see the status of my support request", "expected_docs": ["faq-support-and-feedback", "contacting-support-and-live-chat"], "handoff": "none", "notes": "no ticket list any more; the conversation is in Support > Live Chat"}
 {"id": "q121", "question": "money was deducted from my bank but plan is still expired", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "required", "notes": "payment not applied"}
 {"id": "q122", "question": "payment cut hua par plan active nahi hua", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "required", "notes": "Hinglish; payment not applied"}
 {"id": "q123", "question": "i got charged twice for my renewal", "expected_docs": ["faq-payments-and-invoices", "payments-and-invoices"], "handoff": "required", "notes": "double charge"}

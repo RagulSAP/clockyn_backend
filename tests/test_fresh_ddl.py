@@ -32,7 +32,7 @@ def test_the_fresh_file_is_up_to_date():
 def test_same_schema_as_the_latest_file():
     a, b = C.load_catalog(LATEST), C.load_catalog(FRESH, "clockyn_ddl_fresh.sql")
     assert not a.errors and not b.errors, (a.errors, b.errors)
-    assert sorted(a.tables) == sorted(b.tables) and len(a.tables) == 84
+    assert sorted(a.tables) == sorted(b.tables) and len(a.tables) == 81
     for name, table in a.tables.items():
         assert repr(table) == repr(b.tables[name]), f"table {name} differs"
     assert {k: repr(v) for k, v in a.indexes.items()} == {k: repr(v) for k, v in b.indexes.items()}

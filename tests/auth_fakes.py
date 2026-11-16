@@ -130,8 +130,8 @@ def make_app() -> FastAPI:
             total += len(chunk)
         return {"bytes": total}
 
-    @app.post("/support/submit")
-    async def support_submit(user_id: str = Form(...), org_id: str = Form(...), message: str = Form(...)):
+    @app.post("/form/echo")
+    async def form_echo(user_id: str = Form(...), org_id: str = Form(...), message: str = Form(...)):
         return {"user_id": user_id, "org_id": org_id, "message": message}
 
     @app.post("/orders/create")

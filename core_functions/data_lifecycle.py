@@ -296,13 +296,18 @@ def anonymise_account(cursor, owner_user_id: str, now: Optional[datetime] = None
     (org_info.parent_id): every user of the organisation (staff, managers, including staff created under a manager by the
     old code path) is anonymised like a retained staff row, the leads' customer contact data is blanked, the company rows
     are blanked. Finally the administrator's own user and company rows are anonymised and the deletion request is
-    closed. Billing records (orders, payments, invoices, subscriptions) are NOT touched.
+    closed. The organisations' referral code and rewards are deleted (core_functions/referral_functions.py::delete_org_referral_data).
+    Billing records (orders, payments, invoices, subscriptions) are NOT touched.
     Returns {"org_ids": [...], "user_ids": [...], "s3": [(user_id, urls), ...]} for the post-commit S3 cleanup."""
     now = now or get_utc_now()
     cursor.execute("SELECT org_id FROM org_info WHERE parent_id = %s", (owner_user_id,))
     org_ids = [r["org_id"] for r in cursor.fetchall()]
     user_ids: List[str] = []
     s3: List[Tuple[str, List[str]]] = []
+
+    # Refer & Earn: the organisations' referral code and rewards are deleted (an anonymised company must not stay a valid referrer)
+    from core_functions import referral_functions
+    referral_functions.delete_org_referral_data(cursor, org_ids)
 
     for org_id in org_ids:
         cursor.execute(

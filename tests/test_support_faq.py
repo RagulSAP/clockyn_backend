@@ -510,12 +510,12 @@ def update():
 class TestStarterFaqFiles:
     def test_every_statement_is_recognised_and_guarded_by_its_own_question(self, starter):
         text, rows = starter
-        assert text.count("INSERT INTO clockyn_dev.support_faq") == len(rows) == 397
+        assert text.count("INSERT INTO clockyn_dev.support_faq") == len(rows) == 392
         assert all(r["guard"] == r["question"] for r in rows)
 
     def test_the_header_counts_are_true(self, starter):
         text, rows = starter
-        assert "-- 397 questions in 6 buckets." in text
+        assert "-- 392 questions in 6 buckets." in text
         counts = {}
         for r in rows:
             counts[r["category"]] = counts.get(r["category"], 0) + 1
@@ -585,7 +585,10 @@ class TestReferralUpdateFile:
         body = "\n".join(l for l in text.splitlines() if not l.lstrip().startswith("--"))
         assert body.strip().startswith("BEGIN;") and body.strip().endswith("COMMIT;")
         code = re.sub(r"'(?:[^']|'')*'", "''", body)                    # the statements without their text literals
-        assert not re.search(r"\b(DELETE|DROP|TRUNCATE|ALTER|CREATE)\b", code, re.I)
+        assert not re.search(r"\b(DROP|TRUNCATE|ALTER|CREATE)\b", code, re.I)
+        deletes = re.findall(r"\bDELETE\b", code, re.I)                 # exactly one DELETE: the retire step (part 3)
+        assert len(deletes) == 1 and "DELETE FROM clockyn_dev.support_faq WHERE lower(question) IN (" in body
+        assert "DELETES the 5 retired questions" in text
         assert set(re.findall(r"\b(?:UPDATE|INSERT INTO)\s+([\w.]+)", body)) == {"clockyn_dev.support_faq"}
         assert "DELIBERATELY OVERWRITES" in text and "once" in text
 
@@ -593,7 +596,7 @@ class TestReferralUpdateFile:
         _, rows = starter
         _, _, updates = update
         answers = {r["question"].lower(): r["answer"] for r in rows}
-        assert len(updates) == 14 and len({q.lower() for q, _ in updates}) == 14
+        assert len(updates) == 21 and len({q.lower() for q, _ in updates}) == 21
         for question, answer in updates:
             assert answers[question.lower()] == answer, question
 
@@ -607,7 +610,8 @@ class TestReferralUpdateFile:
 
     def test_updated_questions_are_not_inserted_again(self, update):
         _, new_rows, updates = update
-        assert not {q.lower() for q, _ in updates} & {r["question"].lower() for r in new_rows}
+        both = {q.lower() for q, _ in updates} & {r["question"].lower() for r in new_rows}
+        assert both == {"how can my business or channel become a clockyn partner?"}     # the one documented correction in part 3
 
     def test_the_new_sort_orders_do_not_collide_with_other_categories(self, update):
         _, new_rows, _ = update
@@ -632,6 +636,56 @@ class TestReferralUpdateFile:
         kinds = [type(s.stmt).__name__ for s in stmts]
         assert kinds[0] == "TransactionStmt" and kinds[-1] == "TransactionStmt"
         if path == "FAQ.sql":
-            assert kinds.count("InsertStmt") == 397
+            assert kinds.count("InsertStmt") == 392
         else:
-            assert kinds.count("UpdateStmt") == 14 and kinds.count("InsertStmt") == 9
+            assert kinds.count("UpdateStmt") == 21 and kinds.count("InsertStmt") == 9 and kinds.count("DeleteStmt") == 1
+
+
+# ── the support-ticket screen was removed (2026-11-16): Live Chat replaces it ─────────────────────────────────────────────
+RETIRED = [
+    "How do I raise a support ticket?",
+    "How do I see the status of my tickets?",
+    "How do I reply to a ticket or reopen a resolved one?",
+    "What is the difference between Support in Settings and the Support tab?",
+    "Why can I not submit another support ticket?",
+]
+TICKET_WORDS = re.compile(r"Beyond\s*>\s*Support\b|support ticket|My Tickets|Support request|ticket in My|raise a ticket|tickets per hour", re.I)
+
+
+class TestSupportTicketScreenRemoved:
+    def test_the_retired_questions_are_not_in_the_starter_set(self, starter):
+        _, rows = starter
+        names = {r["question"].lower() for r in rows}
+        for q in RETIRED:
+            assert q.lower() not in names, q
+
+    def test_no_answer_describes_the_ticket_screen_any_more(self, starter):
+        _, rows = starter
+        for r in rows:
+            assert not TICKET_WORDS.search(r["answer"]), r["question"]
+            assert not TICKET_WORDS.search(r["question"]), r["question"]
+
+    def test_the_beyond_menu_is_listed_correctly(self, starter):
+        _, rows = starter
+        ans = {r["question"]: r["answer"] for r in rows}
+        text = ans["Where can I find all the settings?"]
+        assert "Beyond holds Suggest a Feature, More Options, App Permissions and Logout." in text and "Support," not in text
+
+    def test_contact_answers_send_people_to_live_chat(self, starter):
+        _, rows = starter
+        ans = {r["question"]: r["answer"] for r in rows}
+        assert "use Live Chat" in ans["How can I contact Clockyn support?"]
+        assert "Live Chat" in ans["What should I tell support so they can help me faster?"]
+        assert "Support > Live Chat" in ans["My photo could not be uploaded."]
+
+    def test_the_update_file_retires_exactly_those_questions(self, update):
+        text, _, updates = update
+        m = re.search(r"DELETE FROM clockyn_dev\.support_faq WHERE lower\(question\) IN \(\n(.*?)\n\);", text, re.S)
+        listed = [_unq(q) for q in re.findall(r"lower\('((?:[^']|'')*)'\)", m.group(1))]
+        assert listed == RETIRED
+        assert not {q.lower() for q in RETIRED} & {q.lower() for q, _ in updates}        # a retired question is never also updated
+        assert "retired" in text.lower() and text.index("\u2500\u2500\u2500\u2500\u2500 Part 3") > text.index("\u2500\u2500\u2500\u2500\u2500 Part 2")
+
+    def test_support_and_feedback_has_eight_questions_in_the_app_order(self, starter):
+        _, rows = starter
+        assert len([r for r in rows if r["category"] == "Support & Feedback"]) == 8

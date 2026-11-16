@@ -199,28 +199,6 @@ def test_company_logo_endpoint(monkeypatch):
     assert c.post("/company/update-logo/o1", files={"logo": ("l.png", HTML, "image/png")}).status_code == 415
 
 
-def test_support_photo_is_checked_but_stays_best_effort(monkeypatch):
-    import router.support as sp
-    created = []
-
-    async def submit(user_id, org_id, subject, message, photo_key):
-        created.append(photo_key)
-        return {"request_id": 1}
-    monkeypatch.setattr(sp, "submit_support_request", submit)
-    import ml.s3 as s3
-    monkeypatch.setattr(s3, "upload_support_photo", lambda b, n, t: ("client_support/k", "https://s/k"))
-    c = _client(sp)
-    form = {"user_id": "u", "org_id": "o", "subject": "s", "message": "m"}
-    r = c.post("/support/submit", data=form, files={"photo": ("a.png", PNG, "image/png")})
-    assert r.status_code == 200 and created == ["client_support/k"]
-    r = c.post("/support/submit", data=form)                                    # no photo: unchanged
-    assert r.status_code == 200 and r.json() == {"success": True, "data": {"request_id": 1}}
-    r = c.post("/support/submit", data=form, files={"photo": ("a.png", EXE, "image/png")})
-    assert r.status_code == 415 and len(created) == 2                           # refused, no ticket created
-    monkeypatch.setattr(s3, "upload_support_photo", lambda b, n, t: (_ for _ in ()).throw(RuntimeError("s3 down")))
-    r = c.post("/support/submit", data=form, files={"photo": ("a.png", PNG, "image/png")})
-    assert r.status_code == 200 and created[-1] is None                         # storage hiccup: ticket still created
-
 
 def test_expense_receipt_endpoints_accept_images_and_pdf_receipts(monkeypatch):
     import router.emp_expenses as ex

@@ -264,22 +264,20 @@ def test_the_guard_is_the_only_operator_mechanism():
 
 
 def test_real_routers_refuse_without_a_credential_when_enforced(monkeypatch):
-    """The real gen_dashboard / plans / support / company routers, mounted as they are: 403 before any handler runs."""
+    """The real gen_dashboard / plans / company routers, mounted as they are: 403 before any handler runs."""
     import router.company as company
     import router.gen_dashboard as gd
     import router.gen_plans as plans
-    import router.support as support
     monkeypatch.setenv("OPERATOR_ENFORCE", "1")
     app = FastAPI()
-    for module in (gd, plans, support, company):
+    for module in (gd, plans, company):
         app.include_router(module.router)
     c = TestClient(app)
     for method, path, kw in (("GET", "/gen-dashboard/stats", {}), ("GET", "/gen-dashboard/users", {}),
                              ("DELETE", "/gen-dashboard/organizations/o1", {"json": {"changed_by": "x"}}),
                              ("GET", "/plans/all", {}), ("POST", "/plans/coupons", {"json": {"coupon_name": "A", "discount": 5}}),
                              ("PUT", "/plans/9", {"json": {"plan_name": "p", "plan_amount": 1, "plan_month": 1}}),
-                             ("DELETE", "/plans/9", {}), ("GET", "/support/requests/all", {}),
-                             ("PUT", "/support/update/3", {"json": {"status": "closed"}}),
+                             ("DELETE", "/plans/9", {}),
                              ("GET", "/company/deletion-requests", {}), ("GET", "/company/suggest-feature", {}),
                              ("GET", "/company/suggest-feature/with-replies", {}),
                              ("POST", "/company/suggest-feature/4/reply", {"json": {"reply_text": "x"}})):

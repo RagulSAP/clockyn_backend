@@ -1,14 +1,17 @@
 -- ============================================================================================
 -- Clockyn FAQ update for EXISTING databases: referral percent now comes from the database, partner promo codes,
--- plan durations with free months, and support starting a Live Chat conversation. Generated 2026-11-15 together with FAQ.sql
+-- plan durations with free months, support starting a Live Chat conversation, and the removal of the support-ticket screen.
+-- Generated 2026-11-15, extended 2026-11-16, together with FAQ.sql
 -- (same answer texts, word for word).
 --
 -- WHEN TO RUN: once, after the backend / console / app versions with these features are deployed.
 -- Run it in the same schema as FAQ.sql (table clockyn_dev.support_faq); everything runs in one transaction.
 --
--- !! Part 1 DELIBERATELY OVERWRITES the answer of 14 existing questions (matched by lower(question)) and sets
+-- !! Part 1 DELIBERATELY OVERWRITES the answer of 20 existing questions (matched by lower(question)) and sets
 -- !! updated_at = now(). If you edited one of these answers in the FAQ Hub, your edit is replaced.
 -- !! Questions you deleted are not brought back by part 1 (the UPDATE finds nothing).
+-- !! Part 3 also corrects the answer of one question that part 2 inserts (the partner question), and DELETES the 5 retired questions about the support-ticket screen (Settings > Beyond > Support was removed on 2026-11-16, Live
+-- !! Chat replaces it), matched by exact question text (lower()). It removes only those five rows and is safe to run again.
 -- Part 2 adds 9 new questions with the same INSERT ... WHERE NOT EXISTS pattern as FAQ.sql, so it is safe to run again:
 -- running the whole file twice gives the same result (the updates set the same text, the inserts skip existing questions).
 -- Sort orders: Plans & Billing rows 3141-3143 (the free numbers after 3140); the Refer & Earn rows use 3319, the value of the
@@ -78,6 +81,24 @@ WHERE lower(question) = lower('What is Live Chat and who can use it?');
 UPDATE clockyn_dev.support_faq SET answer = 'Yes. When our team replies in Live Chat, or sends you a message first, admins receive a notification and the Live Chat row in Support shows an unread badge. Live Chat is available only to organisation admins.', updated_at = now()
 WHERE lower(question) = lower('Do Live Chat replies from the support team send a notification?');
 
+UPDATE clockyn_dev.support_faq SET answer = 'Tap the Settings tab. The sections are: Your Plan & Validity, Company Settings, Salary Structure, Attendance & Devices, View & Download Reports, Managers, Expenses & Allowances, Appearance and Beyond. Beyond holds Suggest a Feature, More Options, App Permissions and Logout.', updated_at = now()
+WHERE lower(question) = lower('Where can I find all the settings?');
+
+UPDATE clockyn_dev.support_faq SET answer = 'Staff are alerted about announcements, new chat and group messages, new polls and decisions on their requests. Tapping the alert opens the related screen in their app.', updated_at = now()
+WHERE lower(question) = lower('What notifications do my staff receive?');
+
+UPDATE clockyn_dev.support_faq SET answer = 'Photos permission lets you attach images to requests and expenses. If you deny it, the app shows Please allow photo library access when you try to pick a picture. Allow it from Settings > Beyond > App Permissions.', updated_at = now()
+WHERE lower(question) = lower('Why does the app need access to my photos?');
+
+UPDATE clockyn_dev.support_faq SET answer = 'Photos must be real images and not too large. Try a smaller picture, take a fresh screenshot or choose a different image. If the upload keeps failing, tell us in Support > Live Chat.', updated_at = now()
+WHERE lower(question) = lower('My photo could not be uploaded.');
+
+UPDATE clockyn_dev.support_faq SET answer = 'Open the Support tab. You will find FAQ for answers, Live Chat to talk to our support team, and Video Hub for step-by-step guides. To report a problem or ask for help, use Live Chat. Support options are available to organisation admins.', updated_at = now()
+WHERE lower(question) = lower('How can I contact Clockyn support?');
+
+UPDATE clockyn_dev.support_faq SET answer = 'Mention what you were trying to do, what the screen said (the exact message helps), your company name and the time it happened. For payment issues add the amount, the date and time and the last digits of the transaction reference. A screenshot sent in Live Chat also helps.', updated_at = now()
+WHERE lower(question) = lower('What should I tell support so they can help me faster?');
+
 -- ───── Part 2: new questions ─────────────────────────────────────────────────
 -- Plans & Payments / Plans & Billing
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
@@ -138,8 +159,23 @@ WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = 
 
 -- Plans & Payments / Refer & Earn
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Plans & Payments', 'Refer & Earn', 'How can my business or channel become a Clockyn partner?', 'If you run a YouTube, Instagram or Facebook channel, or have another audience, and want to recommend Clockyn, write to us. Open the Support tab and send a message in Live Chat, or raise a ticket from Settings > Beyond > Support, with your channel name, its link and your contact details. Our team will explain the partner programme and, if you are accepted, give you your own code.
+SELECT 'Plans & Payments', 'Refer & Earn', 'How can my business or channel become a Clockyn partner?', 'If you run a YouTube, Instagram or Facebook channel, or have another audience, and want to recommend Clockyn, write to us. Open the Support tab and send a message in Live Chat with your channel name, its link and your contact details. Our team will explain the partner programme and, if you are accepted, give you your own code.
 Every company that registers with your code gets a discount on Prime or Elite. We never share a company''s data with partners.', 3319, 1
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('How can my business or channel become a Clockyn partner?'));
+
+-- ───── Part 3: retired questions (the support-ticket screen was removed) ──────────────────────
+-- Correction of one answer that part 2 inserts: a database that already ran an earlier version of this file keeps the old text
+-- (its INSERT is skipped), so the answer is set here too. A database that has just run part 2 gets the same text again.
+UPDATE clockyn_dev.support_faq SET answer = 'If you run a YouTube, Instagram or Facebook channel, or have another audience, and want to recommend Clockyn, write to us. Open the Support tab and send a message in Live Chat with your channel name, its link and your contact details. Our team will explain the partner programme and, if you are accepted, give you your own code.
+Every company that registers with your code gets a discount on Prime or Elite. We never share a company''s data with partners.', updated_at = now()
+WHERE lower(question) = lower('How can my business or channel become a Clockyn partner?');
+
+DELETE FROM clockyn_dev.support_faq WHERE lower(question) IN (
+    lower('How do I raise a support ticket?'),
+    lower('How do I see the status of my tickets?'),
+    lower('How do I reply to a ticket or reopen a resolved one?'),
+    lower('What is the difference between Support in Settings and the Support tab?'),
+    lower('Why can I not submit another support ticket?')
+);
 
 COMMIT;

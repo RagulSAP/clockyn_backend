@@ -45,7 +45,7 @@ You are alerted when staff punch in or out, when a staff member submits a reques
 
 ## What notifications do my staff receive?
 
-Staff are alerted about announcements, new chat and group messages, new polls, decisions on their requests, and resolved support tickets. Tapping the alert opens the related screen in their app.
+Staff are alerted about announcements, new chat and group messages, new polls and decisions on their requests. Tapping the alert opens the related screen in their app.
 
 ## What happens when I tap a notification?
 
@@ -65,7 +65,7 @@ Switch Notifications off for Clockyn in your phone settings. The App Permissions
 
 ## Why does the app need access to my photos?
 
-Photos permission lets you attach images to requests and expenses and to support tickets. If you deny it, the app shows Please allow photo library access when you try to pick a picture. Allow it from Settings > Beyond > App Permissions.
+Photos permission lets you attach images to requests and expenses. If you deny it, the app shows Please allow photo library access when you try to pick a picture. Allow it from Settings > Beyond > App Permissions.
 
 ## Why does the app say Allow location to punch in?
 

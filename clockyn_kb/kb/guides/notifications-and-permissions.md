@@ -21,7 +21,7 @@ Clockyn needs a few permissions on the phone to work properly: location, camera,
 | Location | GPS check-in and attendance tracking. It confirms that you are inside your branch when you punch. |
 | Camera | Face recognition and photo capture. |
 | Notifications | Alerts, reminders and updates. |
-| Photos | Attaching images to requests, expenses and support tickets. |
+| Photos | Attaching images to requests and expenses. |
 
 Without Location and Camera a punch cannot be completed.
 
@@ -56,7 +56,6 @@ Staff and managers open their own **Settings** and tap **App Permissions**. Thei
 - Announcements and new polls.
 - New chat and group messages.
 - The decision on their requests. Tapping it opens their requests screen.
-- A resolved support ticket.
 
 ## When alerts do not arrive
 
@@ -74,7 +73,7 @@ Switch **Notifications** off for Clockyn in the phone settings. The **App Permis
 ## Common questions
 
 ### Why does the app ask for my photos?
-So you can attach images to requests, expenses and support tickets. If you deny it, the app asks you to allow photo library access when you try to pick a picture.
+So you can attach images to requests and expenses. If you deny it, the app asks you to allow photo library access when you try to pick a picture.
 
 ### Why did I not get an alert when staff punched in?
 Punch alerts go to the phones of your admins. Notifications must be allowed, the phone must be online, and you must be logged in on that phone. You can always check punches on the home screen.

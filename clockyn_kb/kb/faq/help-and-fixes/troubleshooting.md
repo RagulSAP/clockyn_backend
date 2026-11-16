@@ -83,7 +83,7 @@ Pull down on the screen to refresh, or tap Retry if it is shown. Check that your
 
 ## My photo could not be uploaded.
 
-Photos for support tickets must be real images and not too large. Try a smaller picture, take a fresh screenshot or choose a different image. The ticket can still be sent without a photo.
+Photos must be real images and not too large. Try a smaller picture, take a fresh screenshot or choose a different image. If the upload keeps failing, tell us in Support > Live Chat.
 
 ## The admin login says there is no user with this email address.
 

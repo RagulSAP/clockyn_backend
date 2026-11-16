@@ -100,7 +100,7 @@ def test_the_operator_list_covers_the_platform_routes():
                    ("PUT", "/auth/gen-admin-users/{}"), ("DELETE", "/auth/gen-admin-users/{}"),
                    ("GET", "/plans/coupons"), ("POST", "/plans/coupons"), ("PUT", "/plans/coupons/{}"),
                    ("DELETE", "/plans/coupons/{}"), ("GET", "/plans/all"), ("POST", "/plans/"), ("PUT", "/plans/{}"),
-                   ("DELETE", "/plans/{}"), ("GET", "/support/requests/all"), ("PUT", "/support/update/{}"),
+                   ("DELETE", "/plans/{}"),
                    ("GET", "/invoice/bulk-download"), ("GET", "/company/deletion-requests"),
                    ("GET", "/attribution/reports/meta-attribution"),
                    ("GET", "/gen-dashboard/referrals"), ("POST", "/gen-dashboard/referrals/rewards/{}/void")):
@@ -112,7 +112,6 @@ def test_the_operator_list_covers_the_platform_routes():
     # what the Clockyn app reads from /plans, /support, /company must stay available to a signed-in user
     ("GET", "/plans/get_plans"), ("GET", "/plans/subscription/{}"), ("GET", "/plans/plan-status/{}"),
     ("GET", "/plans/coupon/first"), ("GET", "/plans/coupon/validate"),
-    ("GET", "/support/subjects"), ("POST", "/support/submit"), ("GET", "/support/requests/{}"), ("POST", "/support/{}/reply"),
     ("POST", "/company/suggest-feature"), ("GET", "/company/suggest-feature/mine"), ("POST", "/company/request-deletion/{}"),
     ("GET", "/invoice/history"), ("POST", "/attribution/meta"),
     ("GET", "/referral/{}"),     # the organisation's own Refer & Earn page: an app route (admin only), never operator

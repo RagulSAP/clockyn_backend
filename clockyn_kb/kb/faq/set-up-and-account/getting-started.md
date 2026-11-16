@@ -90,7 +90,7 @@ Open Settings and find Appearance. Choose Light, Dark or System. System follows 
 
 ## Where can I find all the settings?
 
-Tap the Settings tab. The sections are: Your Plan & Validity, Company Settings, Salary Structure, Attendance & Devices, View & Download Reports, Managers, Expenses & Allowances, Appearance and Beyond. Beyond holds Suggest a Feature, Support, More Options, App Permissions and Logout.
+Tap the Settings tab. The sections are: Your Plan & Validity, Company Settings, Salary Structure, Attendance & Devices, View & Download Reports, Managers, Expenses & Allowances, Appearance and Beyond. Beyond holds Suggest a Feature, More Options, App Permissions and Logout.
 
 ## How do my staff start using Clockyn?
 

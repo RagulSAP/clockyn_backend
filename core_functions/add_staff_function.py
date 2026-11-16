@@ -820,10 +820,6 @@ async def permanently_delete_staff(user_id: str, requested_by_role_id: Optional[
         parent_id = org_id).
 
     Deliberately OUT OF SCOPE (left untouched on purpose, not by oversight):
-      - Support tickets (admin_subject_request / ticket_replies) submitted by
-        this employee are preserved — they may hold org-relevant
-        troubleshooting history, and their ownership semantics are murkier
-        than the tables below.
       - Chat groups this employee CREATED are preserved as-is (only their own
         membership row is removed) — deleting a shared group would destroy
         other members' history over one person's departure.

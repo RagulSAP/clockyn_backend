@@ -10,7 +10,11 @@ Rules (approved by the owner, see email_drafts/welcome_email_proposal.md):
   at least 1 hour apart (``MAX_ATTEMPTS`` / the interval in ``CLAIM_SQL``).
 * Users who existed when migration 042 ran were marked as welcomed by the migration, so existing customers get nothing.
 * Never in the request path: ``schedule_welcome_email`` returns at once and does the claim, the rendering and the SES call in a worker thread;
-  nothing it does can raise into, slow down or change the Home response. Only the user id and the result are logged, never the e-mail body.
+  nothing it does can raise into, slow down or change the Home response. Only the user id and the result are logged, never the e-mail body
+  or the recipient's address.
+* Every decision is logged at INFO with the prefix ``welcome-email:`` (``grep welcome-email`` in the server log): switch off, already looked
+  at, queued, why an admin was skipped (not an admin / already sent / attempts used up / tried less than an hour ago / bad address /
+  no such user), each step of a send and the reason a send failed.
 * The page itself is built by ``utils/welcome_email_template.py``; links, support address and company details come from ``utils/branding``.
   Sent through Amazon SES like the OTP and invoice e-mails (``EMAIL_USER`` sender, ``AWS_SES_REGION``) as a raw MIME message so the
   logo can travel inline (Content-ID) instead of being fetched from a web address.
@@ -63,6 +67,18 @@ CLAIM_SQL = """
 MARK_SENT_SQL = "UPDATE users SET welcome_email_sent_at = NOW() WHERE user_id = %s AND welcome_email_sent_at IS NULL"
 
 _recent: Dict[str, float] = {}
+_warned_off = False            # the 'switch is off' line is written once per process, not on every Home load
+
+# Why CLAIM_SQL returned no row: the same conditions, read back so the log can name the one that failed (diagnostics only).
+DIAGNOSE_SQL = """
+    SELECT u.user_id, u.role_id, u.welcome_email_sent_at, u.welcome_email_attempts,
+           (u.welcome_email_last_attempt_at IS NOT NULL AND u.welcome_email_last_attempt_at >= NOW() - INTERVAL '1 hour') AS tried_recently,
+           (u.email ~ '^[^@[:space:]]+@[^@[:space:]]+[.][^@[:space:]]+$') AS email_ok
+    FROM users u
+    WHERE u.user_id = %s OR u.user_id = (SELECT o.parent_id FROM org_info o WHERE o.org_id = %s)
+    ORDER BY (u.role_id = 1) DESC
+    LIMIT 1
+"""
 
 
 def enabled() -> bool:
@@ -125,6 +141,33 @@ def _remember(user_id: str) -> bool:
 
 
 # ── database ────────────────────────────────────────────────────────────────────────────────────────────────────────
+def skip_reason(row: Optional[Dict[str, Any]]) -> str:
+    """The first condition of CLAIM_SQL that a user row (from DIAGNOSE_SQL) fails, as a short sentence for the log."""
+    if not row:
+        return "no user with this id, and no organisation with this id has an owner"
+    if row.get("role_id") != 1:
+        return f"the user is not a company admin (role_id={row.get('role_id')})"
+    if row.get("welcome_email_sent_at") is not None:
+        return f"already sent at {row['welcome_email_sent_at']}"
+    if int(row.get("welcome_email_attempts") or 0) >= MAX_ATTEMPTS:
+        return f"all {MAX_ATTEMPTS} attempts are used up"
+    if row.get("tried_recently"):
+        return "an attempt was made less than an hour ago (retries wait one hour)"
+    if not row.get("email_ok"):
+        return "the admin's e-mail address is blank or not valid"
+    return "not eligible for a reason this check does not know (another request may have claimed it at the same moment)"
+
+
+def diagnose(cursor, user_id: str) -> str:
+    """skip_reason for ``user_id`` after a claim returned nothing. Never raises (a diagnostic must not hide the real outcome)."""
+    try:
+        cursor.execute(DIAGNOSE_SQL, (user_id, user_id))
+        row = cursor.fetchone()
+        return skip_reason(dict(row) if row else None)
+    except Exception as exc:
+        return f"reason unknown (the diagnostic query failed: {type(exc).__name__})"
+
+
 def claim_send(cursor, user_id: str) -> Optional[Dict[str, Any]]:
     """The admin's {user_id, name, email, org_id} when THIS call won the right to send the welcome e-mail, else None. The caller commits."""
     cursor.execute(CLAIM_SQL, (user_id, user_id, MAX_ATTEMPTS))
@@ -209,29 +252,50 @@ def send_email(to_email: str, subject: str, html: str, text: str, logo_cid: Opti
     ses.send_raw_email(Source=sender, Destinations=[to_email], RawMessage={"Data": message.as_bytes()})
 
 
+def _safe_message(exc: Exception, claimed: Optional[Dict[str, Any]]) -> str:
+    """The error text for the log, on one line, with the recipient's address (SES repeats it in its errors) replaced."""
+    text = " ".join(str(exc).split())[:300]
+    address = str((claimed or {}).get("email") or "")
+    return text.replace(address, "<recipient>") if address else text
+
+
 def process(user_id: str) -> str:
     """Claim, render, send and record, synchronously. Returns 'skipped' (not eligible / nothing to do), 'sent' or 'failed'. Never raises."""
     conn = None
+    stage = "connecting to the database"
     try:
+        logger.info("welcome-email: checking user %s", user_id)
         conn = get_db_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
+        stage = "claiming the send"
         claimed = claim_send(cur, user_id)
         conn.commit()                                   # the claim is visible to every other request before anything slow happens
         if not claimed:
+            reason = diagnose(cur, user_id)
+            conn.commit()
+            logger.info("welcome-email: skipped user %s: %s", user_id, reason)
             return "skipped"
+        logger.info("welcome-email: claimed user %s (admin %s); preparing the e-mail", user_id, claimed.get("user_id"))
+        stage = "reading the company details"
         data = gather(cur, claimed)
         conn.commit()
+        stage = "building the e-mail"
         from utils import welcome_email_template as tpl
         mail = tpl.render_welcome_email(
             first_name=data["first_name"], org_name=data["org_name"], trial_end=data["trial_end"],
             staff_limit=data["staff_limit"], trial_months=data["trial_months"],
         )
         subject = getattr(mail, "subject", None) or subject_for(claimed.get("name"), data["trial_months"])
+        stage = "sending through Amazon SES"
+        logger.info("welcome-email: sending to admin %s via SES (sender configured: %s, region %s, logo inline: %s)", claimed.get("user_id"),
+                    bool((os.getenv("EMAIL_USER") or "").strip()), os.getenv("AWS_SES_REGION", "ap-south-1"),
+                    bool(getattr(mail, "logo_bytes", None)))
         send_email(claimed["email"], subject, mail.html, mail.text,
                    logo_cid=getattr(mail, "logo_cid", None), logo_bytes=getattr(mail, "logo_bytes", None))
+        stage = "recording the send"
         cur.execute(MARK_SENT_SQL, (claimed["user_id"],))      # the ADMIN's user id (the id we were called with may be the organisation's)
         conn.commit()
-        logger.info("Welcome e-mail sent to user %s", user_id)
+        logger.info("welcome-email: SENT for user %s (admin %s)", user_id, claimed["user_id"])
         return "sent"
     except Exception as exc:
         try:
@@ -239,7 +303,8 @@ def process(user_id: str) -> str:
                 conn.rollback()
         except Exception:
             pass
-        logger.error("Welcome e-mail for user %s failed (%s); the attempt is counted", user_id, type(exc).__name__)
+        logger.error("welcome-email: FAILED for user %s while %s: %s: %s (the attempt is counted; retried after an hour, %d attempts in total)",
+                     user_id, stage, type(exc).__name__, _safe_message(exc, claimed if "claimed" in locals() else None), MAX_ATTEMPTS)
         return "failed"
     finally:
         if conn:
@@ -253,18 +318,28 @@ def _run_safely(user_id: str) -> None:
     try:
         process(user_id)
     except Exception:                                    # process() already catches everything; belt and braces for the worker thread
-        logger.exception("Welcome e-mail worker for user %s crashed", user_id)
+        logger.exception("welcome-email: worker for user %s crashed", user_id)
 
 
 async def schedule_welcome_email(user_id: Optional[str]) -> None:
     """Called by the Home screen's first request. Returns immediately and never raises: the work runs in a worker thread.
     Off (the default): returns before any query. The same admin is looked at once per SKIP_TTL_SECONDS per process."""
     try:
-        if not user_id or not enabled():
+        global _warned_off
+        if not user_id:
+            return
+        if not enabled():
+            if not _warned_off:
+                _warned_off = True
+                logger.info("welcome-email: OFF (WELCOME_EMAIL_ENABLED=%r; set it to 1 in the backend's environment and restart). "
+                            "No welcome e-mail is sent while it is off. This line is written once per process.", os.getenv("WELCOME_EMAIL_ENABLED"))
             return
         if _remember(str(user_id)):
+            logger.info("welcome-email: user %s was looked at less than %d minutes ago by this process; not checking again yet",
+                        user_id, SKIP_TTL_SECONDS // 60)
             return
         loop = asyncio.get_running_loop()
+        logger.info("welcome-email: home screen loaded for user %s; queued the check", user_id)
         loop.run_in_executor(None, _run_safely, str(user_id))
     except Exception:
-        logger.exception("Could not schedule the welcome e-mail for user %s", user_id)
+        logger.exception("welcome-email: could not schedule the check for user %s", user_id)

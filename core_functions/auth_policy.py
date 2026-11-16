@@ -103,9 +103,7 @@ OPERATOR_RULES: Tuple[Tuple[object, str], ...] = (
     (("GET",), "/plans/all"),
     (("POST",), "/plans"),
     (("PUT", "DELETE"), "/plans/{}"),
-    # support / suggestion / attribution / invoice administration lists
-    (("GET",), "/support/requests/all"),
-    (("PUT",), "/support/update/{}"),
+    # suggestion / attribution / invoice administration lists
     (("GET",), "/company/deletion-requests"),
     (("GET",), "/company/suggest-feature"),
     (("GET",), "/company/suggest-feature/with-replies"),

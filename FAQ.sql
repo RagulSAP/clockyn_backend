@@ -1,6 +1,6 @@
 -- ============================================================================================
 -- Clockyn FAQ starter set for the Support > FAQ screen of the app and the FAQ Hub of the web console.
--- 397 questions in 6 buckets. Generated 2026-11-15.
+-- 392 questions in 6 buckets. Generated 2026-11-15, updated 2026-11-16.
 --
 -- Run AFTER the 'CREATE: FAQ' block of clockyn_ddl_latest.sql (table clockyn_dev.support_faq).
 -- Safe to run more than once: a question that already exists (compared case-insensitively) is skipped, so FAQs you
@@ -8,6 +8,8 @@
 -- Everything runs in one transaction: either all rows are loaded or none.
 -- An EXISTING database already holds the older wording of some answers (the Refer & Earn percent, plan durations and free months):
 -- run FAQ_referral_update.sql once after deploying; it updates those answers and adds the new questions listed there.
+-- Retired 2026-11-16: the five questions about the support-ticket screen (Settings > Beyond > Support, removed because Live Chat replaces it)
+-- are no longer in this starter set; FAQ_referral_update.sql (part 3) deletes them from an EXISTING database.
 -- Sort orders: the new Refer & Earn rows share the value 3319 with the last older one (the app orders by sort_order, then id).
 --
 --   Set up & Account: Getting Started (15), Account & Security (26), Company Setup (25), Staff Management (32)
@@ -15,7 +17,7 @@
 --   Pay & Expenses: Payroll & Salary (39), Expenses & Advances (22)
 --   Team & Customers: CRM & Leads (18), Chat & Announcements (18)
 --   Plans & Payments: Plans & Billing (25), Payments & Invoices (17), Refer & Earn (15)
---   Help & Fixes: Notifications & Permissions (15), Troubleshooting (20), Support & Feedback (13)
+--   Help & Fixes: Notifications & Permissions (15), Troubleshooting (20), Support & Feedback (8)
 -- ============================================================================================
 
 BEGIN;
@@ -102,7 +104,7 @@ SELECT 'Set up & Account', 'Getting Started', 'How do I switch to dark mode?', '
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('How do I switch to dark mode?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Set up & Account', 'Getting Started', 'Where can I find all the settings?', 'Tap the Settings tab. The sections are: Your Plan & Validity, Company Settings, Salary Structure, Attendance & Devices, View & Download Reports, Managers, Expenses & Allowances, Appearance and Beyond. Beyond holds Suggest a Feature, Support, More Options, App Permissions and Logout.', 140, 1
+SELECT 'Set up & Account', 'Getting Started', 'Where can I find all the settings?', 'Tap the Settings tab. The sections are: Your Plan & Validity, Company Settings, Salary Structure, Attendance & Devices, View & Download Reports, Managers, Expenses & Allowances, Appearance and Beyond. Beyond holds Suggest a Feature, More Options, App Permissions and Logout.', 140, 1
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('Where can I find all the settings?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
@@ -1833,7 +1835,7 @@ Your own referral code is separate: after you register you can still share it, a
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('Can I use a friend''s referral code and a partner promo code together?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Plans & Payments', 'Refer & Earn', 'How can my business or channel become a Clockyn partner?', 'If you run a YouTube, Instagram or Facebook channel, or have another audience, and want to recommend Clockyn, write to us. Open the Support tab and send a message in Live Chat, or raise a ticket from Settings > Beyond > Support, with your channel name, its link and your contact details. Our team will explain the partner programme and, if you are accepted, give you your own code.
+SELECT 'Plans & Payments', 'Refer & Earn', 'How can my business or channel become a Clockyn partner?', 'If you run a YouTube, Instagram or Facebook channel, or have another audience, and want to recommend Clockyn, write to us. Open the Support tab and send a message in Live Chat with your channel name, its link and your contact details. Our team will explain the partner programme and, if you are accepted, give you your own code.
 Every company that registers with your code gets a discount on Prime or Elite. We never share a company''s data with partners.', 3319, 1
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('How can my business or channel become a Clockyn partner?'));
 
@@ -1874,7 +1876,7 @@ SELECT 'Help & Fixes', 'Notifications & Permissions', 'What notifications will I
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('What notifications will I receive as an admin?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Help & Fixes', 'Notifications & Permissions', 'What notifications do my staff receive?', 'Staff are alerted about announcements, new chat and group messages, new polls, decisions on their requests, and resolved support tickets. Tapping the alert opens the related screen in their app.', 3390, 1
+SELECT 'Help & Fixes', 'Notifications & Permissions', 'What notifications do my staff receive?', 'Staff are alerted about announcements, new chat and group messages, new polls and decisions on their requests. Tapping the alert opens the related screen in their app.', 3390, 1
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('What notifications do my staff receive?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
@@ -1894,7 +1896,7 @@ SELECT 'Help & Fixes', 'Notifications & Permissions', 'How do I stop notificatio
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('How do I stop notifications or turn them off?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Help & Fixes', 'Notifications & Permissions', 'Why does the app need access to my photos?', 'Photos permission lets you attach images to requests and expenses and to support tickets. If you deny it, the app shows Please allow photo library access when you try to pick a picture. Allow it from Settings > Beyond > App Permissions.', 3440, 1
+SELECT 'Help & Fixes', 'Notifications & Permissions', 'Why does the app need access to my photos?', 'Photos permission lets you attach images to requests and expenses. If you deny it, the app shows Please allow photo library access when you try to pick a picture. Allow it from Settings > Beyond > App Permissions.', 3440, 1
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('Why does the app need access to my photos?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
@@ -1979,7 +1981,7 @@ SELECT 'Help & Fixes', 'Troubleshooting', 'A screen shows an error or stays empt
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('A screen shows an error or stays empty. How do I fix it?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Help & Fixes', 'Troubleshooting', 'My photo could not be uploaded.', 'Photos for support tickets must be real images and not too large. Try a smaller picture, take a fresh screenshot or choose a different image. The ticket can still be sent without a photo.', 3650, 1
+SELECT 'Help & Fixes', 'Troubleshooting', 'My photo could not be uploaded.', 'Photos must be real images and not too large. Try a smaller picture, take a fresh screenshot or choose a different image. If the upload keeps failing, tell us in Support > Live Chat.', 3650, 1
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('My photo could not be uploaded.'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
@@ -1988,7 +1990,7 @@ WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = 
 
 -- Help & Fixes / Support & Feedback
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Help & Fixes', 'Support & Feedback', 'How can I contact Clockyn support?', 'Open the Support tab. You will find FAQ for answers, Live Chat to talk to our support team, and Video Hub for step-by-step guides. You can also raise a ticket from Settings > Beyond > Support. Support options are available to organisation admins.', 3670, 1
+SELECT 'Help & Fixes', 'Support & Feedback', 'How can I contact Clockyn support?', 'Open the Support tab. You will find FAQ for answers, Live Chat to talk to our support team, and Video Hub for step-by-step guides. To report a problem or ask for help, use Live Chat. Support options are available to organisation admins.', 3670, 1
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('How can I contact Clockyn support?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
@@ -2002,27 +2004,6 @@ WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
 SELECT 'Help & Fixes', 'Support & Feedback', 'Why can I not see the Support tab?', 'The Support tab with FAQ, Live Chat and Video Hub is meant for organisation admins. Staff and managers do not see it. Sign in with the admin account to use it.', 3700, 1
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('Why can I not see the Support tab?'));
-
-INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Help & Fixes', 'Support & Feedback', 'How do I raise a support ticket?', '1. Open Settings > Beyond > Support.
-2. Choose a subject.
-3. Describe your issue or question.
-4. Optionally tap Upload Photo to add a screenshot.
-5. Tap Submit Request.
-You will see Support request submitted. You can send up to 10 tickets per hour.', 3710, 1
-WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('How do I raise a support ticket?'));
-
-INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Help & Fixes', 'Support & Feedback', 'How do I see the status of my tickets?', 'Open Settings > Beyond > Support and scroll to My Tickets. Each ticket shows a status: Open, In Progress or Resolved, with your message, the photo if any, and the replies from our team.', 3720, 1
-WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('How do I see the status of my tickets?'));
-
-INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Help & Fixes', 'Support & Feedback', 'How do I reply to a ticket or reopen a resolved one?', 'Open the ticket in My Tickets and type in the reply box at the bottom, then send. When a ticket is resolved the box says Reply to reopen this ticket, and replying moves it back to In Progress. You will see a Reply sent confirmation.', 3730, 1
-WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('How do I reply to a ticket or reopen a resolved one?'));
-
-INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Help & Fixes', 'Support & Feedback', 'What is the difference between Support in Settings and the Support tab?', 'The Support tab is for self-help and quick contact: FAQ, Live Chat and Video Hub. Support under Settings > Beyond is for raising a ticket with a subject, a description and an optional photo, and following its replies. Use Live Chat for fast answers and tickets for issues you want tracked.', 3740, 1
-WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('What is the difference between Support in Settings and the Support tab?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
 SELECT 'Help & Fixes', 'Support & Feedback', 'How do I suggest a new feature?', '1. Open Settings > Beyond > Suggest a Feature.
@@ -2040,12 +2021,8 @@ The request is sent for review, and once it is reviewed, all the data is permane
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('How do I request deletion of my account?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Help & Fixes', 'Support & Feedback', 'What should I tell support so they can help me faster?', 'Mention what you were trying to do, what the screen said (the exact message helps), your company name and the time it happened. For payment issues add the amount, the date and time and the last digits of the transaction reference. A screenshot attached to a ticket also helps.', 3770, 1
+SELECT 'Help & Fixes', 'Support & Feedback', 'What should I tell support so they can help me faster?', 'Mention what you were trying to do, what the screen said (the exact message helps), your company name and the time it happened. For payment issues add the amount, the date and time and the last digits of the transaction reference. A screenshot sent in Live Chat also helps.', 3770, 1
 WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('What should I tell support so they can help me faster?'));
-
-INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
-SELECT 'Help & Fixes', 'Support & Feedback', 'Why can I not submit another support ticket?', 'To prevent spam, each user can send up to 10 tickets per hour. If you reach that you will see a message asking you to try again later. Wait a while, or add your update as a reply on an existing ticket or in Live Chat.', 3780, 1
-WHERE NOT EXISTS (SELECT 1 FROM clockyn_dev.support_faq WHERE lower(question) = lower('Why can I not submit another support ticket?'));
 
 INSERT INTO clockyn_dev.support_faq (faq_bucket, category, question, answer, sort_order, status)
 SELECT 'Help & Fixes', 'Support & Feedback', 'Where can I see the Fine / Deduction feature?', 'Fine / Deduction appears under Settings > Salary Structure, but it is not ready yet and shows Coming soon when you tap it. Use Suggest a Feature if you want to tell us how you would like it to work.', 3790, 1

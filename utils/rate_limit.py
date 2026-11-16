@@ -7,7 +7,6 @@ against ONE instance); a shared limiter (Redis, an API gateway, a WAF rule) is t
 Rules (name -> default `count/window_seconds`), each overridable with the env variable `RATE_LIMIT_<NAME>` written as
 `<count>/<window_seconds>` (for example `RATE_LIMIT_AUTH_LOGIN=60/60`) or `0` / `off` to switch that one rule off:
 
-  SUPPORT_CREATE       10/3600   per user    POST /support/submit
   SUGGESTION_CREATE    10/3600   per user    POST /company/suggest-feature
   VIDEO_VIEW           120/3600  per user    POST /support/videos/{id}/view
   LIVE_CHAT_SEND       30/60     per user    POST /live-chat/send, /live-chat/send-file
@@ -47,7 +46,6 @@ MAX_KEY_LENGTH = 200       # request-supplied values (user ids) are clipped befo
 
 # name -> (count, window seconds)
 DEFAULT_RULES: Dict[str, Tuple[int, int]] = {
-    "SUPPORT_CREATE": (10, 3600),
     "SUGGESTION_CREATE": (10, 3600),
     "VIDEO_VIEW": (120, 3600),
     "LIVE_CHAT_SEND": (30, 60),

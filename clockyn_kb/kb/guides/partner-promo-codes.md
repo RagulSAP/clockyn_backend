@@ -71,7 +71,7 @@ No. The Referral code box takes one code, and a code cannot be added or changed 
 No. The code can only be entered on the register screen.
 
 ### How can my business or channel become a Clockyn partner?
-If you run a YouTube, Instagram or Facebook channel, or have another audience, and want to recommend Clockyn, write to us. Open the Support tab and send a message in **Live Chat**, or raise a ticket from Settings > Beyond > Support, with your channel name, its link and your contact details. The Clockyn team will explain the partner programme and, if you are accepted, give you your own code. Every company that registers with your code gets a discount on Prime or Elite.
+If you run a YouTube, Instagram or Facebook channel, or have another audience, and want to recommend Clockyn, write to us. Open the Support tab and send a message in **Live Chat** with your channel name, its link and your contact details. The Clockyn team will explain the partner programme and, if you are accepted, give you your own code. Every company that registers with your code gets a discount on Prime or Elite.
 
 ## What can go wrong
 

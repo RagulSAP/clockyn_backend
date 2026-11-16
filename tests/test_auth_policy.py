@@ -63,7 +63,6 @@ STAFF_CALLS = [
     ("DELETE", "/company/delete-account/{}"), ("POST", "/company/request-deletion/{}"), ("GET", "/company/details/{}"),
     ("POST", "/company/suggest-feature"), ("GET", "/company/suggest-feature/mine"),
     ("GET", "/plans/plan-status/{}"), ("GET", "/plans/subscription/{}"), ("GET", "/plans/get_plans"),
-    ("GET", "/support/subjects"), ("POST", "/support/submit"), ("GET", "/support/requests/{}"), ("POST", "/support/{}/reply"),
 ]
 
 ROUTES = {(m, p) for _f, m, p in mounted_routes()}
@@ -131,7 +130,7 @@ def test_device_change_submit_is_public_for_post_only():
     ("GET", "/gen-dashboard/stats"), ("DELETE", "/gen-dashboard/organizations/x"), ("GET", "/auth/gen-admin-users"),
     ("PUT", "/auth/gen-admin-users/9"), ("POST", "/plans/coupons"), ("DELETE", "/plans/coupons/3"), ("POST", "/plans"),
     ("POST", "/plans/"), ("PUT", "/plans/7"), ("DELETE", "/plans/7"), ("GET", "/plans/all"),
-    ("GET", "/support/requests/all"), ("PUT", "/support/update/4"), ("GET", "/invoice/bulk-download"),
+    ("GET", "/invoice/bulk-download"),
     ("GET", "/gen-dashboard/referrals"), ("POST", "/gen-dashboard/referrals/rewards/9/void"),
 ])
 def test_operator_paths_are_never_satisfied_by_an_app_token(method, path):
@@ -318,7 +317,7 @@ def test_key_lists_are_data():
     [("path", "user_id", "stf"), ("query", "org_id", "org-A")],                # GET /chat/list/{me}?org_id=
     [("path", "org_id", "org-A"), ("path", "user_id", "stf")],                 # GET /api/leads/employee/{org}/{me}
     [("path", "staff_id", "stf"), ("path", "org_id", "org-A")],                # GET /api/salary/employee/{org}/{me}
-    [("form", "user_id", "stf"), ("form", "org_id", "org-A")],                 # POST /face/punch, /support/submit
+    [("form", "user_id", "stf"), ("form", "org_id", "org-A")],                 # POST /face/punch
     [("query", "user_id", "stf"), ("query", "org_id", "org-A")],               # /expenses/*
     [("body", "user_id", "stf"), ("body", "org_id", "org-A")],                 # POST /requests/leave/submit
     [("body", "sender_id", "stf")],                                            # POST /chat/send

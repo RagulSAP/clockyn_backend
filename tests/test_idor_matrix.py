@@ -103,7 +103,7 @@ def test_id_in_a_multipart_form(client, caller, key, value, expected):
            "admin-of-B": ("adm-b", "org-B")}[caller]
     form = {"user_id": own[0], "org_id": own[1], "message": "m"}
     form[key] = value
-    r = client.post("/support/submit", data=form, headers=CALLERS[caller])
+    r = client.post("/form/echo", data=form, headers=CALLERS[caller])
     assert r.status_code == expected, r.text
 
 

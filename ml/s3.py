@@ -298,44 +298,6 @@ def get_chat_file_presigned_url(s3_key: str, expires_in: int = 604800) -> str:
         return None
 
 
-def upload_support_photo(file_bytes: bytes, filename: str, content_type: str) -> tuple:
-    """Upload a support photo to S3 client_support/ prefix.
-    Returns (s3_key, presigned_url).
-    """
-    if is_heic(file_bytes):
-        content_type = HEIC_CONTENT_TYPE
-        if not (filename or "").lower().endswith((".heic", ".heif")):
-            filename = f"{os.path.splitext(filename or 'image')[0]}.{HEIC_EXT}"
-    key = f"client_support/{uuid.uuid4().hex}_{filename}"
-    s3.put_object(
-        Bucket=S3_BUCKET,
-        Key=key,
-        Body=file_bytes,
-        ContentType=content_type,
-    )
-    presigned_url = s3.generate_presigned_url(
-        'get_object',
-        Params={'Bucket': S3_BUCKET, 'Key': key},
-        ExpiresIn=604800
-    )
-    return key, presigned_url
-
-
-def get_support_photo_url(s3_key: str, expires_in: int = 604800) -> str:
-    """Generate a fresh presigned URL for a stored support photo key."""
-    if not s3_key:
-        return None
-    try:
-        s3.head_object(Bucket=S3_BUCKET, Key=s3_key)
-        return s3.generate_presigned_url(
-            'get_object',
-            Params={'Bucket': S3_BUCKET, 'Key': s3_key},
-            ExpiresIn=expires_in
-        )
-    except Exception as e:
-        print(f"Support photo not found: {s3_key} — {e}")
-        return None
-
 
 def get_support_video_url(s3_key: str, expires_in: int = 21600) -> str:
     """Presigned GET URL of a guide video (no head_object: the list would otherwise cost one S3 call per video).

@@ -215,8 +215,8 @@ def test_on_org_mismatch_in_query_path_body_and_form_is_403(client, enforced):
     assert client.get("/api/leads/employee/org-A/stf", headers=STF).status_code == 200
     assert client.post("/api/leads/create", headers=STF, json={"org_id": "org-B", "user_id": "stf"}).status_code == 403
     assert client.post("/api/leads/create", headers=STF, json={"org_id": "org-A", "user_id": "stf"}).status_code == 200
-    ok = client.post("/support/submit", headers=STF, data={"user_id": "stf", "org_id": "org-A", "message": "m"})
-    bad = client.post("/support/submit", headers=STF, data={"user_id": "stf", "org_id": "org-B", "message": "m"})
+    ok = client.post("/form/echo", headers=STF, data={"user_id": "stf", "org_id": "org-A", "message": "m"})
+    bad = client.post("/form/echo", headers=STF, data={"user_id": "stf", "org_id": "org-B", "message": "m"})
     assert ok.status_code == 200 and bad.status_code == 403 and bad.json() == {"detail": "Forbidden"}
 
 

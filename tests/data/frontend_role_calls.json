@@ -776,14 +776,6 @@
   },
   {
    "method": "GET",
-   "path": "/support/requests/{param}"
-  },
-  {
-   "method": "GET",
-   "path": "/support/subjects"
-  },
-  {
-   "method": "GET",
    "path": "/support/videos"
   },
   {
@@ -1016,15 +1008,7 @@
   },
   {
    "method": "POST",
-   "path": "/support/submit"
-  },
-  {
-   "method": "POST",
    "path": "/support/videos/{param}/view"
-  },
-  {
-   "method": "POST",
-   "path": "/support/{param}/reply"
   },
   {
    "method": "PUT",
@@ -8401,88 +8385,6 @@
    {
     "method": "POST",
     "path": "/company/suggest-feature"
-   },
-   {
-    "method": "PUT",
-    "path": "/api/leads/{param}/work-status"
-   }
-  ],
-  "admin/support": [
-   {
-    "method": "GET",
-    "path": "/api/announcements/employee/{param}"
-   },
-   {
-    "method": "GET",
-    "path": "/api/leads/carry-forward/my/{param}/{param}"
-   },
-   {
-    "method": "GET",
-    "path": "/api/leads/employee/{param}/{param}"
-   },
-   {
-    "method": "GET",
-    "path": "/attendance/today/{param}"
-   },
-   {
-    "method": "GET",
-    "path": "/auth/org-logo/{param}"
-   },
-   {
-    "method": "GET",
-    "path": "/chat/list/{param}"
-   },
-   {
-    "method": "GET",
-    "path": "/group-chat/list/{param}"
-   },
-   {
-    "method": "GET",
-    "path": "/live-chat/unread/{param}"
-   },
-   {
-    "method": "GET",
-    "path": "/plans/plan-status/{param}"
-   },
-   {
-    "method": "GET",
-    "path": "/requests/check-session/{param}"
-   },
-   {
-    "method": "GET",
-    "path": "/support/requests/{param}"
-   },
-   {
-    "method": "GET",
-    "path": "/support/subjects"
-   },
-   {
-    "method": "GET",
-    "path": "/version/check"
-   },
-   {
-    "method": "POST",
-    "path": "/analytics/events"
-   },
-   {
-    "method": "POST",
-    "path": "/api/leads/carry-forward/request"
-   },
-   {
-    "method": "POST",
-    "path": "/auth/logout"
-   },
-   {
-    "method": "POST",
-    "path": "/auth/update-push-token"
-   },
-   {
-    "method": "POST",
-    "path": "/support/submit"
-   },
-   {
-    "method": "POST",
-    "path": "/support/{param}/reply"
    },
    {
     "method": "PUT",

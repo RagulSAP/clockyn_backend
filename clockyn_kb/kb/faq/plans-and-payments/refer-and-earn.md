@@ -98,5 +98,5 @@ Your own referral code is separate: after you register you can still share it, a
 
 ## How can my business or channel become a Clockyn partner?
 
-If you run a YouTube, Instagram or Facebook channel, or have another audience, and want to recommend Clockyn, write to us. Open the Support tab and send a message in Live Chat, or raise a ticket from Settings > Beyond > Support, with your channel name, its link and your contact details. Our team will explain the partner programme and, if you are accepted, give you your own code.
+If you run a YouTube, Instagram or Facebook channel, or have another audience, and want to recommend Clockyn, write to us. Open the Support tab and send a message in Live Chat with your channel name, its link and your contact details. Our team will explain the partner programme and, if you are accepted, give you your own code.
 Every company that registers with your code gets a discount on Prime or Elite. We never share a company's data with partners.

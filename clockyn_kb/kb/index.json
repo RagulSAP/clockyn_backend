@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-15",
+  "generated": "2026-11-16",
   "count": 54,
   "counts": {
     "faq": 18,
     "guide": 29,
     "playbook": 7
   },
-  "faq_questions": 397,
+  "faq_questions": 392,
   "docs": [
     {
       "slug": "faq-attendance-and-face-punch",
@@ -717,13 +717,13 @@
           "id": "why-does-the-camera-not-open-when-i-punch"
         }
       ],
-      "words": 799,
+      "words": 792,
       "faq_questions": 15
     },
     {
       "slug": "faq-support-and-feedback",
       "title": "Support & Feedback",
-      "summary": "Answers to 13 common questions about Support & Feedback.",
+      "summary": "Answers to 8 common questions about Support & Feedback.",
       "category": "Help & Fixes",
       "audience": "all",
       "source": "faq",
@@ -733,14 +733,14 @@
       "tags": [
         "support",
         "feedback",
-        "see",
-        "ticket",
         "feature",
-        "tab",
+        "see",
         "account",
-        "another",
-        "between",
-        "chat"
+        "chat",
+        "clockyn",
+        "contact",
+        "deduction",
+        "deletion"
       ],
       "updated": "2026-11-15",
       "related": [],
@@ -768,26 +768,6 @@
         },
         {
           "level": 2,
-          "text": "How do I raise a support ticket?",
-          "id": "how-do-i-raise-a-support-ticket"
-        },
-        {
-          "level": 2,
-          "text": "How do I see the status of my tickets?",
-          "id": "how-do-i-see-the-status-of-my-tickets"
-        },
-        {
-          "level": 2,
-          "text": "How do I reply to a ticket or reopen a resolved one?",
-          "id": "how-do-i-reply-to-a-ticket-or-reopen-a-resolved-one"
-        },
-        {
-          "level": 2,
-          "text": "What is the difference between Support in Settings and the Support tab?",
-          "id": "what-is-the-difference-between-support-in-settings-and-the-support-tab"
-        },
-        {
-          "level": 2,
           "text": "How do I suggest a new feature?",
           "id": "how-do-i-suggest-a-new-feature"
         },
@@ -803,17 +783,12 @@
         },
         {
           "level": 2,
-          "text": "Why can I not submit another support ticket?",
-          "id": "why-can-i-not-submit-another-support-ticket"
-        },
-        {
-          "level": 2,
           "text": "Where can I see the Fine / Deduction feature?",
           "id": "where-can-i-see-the-fine-deduction-feature"
         }
       ],
-      "words": 698,
-      "faq_questions": 13
+      "words": 435,
+      "faq_questions": 8
     },
     {
       "slug": "faq-troubleshooting",
@@ -941,7 +916,7 @@
           "id": "the-admin-login-says-there-is-no-user-with-this-email-address"
         }
       ],
-      "words": 1058,
+      "words": 1057,
       "faq_questions": 20
     },
     {
@@ -1681,7 +1656,7 @@
           "id": "how-can-my-business-or-channel-become-a-clockyn-partner"
         }
       ],
-      "words": 1589,
+      "words": 1581,
       "faq_questions": 15
     },
     {
@@ -2101,7 +2076,7 @@
           "id": "how-do-my-staff-start-using-clockyn"
         }
       ],
-      "words": 972,
+      "words": 971,
       "faq_questions": 15
     },
     {
@@ -3256,8 +3231,8 @@
     },
     {
       "slug": "contacting-support-and-live-chat",
-      "title": "Contact Clockyn support: Live Chat, tickets, FAQ and videos",
-      "summary": "How to reach the Clockyn support team from the app, who can use Live Chat, support hours and reply time, how to send files, raise tickets and what details to share.",
+      "title": "Contact Clockyn support: Live Chat, FAQ and videos",
+      "summary": "How to reach the Clockyn support team from the app, who can use Live Chat, support hours and reply time, how to send files and what details to share.",
       "category": "Help & Fixes",
       "audience": "admin",
       "source": "guide",
@@ -3270,8 +3245,8 @@
         "live chat",
         "chat with support",
         "help",
+        "report a problem",
         "ticket",
-        "support request",
         "raise ticket",
         "faq",
         "video hub",
@@ -3282,7 +3257,7 @@
         "talk to someone",
         "customer care"
       ],
-      "updated": "2026-11-15",
+      "updated": "2026-11-16",
       "related": [
         "faq-support-and-feedback",
         "faq-troubleshooting",
@@ -3327,11 +3302,6 @@
         },
         {
           "level": 2,
-          "text": "Raise a support ticket",
-          "id": "raise-a-support-ticket"
-        },
-        {
-          "level": 2,
           "text": "Suggest a feature",
           "id": "suggest-a-feature"
         },
@@ -3362,13 +3332,8 @@
         },
         {
           "level": 3,
-          "text": "What is the difference between Live Chat and a ticket?",
-          "id": "what-is-the-difference-between-live-chat-and-a-ticket"
-        },
-        {
-          "level": 3,
-          "text": "Why can I not submit another ticket?",
-          "id": "why-can-i-not-submit-another-ticket"
+          "text": "Can I raise a support ticket?",
+          "id": "can-i-raise-a-support-ticket"
         },
         {
           "level": 3,
@@ -3391,7 +3356,7 @@
           "id": "when-to-contact-support"
         }
       ],
-      "words": 1145,
+      "words": 1009,
       "faq_questions": 0
     },
     {
@@ -4845,7 +4810,7 @@
           "id": "when-to-contact-support"
         }
       ],
-      "words": 863,
+      "words": 855,
       "faq_questions": 0
     },
     {
@@ -4937,7 +4902,7 @@
           "id": "when-to-contact-support"
         }
       ],
-      "words": 846,
+      "words": 838,
       "faq_questions": 0
     },
     {
@@ -6284,7 +6249,7 @@
           "id": "feature-requests-and-complaints-about-the-product"
         }
       ],
-      "words": 459,
+      "words": 461,
       "faq_questions": 0
     },
     {

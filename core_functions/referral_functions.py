@@ -421,6 +421,54 @@ def qualify_referral_on_first_payment(cursor, org_id: str, base_amount: Any = No
     return referral_id
 
 
+# ──────────────────────────────────────────────────────────────────────────── account deletion
+def delete_org_referral_data(cursor, org_ids) -> Dict[str, int]:
+    """Remove the Refer & Earn data of organisations whose account is being deleted (hard delete or anonymise). Runs inside the
+    caller's transaction and NEVER makes the deletion fail: it works in a savepoint, and on any database error it rolls back to
+    the savepoint, logs, and returns an empty result.
+
+    * the organisation's own referral code (``org_referral_code``) and all of its own rewards (``referral_reward.org_id``, any
+      status) are deleted;
+    * a PENDING reward that another organisation was waiting for from this one (this organisation was the referred one and never
+      paid) can never unlock any more, so it is VOIDED;
+    * a C2C ``referral`` row is deleted once no reward is left on it. If the OTHER side still holds a reward (a friend's earned
+      discount, or the referred organisation's own), the row stays, because that reward belongs to a live customer; it holds
+      only organisation ids, no personal data;
+    * B2C referral rows (``partner_id`` set) are never deleted: they carry the promoter's commission (money) and its ledger.
+    Billing records (orders, payments, invoices) are not touched; they only keep the numeric reward id."""
+    ids = [o for o in dict.fromkeys(org_ids or []) if o]
+    result = {"voided": 0, "rewards": 0, "codes": 0, "referrals": 0}
+    if not ids:
+        return result
+    try:
+        cursor.execute("SAVEPOINT referral_cleanup_sp")
+        cursor.execute(
+            "UPDATE referral_reward SET status = 'VOID' WHERE role = 'referrer' AND status = 'PENDING' AND referral_id IN "
+            "(SELECT referral_id FROM referral WHERE referred_org_id = ANY(%s) AND qualified_at IS NULL)",
+            (ids,),
+        )
+        result["voided"] = int(getattr(cursor, "rowcount", 0) or 0)
+        cursor.execute("DELETE FROM referral_reward WHERE org_id = ANY(%s)", (ids,))
+        result["rewards"] = int(getattr(cursor, "rowcount", 0) or 0)
+        cursor.execute("DELETE FROM org_referral_code WHERE org_id = ANY(%s)", (ids,))
+        result["codes"] = int(getattr(cursor, "rowcount", 0) or 0)
+        cursor.execute(
+            "DELETE FROM referral r WHERE r.partner_id IS NULL AND (r.referrer_org_id = ANY(%s) OR r.referred_org_id = ANY(%s)) "
+            "AND NOT EXISTS (SELECT 1 FROM referral_reward w WHERE w.referral_id = r.referral_id)",
+            (ids, ids),
+        )
+        result["referrals"] = int(getattr(cursor, "rowcount", 0) or 0)
+        cursor.execute("RELEASE SAVEPOINT referral_cleanup_sp")
+    except Exception:
+        try:
+            cursor.execute("ROLLBACK TO SAVEPOINT referral_cleanup_sp")
+        except Exception:
+            pass
+        logger.exception("Referral cleanup for %s deleted organisation(s) failed; the account deletion continues", len(ids))
+        return {"voided": 0, "rewards": 0, "codes": 0, "referrals": 0}
+    return result
+
+
 # ──────────────────────────────────────────────────────────────────────────── org-admin view
 def _eligible_plan_names(cursor) -> List[str]:
     try:
