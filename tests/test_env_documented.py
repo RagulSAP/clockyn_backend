@@ -1,5 +1,5 @@
 """Every environment variable the backend reads must be documented (README.md, Environment Variables table)
-and present in .env (commented or placeholder). Scans the Python sources with `ast`; no import of the app.
+and present in .env.example (commented or placeholder). Scans the Python sources with `ast`; no import of the app.
 Run: python -m pytest tests/test_env_documented.py -q
 """
 import ast
@@ -139,7 +139,7 @@ def readme_env_section() -> str:
 
 def env_file_names() -> set:
     out = set()
-    p = ROOT / ".env"
+    p = ROOT / ".env.example"          # the committed template; a local .env is the owner's own and may not exist
     for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
         m = re.match(r"^\s*#?\s*([A-Za-z_][A-Za-z0-9_]*)\s*=", line)
         if m:
@@ -191,12 +191,29 @@ def test_every_env_variable_is_documented_in_readme():
         f"{n} ({'/'.join(sorted(wanted[n]))})" for n in missing)
 
 
-def test_every_env_variable_is_present_in_dot_env():
+def test_every_env_variable_is_present_in_dot_env_example():
     wanted, _ = _wanted()
     present = env_file_names()
     missing = sorted(n for n in wanted if n not in present)
     assert not missing, "not in .env (add a commented placeholder): " + ", ".join(
         f"{n} ({'/'.join(sorted(wanted[n]))})" for n in missing)
+
+
+def test_env_example_is_up_to_date_and_holds_no_secret_values():
+    """.env.example is generated (scripts/build_env_example.py); it is committed, so a secret-looking key must be empty or a <placeholder>."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("build_env_example", ROOT / "scripts" / "build_env_example.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    current = (ROOT / ".env.example").read_text(encoding="utf-8").replace("\r\n", "\n")
+    assert current == mod.render(), "run: python scripts/build_env_example.py"
+    offenders = []
+    for line in current.splitlines():
+        m = re.match(r"^\s*#?\s*([A-Z0-9_]*(?:SECRET|PASSWORD|PRIVATE_KEY|AUTH_KEY|API_KEY|ACCESS_KEY|TOKEN)[A-Z0-9_]*)\s*=\s*(.*)$", line)
+        if m and not (m.group(2).strip() == "" or "<" in m.group(2)):
+            offenders.append(m.group(1))
+    no_real_values = not offenders
+    assert no_real_values, "non-placeholder value(s) in .env.example for: " + ", ".join(sorted(offenders))
 
 
 def _env_is_git_ignored() -> bool:

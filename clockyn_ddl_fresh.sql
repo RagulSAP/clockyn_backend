@@ -1255,6 +1255,10 @@ CREATE TABLE clockyn_dev.users (
 	auth_epoch int4 DEFAULT 0 NOT NULL,
 	-- manager_id (migration 034): the manager this staff member reports to / was created for. parent_id stays the organisation.
 	manager_id varchar(36) NULL,
+	-- migration 042: the one-time welcome e-mail to a company admin (core_functions/welcome_email.py)
+	welcome_email_sent_at timestamptz NULL,              -- set when it was sent; NULL = not sent yet
+	welcome_email_attempts int4 DEFAULT 0 NOT NULL,      -- sends tried (at most 3, at least 1 hour apart)
+	welcome_email_last_attempt_at timestamptz NULL,      -- when the last try started
 	CONSTRAINT users_pkey PRIMARY KEY (id)
 );
 CREATE INDEX idx_users_branch_id ON clockyn_dev.users USING btree (branch_id);

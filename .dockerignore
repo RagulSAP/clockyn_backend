@@ -17,3 +17,6 @@ fix.sql
 
 # the customer knowledge base (documents, scripts, eval set) is not part of the running service
 clockyn_kb/
+
+# design drafts and previews of e-mails (the running service only needs static/email_logo.png)
+email_drafts/

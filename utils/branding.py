@@ -16,6 +16,8 @@ environment (see the Environment Variables table in README.md).
     SELLER_PLACE_OF_SUPPLY   text shown as Place of Supply                  (default empty)
     ANDROID_STORE_URL / IOS_STORE_URL   store listings (also used by the version check)
     BRAND_LOGO_FILE          logo file name inside static/                  (default brand_logo.png)
+    EMAIL_LOGO_FILE          logo file in static/ shown in the welcome e-mail header, attached inline  (default email_logo.png)
+    EMAIL_LOGO_URL           https address of a hosted e-mail logo; wins over EMAIL_LOGO_FILE (no attachment)  (default empty)
     MSG91_WHATSAPP_TEMPLATE  approved WhatsApp template name (no default)
     CORS_ALLOWED_ORIGINS     comma list of allowed web origins              (default * = any origin)
 """
@@ -152,6 +154,18 @@ def _static_file(env_name: str, default_file: str) -> str:
 
 def logo_path() -> str:
     return _static_file("BRAND_LOGO_FILE", "brand_logo.png")
+
+
+def email_logo_path() -> Optional[str]:
+    """Absolute path of the logo placed in the header of the welcome e-mail (static/<EMAIL_LOGO_FILE>, default
+    email_logo.png), or None when that file does not exist, so the e-mail falls back to its text wordmark."""
+    path = _static_file("EMAIL_LOGO_FILE", "email_logo.png")
+    return path if os.path.isfile(path) else None
+
+
+def email_logo_url() -> str:
+    """EMAIL_LOGO_URL as configured (empty when unset). The e-mail template accepts it only when it is an https address."""
+    return _env("EMAIL_LOGO_URL")
 
 
 # ── CORS ────────────────────────────────────────────────────────────────────

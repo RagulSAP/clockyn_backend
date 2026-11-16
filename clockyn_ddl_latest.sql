@@ -1313,6 +1313,10 @@ CREATE TABLE clockyn_dev.users (
 	auth_epoch int4 DEFAULT 0 NOT NULL,
 	-- manager_id (migration 034): the manager this staff member reports to / was created for. parent_id stays the organisation.
 	manager_id varchar(36) NULL,
+	-- migration 042: the one-time welcome e-mail to a company admin (core_functions/welcome_email.py)
+	welcome_email_sent_at timestamptz NULL,              -- set when it was sent; NULL = not sent yet
+	welcome_email_attempts int4 DEFAULT 0 NOT NULL,      -- sends tried (at most 3, at least 1 hour apart)
+	welcome_email_last_attempt_at timestamptz NULL,      -- when the last try started
 	CONSTRAINT users_pkey PRIMARY KEY (id)
 );
 CREATE INDEX idx_users_branch_id ON clockyn_dev.users USING btree (branch_id);
@@ -1833,3 +1837,21 @@ ALTER TABLE clockyn_dev.referral_reward ADD COLUMN IF NOT EXISTS expires_at time
 ALTER TABLE clockyn_dev.b2c_payout ADD COLUMN IF NOT EXISTS voided_at timestamptz NULL;
 ALTER TABLE clockyn_dev.b2c_payout ADD COLUMN IF NOT EXISTS voided_by varchar(255) NULL;
 ALTER TABLE clockyn_dev.b2c_payout ADD COLUMN IF NOT EXISTS void_reason varchar(300) NULL;
+
+-- ─── ALTER: one-time welcome e-mail columns on users (migration 042; run once on existing databases) ──────────────────────────
+-- The CREATE TABLE above already has these columns for a fresh install (no users yet, nobody to mark), so there the block does nothing.
+-- On an existing database it adds the three columns and marks EVERY existing user as already welcomed (welcome_email_sent_at = now()),
+-- so existing customers do not get a welcome e-mail; only users registered afterwards are pending. The columns and that one UPDATE are in
+-- one block guarded by "the column does not exist yet", so running this block again never marks newer, still pending users.
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_schema = 'clockyn_dev' AND table_name = 'users' AND column_name = 'welcome_email_sent_at'
+    ) THEN
+        ALTER TABLE clockyn_dev.users ADD COLUMN IF NOT EXISTS welcome_email_sent_at timestamptz NULL;
+        ALTER TABLE clockyn_dev.users ADD COLUMN IF NOT EXISTS welcome_email_attempts int4 NOT NULL DEFAULT 0;
+        ALTER TABLE clockyn_dev.users ADD COLUMN IF NOT EXISTS welcome_email_last_attempt_at timestamptz NULL;
+        UPDATE clockyn_dev.users SET welcome_email_sent_at = now() WHERE welcome_email_sent_at IS NULL;
+    END IF;
+END $$;

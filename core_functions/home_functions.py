@@ -1,3 +1,4 @@
+import logging
 from fastapi import HTTPException
 from core_functions.db_function import get_db_connection, return_connection
 from datetime import datetime, date, timedelta
@@ -9,6 +10,8 @@ from ml.s3 import get_employee_profile_url
 from core_functions import attendance_rules as rules
 from core_functions.attendance_functions import org_grace_minutes
 from core_functions import scope as staff_scope   # ENFORCE_MANAGER_SCOPE: adds nothing while the flag is off
+
+logger = logging.getLogger(__name__)
 
 
 def _count_late(rows, grace_minutes: int, key=None):
@@ -144,10 +147,24 @@ class StaffAttendanceResponse(BaseModel):
     work_hours: Optional[float] = None
     status: str
 
+async def _welcome_email_hook(user_id: str, org_id, branch_ids, dept_ids) -> None:
+    """The Home screen's first request: hand the admin to the one-time welcome e-mail (core_functions/welcome_email.py).
+    Only an unrestricted caller whose scope is its own organisation (an admin: get_manager_scope returns (user_id, None, None) for it)
+    is passed on; the claim itself re-checks role_id = 1, so managers and staff can never be welcomed. It returns at once (the work runs
+    in a worker thread) and nothing here can change or break the Home response."""
+    try:
+        if org_id == user_id and branch_ids is None and dept_ids is None:
+            from core_functions import welcome_email
+            await welcome_email.schedule_welcome_email(user_id)
+    except Exception:
+        logger.exception("Welcome e-mail hook failed for user %s (ignored)", user_id)
+
+
 async def get_dashboard_status(user_id: str, branch_id: Optional[str] = None, target_date: Optional[str] = None):
     """Get dashboard statistics for home screen"""
     from core_functions.manager_functions import get_staff_query_scope as get_manager_scope
     org_id, mgr_branch_ids, mgr_dept_ids = await get_manager_scope(user_id)
+    await _welcome_email_hook(user_id, org_id, mgr_branch_ids, mgr_dept_ids)
 
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)

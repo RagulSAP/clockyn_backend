@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Welcome to Clockyn</title>
+<style>
+  body { margin:0; padding:0; width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+  table { border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; }
+  img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; }
+  a { text-decoration:none; }
+  .btn:hover { opacity:.9; }
+  @media (max-width:620px) {
+    .container { width:100% !important; }
+    .px { padding-left:24px !important; padding-right:24px !important; }
+    .stack { display:block !important; width:100% !important; padding-left:0 !important; padding-right:0 !important; }
+    .h1 { font-size:32px !important; line-height:38px !important; }
+    .hide-sm { display:none !important; }
+    .stat { border-left:0 !important; border-top:1px solid #E1DFD9 !important; padding:16px 0 !important; }
+    .stat-first { border-top:0 !important; }
+  }
+  @media (prefers-color-scheme: dark) {
+    body, .page { background:#0A0A0A !important; }
+    .card { background:#141414 !important; border-color:#292929 !important; }
+    .ink { color:#F5F5F5 !important; }
+    .muted { color:#A3A3A3 !important; }
+    .rule { border-color:#292929 !important; }
+    .stat { border-color:#292929 !important; }
+    .num { color:#34E3A5 !important; }
+    .panel { background:#1B1B1C !important; }
+    .foot { color:#8A8A8A !important; }
+    .footbg { background:#0F0F0F !important; border-color:#292929 !important; }
+    .btn-dark { background:#F5F5F5 !important; color:#0A0A0A !important; }
+    .btn-dark-td { background:#F5F5F5 !important; }
+    .link { color:#34E3A5 !important; }
+  }
+</style>
+</head>
+<body class="page" style="margin:0;padding:0;background:#F2F1EE;">
+
+<!-- preheader: the grey preview line inboxes show next to the subject -->
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;font-size:1px;line-height:1px;">
+  Add your team, set up attendance and run payroll, all from one app. Your 1-month free trial has started.
+  &#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;
+  &#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="page" style="background:#F2F1EE;">
+<tr><td align="center" style="padding:32px 12px 44px;">
+
+  <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
+
+    <!-- ============ HERO (graphite) ============ -->
+    <tr><td class="px" bgcolor="#141416" style="background:#141416;background-image:linear-gradient(160deg,#2A2A2E 0%,#17171A 55%,#0D0D0E 100%);border-radius:22px 22px 0 0;padding:34px 44px 46px;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="font-size:20px;line-height:24px;font-weight:700;letter-spacing:.2px;color:#FFFFFF;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+              <td valign="middle" style="padding-right:11px;"><img src="data:image/png;base64,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" width="40" height="40" alt="Clockyn" style="display:block;border:0;border-radius:10px;"></td>
+              <td valign="middle" style="font-size:20px;line-height:24px;font-weight:700;letter-spacing:.2px;color:#FFFFFF;">Clockyn</td>
+            </tr></table>
+          </td>
+          <td align="right" class="hide-sm" style="font-size:11px;letter-spacing:2.4px;font-weight:600;color:#8E8E93;text-transform:uppercase;">Track &nbsp;&middot;&nbsp; Manage &nbsp;&middot;&nbsp; Pay</td>
+        </tr>
+      </table>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:46px;">
+        <tr><td style="font-size:11px;letter-spacing:2.6px;font-weight:700;color:#34E3A5;text-transform:uppercase;">Welcome aboard</td></tr>
+        <tr><td class="h1" style="padding-top:14px;font-family:Georgia,'Times New Roman',serif;font-size:42px;line-height:48px;font-weight:400;letter-spacing:-.6px;color:#FFFFFF;">
+          Welcome to Clockyn,<br>Asha.
+        </td></tr>
+        <tr><td style="padding-top:8px;"><div style="width:44px;height:2px;background:#34E3A5;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+        <tr><td style="padding-top:20px;font-size:16px;line-height:26px;color:#C9C9CE;">
+          <span style="color:#FFFFFF;">Sunrise Traders</span> is all set. Your 1-month free trial has started, with every feature unlocked, so you can run your whole team from your phone.
+        </td></tr>
+
+      </table>
+    </td></tr>
+
+    <!-- ============ BODY ============ -->
+    <tr><td class="card px" style="background:#FFFFFF;padding:40px 44px 14px;border-left:1px solid #E1DFD9;border-right:1px solid #E1DFD9;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+
+      <!-- trial at a glance: three figures separated by hairlines -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="stack stat stat-first" width="33%" align="center" style="padding:6px 8px;">
+            <div class="num" style="font-family:Georgia,'Times New Roman',serif;font-size:34px;line-height:38px;color:#0D0D0D;">1 month</div>
+            <div class="muted" style="font-size:11px;letter-spacing:1.8px;font-weight:600;color:#6B6B6B;padding-top:4px;text-transform:uppercase;">Free trial</div>
+          </td>
+          <td class="stack stat" width="33%" align="center" style="padding:6px 8px;border-left:1px solid #E1DFD9;">
+            <div class="num" style="font-family:Georgia,'Times New Roman',serif;font-size:34px;line-height:38px;color:#0D0D0D;">All</div>
+            <div class="muted" style="font-size:11px;letter-spacing:1.8px;font-weight:600;color:#6B6B6B;padding-top:4px;text-transform:uppercase;">Features unlocked</div>
+          </td>
+          <td class="stack stat" width="33%" align="center" style="padding:6px 8px;border-left:1px solid #E1DFD9;">
+            <div class="num" style="font-family:Georgia,'Times New Roman',serif;font-size:34px;line-height:38px;color:#0D0D0D;">10</div>
+            <div class="muted" style="font-size:11px;letter-spacing:1.8px;font-weight:600;color:#6B6B6B;padding-top:4px;text-transform:uppercase;">Staff &amp; managers</div>
+          </td>
+        </tr>
+      </table>
+      <p class="muted" style="margin:16px 0 0;font-size:13px;line-height:20px;color:#6B6B6B;text-align:center;">Your trial runs until <strong class="ink" style="color:#0D0D0D;">16 Dec 2026</strong>. You can check it any time under Settings &rsaquo; Your Plan &amp; Validity.</p>
+
+      <!-- steps -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:44px;">
+        <tr><td class="rule" style="border-top:1px solid #E1DFD9;padding-top:30px;">
+          <div style="font-size:11px;letter-spacing:2.4px;font-weight:700;color:#0A7A4B;text-transform:uppercase;" class="link">Get started</div>
+          <div class="ink" style="font-family:Georgia,'Times New Roman',serif;font-size:26px;line-height:32px;color:#0D0D0D;padding-top:8px;">Be up and running in three steps</div>
+        </td></tr>
+      </table>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:20px;">
+        <tr>
+          <td width="56" valign="top" class="num" style="padding:14px 0;font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:34px;color:#0A7A4B;">01</td>
+          <td class="rule" style="padding:14px 0;border-bottom:1px solid #EFEDE8;">
+            <div class="ink" style="font-size:16px;font-weight:700;color:#0D0D0D;">Set up your company</div>
+            <div class="muted" style="font-size:14px;line-height:22px;color:#6B6B6B;padding-top:3px;">Add your branches and departments, and mark each work location so attendance can be checked against it.</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="56" valign="top" class="num" style="padding:14px 0;font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:34px;color:#0A7A4B;">02</td>
+          <td class="rule" style="padding:14px 0;border-bottom:1px solid #EFEDE8;">
+            <div class="ink" style="font-size:16px;font-weight:700;color:#0D0D0D;">Add your managers and staff</div>
+            <div class="muted" style="font-size:14px;line-height:22px;color:#6B6B6B;padding-top:3px;">Add people one by one, pick their shift and branch, and choose what each manager is allowed to do.</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="56" valign="top" class="num" style="padding:14px 0;font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:34px;color:#0A7A4B;">03</td>
+          <td style="padding:14px 0;">
+            <div class="ink" style="font-size:16px;font-weight:700;color:#0D0D0D;">Let your team punch in</div>
+            <div class="muted" style="font-size:14px;line-height:22px;color:#6B6B6B;padding-top:3px;">Each person registers their face once, then punches in from the work location. You see who is in, late or absent, live.</div>
+          </td>
+        </tr>
+      </table>
+
+      <!-- features -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:38px;">
+        <tr><td class="rule" style="border-top:1px solid #E1DFD9;padding-top:30px;">
+          <div class="link" style="font-size:11px;letter-spacing:2.4px;font-weight:700;color:#0A7A4B;text-transform:uppercase;">What is inside</div>
+          <div class="ink" style="font-family:Georgia,'Times New Roman',serif;font-size:26px;line-height:32px;color:#0D0D0D;padding-top:8px;">Everything your team needs, in one app</div>
+          <div class="muted" style="font-size:15px;line-height:23px;color:#6B6B6B;padding-top:6px;">From the first punch to the last payslip.</div>
+        </td></tr>
+      </table>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px;">
+        <tr>
+          <td class="stack" width="50%" valign="top" style="padding:14px 14px 14px 0;">
+            <div style="width:22px;height:3px;background:#34E3A5;font-size:0;line-height:0;">&nbsp;</div>
+            <div class="ink" style="font-size:15px;font-weight:700;color:#0D0D0D;padding-top:10px;">Face-verified attendance</div>
+            <div class="muted" style="font-size:13px;line-height:21px;color:#6B6B6B;padding-top:4px;">A quick selfie punches in and out, so every punch is tied to the person who made it.</div>
+          </td>
+          <td class="stack" width="50%" valign="top" style="padding:14px 0 14px 14px;">
+            <div style="width:22px;height:3px;background:#34E3A5;font-size:0;line-height:0;">&nbsp;</div>
+            <div class="ink" style="font-size:15px;font-weight:700;color:#0D0D0D;padding-top:10px;">Geofenced work locations</div>
+            <div class="muted" style="font-size:13px;line-height:21px;color:#6B6B6B;padding-top:4px;">Staff can punch in only where they should be, at the office or on a site you set.</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="stack" width="50%" valign="top" style="padding:14px 14px 14px 0;">
+            <div style="width:22px;height:3px;background:#34E3A5;font-size:0;line-height:0;">&nbsp;</div>
+            <div class="ink" style="font-size:15px;font-weight:700;color:#0D0D0D;padding-top:10px;">Shifts, holidays &amp; rules</div>
+            <div class="muted" style="font-size:13px;line-height:21px;color:#6B6B6B;padding-top:4px;">Set shifts, holidays and late-coming rules once. Clockyn applies them every day.</div>
+          </td>
+          <td class="stack" width="50%" valign="top" style="padding:14px 0 14px 14px;">
+            <div style="width:22px;height:3px;background:#34E3A5;font-size:0;line-height:0;">&nbsp;</div>
+            <div class="ink" style="font-size:15px;font-weight:700;color:#0D0D0D;padding-top:10px;">Leave &amp; requests</div>
+            <div class="muted" style="font-size:13px;line-height:21px;color:#6B6B6B;padding-top:4px;">Staff ask from the app and you approve in one tap, with everything on record.</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="stack" width="50%" valign="top" style="padding:14px 14px 14px 0;">
+            <div style="width:22px;height:3px;background:#34E3A5;font-size:0;line-height:0;">&nbsp;</div>
+            <div class="ink" style="font-size:15px;font-weight:700;color:#0D0D0D;padding-top:10px;">Payroll &amp; payslips</div>
+            <div class="muted" style="font-size:13px;line-height:21px;color:#6B6B6B;padding-top:4px;">Attendance flows straight into salary, with overtime, deductions and advances worked out.</div>
+          </td>
+          <td class="stack" width="50%" valign="top" style="padding:14px 0 14px 14px;">
+            <div style="width:22px;height:3px;background:#34E3A5;font-size:0;line-height:0;">&nbsp;</div>
+            <div class="ink" style="font-size:15px;font-weight:700;color:#0D0D0D;padding-top:10px;">Expenses &amp; advances</div>
+            <div class="muted" style="font-size:13px;line-height:21px;color:#6B6B6B;padding-top:4px;">Claims and salary advances are raised, approved and tracked in the app.</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="stack" width="50%" valign="top" style="padding:14px 14px 14px 0;">
+            <div style="width:22px;height:3px;background:#34E3A5;font-size:0;line-height:0;">&nbsp;</div>
+            <div class="ink" style="font-size:15px;font-weight:700;color:#0D0D0D;padding-top:10px;">Reports &amp; analytics</div>
+            <div class="muted" style="font-size:13px;line-height:21px;color:#6B6B6B;padding-top:4px;">Daily and monthly attendance, late and absent trends, ready to download.</div>
+          </td>
+          <td class="stack" width="50%" valign="top" style="padding:14px 0 14px 14px;">
+            <div style="width:22px;height:3px;background:#34E3A5;font-size:0;line-height:0;">&nbsp;</div>
+            <div class="ink" style="font-size:15px;font-weight:700;color:#0D0D0D;padding-top:10px;">Chat &amp; announcements</div>
+            <div class="muted" style="font-size:13px;line-height:21px;color:#6B6B6B;padding-top:4px;">Message your team, or announce to everyone, without leaving the app.</div>
+          </td>
+        </tr>
+      </table>
+
+      <p class="muted" style="margin:14px 0 0;font-size:14px;line-height:22px;color:#6B6B6B;text-align:center;">
+        Plus <strong class="ink" style="color:#0D0D0D;">incentives</strong>, <strong class="ink" style="color:#0D0D0D;">CRM &amp; leads</strong> for field teams, and <strong class="ink" style="color:#0D0D0D;">Refer &amp; Earn</strong> to save on your plan when you invite other companies.
+      </p>
+
+      <!-- help: a graphite panel that echoes the hero -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="panel" style="margin-top:38px;background:#141416;background-image:linear-gradient(160deg,#2A2A2E 0%,#17171A 60%,#0D0D0E 100%);border-radius:18px;border-collapse:separate;border:0;">
+        <tr><td style="padding:28px 30px 26px;">
+          <div style="font-size:11px;letter-spacing:2.4px;font-weight:700;color:#34E3A5;text-transform:uppercase;">We are here</div>
+          <div style="font-family:Georgia,'Times New Roman',serif;font-size:23px;line-height:30px;color:#FFFFFF;padding-top:8px;">Stuck on something? We have you covered.</div>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px;">
+            <tr><td valign="top" width="22" style="font-size:14px;line-height:23px;color:#34E3A5;padding:4px 0;">&#10003;</td><td style="font-size:14px;line-height:23px;color:#C9C9CE;padding:4px 0;"><strong style="color:#FFFFFF;">FAQ</strong>: hundreds of answers under Support in the app.</td></tr>
+            <tr><td valign="top" width="22" style="font-size:14px;line-height:23px;color:#34E3A5;padding:4px 0;">&#10003;</td><td style="font-size:14px;line-height:23px;color:#C9C9CE;padding:4px 0;"><strong style="color:#FFFFFF;">Video Hub</strong>: short guides that show each step.</td></tr>
+            <tr><td valign="top" width="22" style="font-size:14px;line-height:23px;color:#34E3A5;padding:4px 0;">&#10003;</td><td style="font-size:14px;line-height:23px;color:#C9C9CE;padding:4px 0;"><strong style="color:#FFFFFF;">Live Chat</strong>: talk to the Clockyn team from Support &rsaquo; Live Chat.</td></tr>
+          </table>
+        </td></tr>
+      </table>
+
+      <!-- closing CTA -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:40px;">
+        <tr><td align="center">
+          <div class="ink" style="font-family:Georgia,'Times New Roman',serif;font-size:24px;line-height:31px;color:#0D0D0D;">Ready to add your first team member?</div>
+        </td></tr>
+
+        <tr><td style="padding-bottom:24px;font-size:0;line-height:0;">&nbsp;</td></tr>
+
+      </table>
+
+    </td></tr>
+
+    <!-- ============ SIGN-OFF ============ -->
+    <tr><td class="card px" style="background:#FFFFFF;border-left:1px solid #E1DFD9;border-right:1px solid #E1DFD9;border-top:1px solid #EFEDE8;padding:24px 44px 30px;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+      <div class="ink" style="font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:26px;color:#0D0D0D;">Welcome to the team,<br><span style="font-style:italic;">The Clockyn team</span></div>
+      <div class="muted" style="font-size:13px;line-height:20px;color:#6B6B6B;padding-top:10px;">Just reply to this e-mail if you have a question.</div>
+    </td></tr>
+
+    <!-- ============ FOOTER ============ -->
+    <tr><td class="px footbg" style="background:#ECEAE5;border:1px solid #E1DFD9;border-top:0;border-radius:0 0 22px 22px;padding:22px 44px 26px;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+      <div class="foot" style="font-size:12px;line-height:19px;color:#77756E;text-align:center;">
+        You are receiving this one-time welcome e-mail because you created <strong>Sunrise Traders</strong> on Clockyn.<br>
+        Clockyn
+      </div>
+    </td></tr>
+
+  </table>
+</td></tr>
+</table>
+</body>
+</html>
