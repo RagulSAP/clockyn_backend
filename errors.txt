@@ -1,28 +1,21 @@
-INFO:     Application startup complete.
-INFO:     127.0.0.1:54316 - "GET /auth/config HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64689 - "POST /auth/verify-device-token HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64689 - "POST /auth/generate-otp HTTP/1.1" 429 Too Many Requests
-INFO:     127.0.0.1:55056 - "POST /auth/generate-otp HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61112 - "POST /auth/validate-otp HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54826 - "GET /auth/check-mobile/9500336244 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54826 - "OPTIONS /auth/register HTTP/1.1" 204 No Content
-INFO:     127.0.0.1:54826 - "POST /auth/register HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54826 - "POST /auth/upload-org-logo/b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
-INFO:     ('127.0.0.1', 58079) - "WebSocket /ws/chat/10d2b7ef-926f-4f61-9507-95ead99db8f3" [accepted]
-INFO:     connection open
-INFO:     127.0.0.1:54826 - "OPTIONS /attribution/meta HTTP/1.1" 204 No Content
-INFO:     127.0.0.1:54826 - "GET /home/dashboard-status?user_id=b9d257df-ed9b-4d66-8f38-17ca9e500d3d&target_date=2026-11-21 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50700 - "GET /home/branches?org_id=b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56419 - "GET /home/departments?org_id=b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59755 - "GET /home/all-staff?user_id=b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49174 - "GET /plans/plan-status/b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54826 - "GET /live-chat/unread/b9d257df-ed9b-4d66-8f38-17ca9e500d3d?user_id=10d2b7ef-926f-4f61-9507-95ead99db8f3 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62190 - "POST /attribution/meta HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50700 - "GET /auth/org-logo/b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59755 - "GET /requests/admin/b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56419 - "GET /company/details/b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49174 - "GET /plans/subscription/b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54826 - "OPTIONS /analytics/events HTTP/1.1" 204 No Content
-INFO:     127.0.0.1:62190 - "GET /chat/list/10d2b7ef-926f-4f61-9507-95ead99db8f3?org_id=b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54826 - "GET /group-chat/list/10d2b7ef-926f-4f61-9507-95ead99db8f3?org_id=b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49174 - "POST /analytics/events HTTP/1.1" 200 OK
+(.venv) PS F:\Tech\clockyn_backend\scripts> python .\check_welcome_email.py id=ffe812b7-8e7d-46dd-b818-40b43e4e1a14
+1. settings
+[ ok ] WELCOME_EMAIL_ENABLED='1': the feature is on in THIS environment
+[ ok ] EMAIL_USER is set (p***@gensharp.in)
+[note] AWS_SES_REGION='ap-south-1' (default ap-south-1); DB_SCHEMA='clockyn_dev'
+INFO botocore.credentials: Found credentials in environment variables.
+[ ok ] AWS credentials were found
+2. database
+INFO core_functions.db_function: Database connection pool initialized with schema: clockyn_dev
+[ ok ] connected to the database (schema clockyn_dev)
+[ ok ] users has the three welcome_email_* columns
+[FAIL] no user has id id=ffe812b7-8e7d-46dd-b818-40b43e4e1a14 and no organisation with that id has an owner: check the id (it must come from your database)
+3. Amazon SES
+INFO botocore.credentials: Found credentials in environment variables.
+[note] SES ap-south-1: may send 50000 e-mails per 24 hours, 12 sent in the last 24 hours
+[ ok ] SES is out of the sandbox (the daily limit is above 200)
+[ ok ] sender p***@gensharp.in (or its domain) is verified in SES region ap-south-1: {'p***@gensharp.in': 'Success', 'gensharp.in': 'Success'}
+4. the e-mail
+[ ok ] the e-mail renders: subject 'Welcome to Clockyn, there! Your 1-month free trial has started', 19 KB, logo inline: True
+
+1 CHECK(S) FAILED: fix the [FAIL] lines above, top to bottom
