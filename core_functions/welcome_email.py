@@ -40,6 +40,21 @@ from utils import branding
 
 logger = logging.getLogger(__name__)
 
+
+def _ensure_log_output() -> None:
+    """Make this module's INFO lines visible however the server was started. ``python app.py`` configures logging only in the parent
+    process; the auto-reload worker (and a plain ``uvicorn app:app``) has no root handler, so INFO lines would be silently dropped
+    (uvicorn's own access log keeps working because uvicorn sets up its own handlers). Only when nothing else would print them a
+    handler is added to THIS logger, so there are never duplicate lines."""
+    logger.setLevel(logging.INFO)
+    if not logger.hasHandlers():
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter("%(levelname)s:     %(name)s:%(message)s"))
+        logger.addHandler(handler)
+
+
+_ensure_log_output()
+
 MAX_ATTEMPTS = 3
 TRIAL_MONTHS = 1                 # registration gives a 1-month trial (core_functions/auth_function.py: relativedelta(months=1))
 SKIP_TTL_SECONDS = 600           # an admin already looked at in the last 10 minutes is not looked at again by this process
@@ -79,6 +94,16 @@ DIAGNOSE_SQL = """
     ORDER BY (u.role_id = 1) DESC
     LIMIT 1
 """
+
+
+def log_startup_state() -> None:
+    """One line when the server starts: is the feature on and is the sender configured (values are never printed)."""
+    if enabled():
+        logger.info("welcome-email: ON at startup (sender EMAIL_USER configured: %s, AWS_SES_REGION=%s)",
+                    bool((os.getenv("EMAIL_USER") or "").strip()), os.getenv("AWS_SES_REGION", "ap-south-1"))
+    else:
+        logger.info("welcome-email: OFF at startup (WELCOME_EMAIL_ENABLED=%r). Set WELCOME_EMAIL_ENABLED=1 in the backend's environment "
+                    "and restart to send welcome e-mails.", os.getenv("WELCOME_EMAIL_ENABLED"))
 
 
 def enabled() -> bool:
@@ -141,8 +166,8 @@ def _remember(user_id: str) -> bool:
 
 
 # ── database ────────────────────────────────────────────────────────────────────────────────────────────────────────
-def skip_reason(row: Optional[Dict[str, Any]]) -> str:
-    """The first condition of CLAIM_SQL that a user row (from DIAGNOSE_SQL) fails, as a short sentence for the log."""
+def first_failure(row: Optional[Dict[str, Any]]) -> Optional[str]:
+    """The first condition of CLAIM_SQL that a user row (from DIAGNOSE_SQL) fails, as a short sentence; None when the row passes them all."""
     if not row:
         return "no user with this id, and no organisation with this id has an owner"
     if row.get("role_id") != 1:
@@ -155,7 +180,12 @@ def skip_reason(row: Optional[Dict[str, Any]]) -> str:
         return "an attempt was made less than an hour ago (retries wait one hour)"
     if not row.get("email_ok"):
         return "the admin's e-mail address is blank or not valid"
-    return "not eligible for a reason this check does not know (another request may have claimed it at the same moment)"
+    return None
+
+
+def skip_reason(row: Optional[Dict[str, Any]]) -> str:
+    """first_failure for the log. A claim that returned nothing although the row passes every condition means another request claimed it."""
+    return first_failure(row) or "not eligible for a reason this check does not know (another request may have claimed it at the same moment)"
 
 
 def diagnose(cursor, user_id: str) -> str:
