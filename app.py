@@ -56,13 +56,6 @@ from core_functions.auth_dependency import install as _install_auth
 _install_auth(app)
 
 
-# One log line saying whether the welcome e-mail is on (visible in the worker too; see welcome_email._ensure_log_output).
-try:
-    from core_functions import welcome_email as _welcome_email
-    _welcome_email.log_startup_state()
-except Exception:  # a log line must never stop the server
-    pass
-
 # Include routers
 from router import health
 app.include_router(health.router)

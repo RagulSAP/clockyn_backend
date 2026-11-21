@@ -153,15 +153,11 @@ async def _welcome_email_hook(user_id: str, org_id, branch_ids, dept_ids) -> Non
     is passed on; the claim itself re-checks role_id = 1, so managers and staff can never be welcomed. It returns at once (the work runs
     in a worker thread) and nothing here can change or break the Home response."""
     try:
-        from core_functions import welcome_email
         if org_id == user_id and branch_ids is None and dept_ids is None:
+            from core_functions import welcome_email
             await welcome_email.schedule_welcome_email(user_id)
-        else:
-            welcome_email.logger.info(
-                "welcome-email: not checked for user %s: not an unrestricted admin call (scope org=%s, branch limit=%s, department limit=%s)",
-                user_id, org_id, branch_ids is not None, dept_ids is not None)
     except Exception:
-        logger.exception("welcome-email: hook failed for user %s (ignored)", user_id)
+        logger.exception("Welcome e-mail hook failed for user %s (ignored)", user_id)
 
 
 async def get_dashboard_status(user_id: str, branch_id: Optional[str] = None, target_date: Optional[str] = None):
