@@ -1,14 +1,28 @@
-Received `false` for a non-boolean attribute `collapsable`.
-
-If you want to write it to the DOM, pass a string instead: collapsable="false" or collapsable={value.toString()}.
-
-If you used to conditionally omit it with collapsable={condition && value}, pass collapsable={condition ? value : undefined} instead.
-
------------
-
-Render Error
-
-Attempting to run JS driven animation on animated node that has been moved to "native" earlier by starting an animation with useNativeDriver: true
-
-Source:
-F:\Tech\clockyn_frontend\node_modules\react-native\Libraries\Animated\animations\Animation.js (75:21)
+INFO:     Application startup complete.
+INFO:     127.0.0.1:54316 - "GET /auth/config HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64689 - "POST /auth/verify-device-token HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64689 - "POST /auth/generate-otp HTTP/1.1" 429 Too Many Requests
+INFO:     127.0.0.1:55056 - "POST /auth/generate-otp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61112 - "POST /auth/validate-otp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54826 - "GET /auth/check-mobile/9500336244 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54826 - "OPTIONS /auth/register HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:54826 - "POST /auth/register HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54826 - "POST /auth/upload-org-logo/b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
+INFO:     ('127.0.0.1', 58079) - "WebSocket /ws/chat/10d2b7ef-926f-4f61-9507-95ead99db8f3" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:54826 - "OPTIONS /attribution/meta HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:54826 - "GET /home/dashboard-status?user_id=b9d257df-ed9b-4d66-8f38-17ca9e500d3d&target_date=2026-11-21 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50700 - "GET /home/branches?org_id=b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56419 - "GET /home/departments?org_id=b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59755 - "GET /home/all-staff?user_id=b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49174 - "GET /plans/plan-status/b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54826 - "GET /live-chat/unread/b9d257df-ed9b-4d66-8f38-17ca9e500d3d?user_id=10d2b7ef-926f-4f61-9507-95ead99db8f3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62190 - "POST /attribution/meta HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50700 - "GET /auth/org-logo/b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59755 - "GET /requests/admin/b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56419 - "GET /company/details/b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49174 - "GET /plans/subscription/b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54826 - "OPTIONS /analytics/events HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:62190 - "GET /chat/list/10d2b7ef-926f-4f61-9507-95ead99db8f3?org_id=b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54826 - "GET /group-chat/list/10d2b7ef-926f-4f61-9507-95ead99db8f3?org_id=b9d257df-ed9b-4d66-8f38-17ca9e500d3d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49174 - "POST /analytics/events HTTP/1.1" 200 OK
