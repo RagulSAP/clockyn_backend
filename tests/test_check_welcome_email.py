@@ -177,3 +177,10 @@ def test_reset_clears_only_that_admin(world):
     updates = [(s, p) for s, p in world.executed if s.startswith("UPDATE users SET welcome_email_sent_at = NULL")]
     assert len(updates) == 1 and updates[0][1] == ("admin-1",) and world.commits == 1
     assert "cleared the welcome_email_* columns of admin admin-1" in text
+
+
+@pytest.mark.parametrize("given", ["id=org-1", "org_id=org-1", "user_id=org-1", "'org-1'"])
+def test_an_id_with_a_name_prefix_or_quotes_is_accepted(world, given):
+    out = io.StringIO()
+    assert chk.main([given], out=out) == 0, out.getvalue()
+    assert [p for s, p in world.executed if s.startswith("SELECT u.user_id, u.name")] == [("org-1", "org-1")]

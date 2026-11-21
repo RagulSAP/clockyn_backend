@@ -190,6 +190,10 @@ def main(argv=None, out=None) -> int:
     ap.add_argument("--reset", action="store_true", help="clear the welcome_email_* columns of this one admin so it can be sent again")
     args = ap.parse_args(argv)
     out = out or sys.stdout
+    for prefix in ("id=", "org_id=", "user_id="):                       # `id=<uuid>` pasted from a URL or a log is accepted too
+        if args.id.lower().startswith(prefix):
+            args.id = args.id[len(prefix):]
+    args.id = args.id.strip().strip("'\"")
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s", stream=out)   # before the import: no duplicate handler
     from core_functions import welcome_email as we
